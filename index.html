@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBOI - Asset Compiler For Photoshop</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --border-color: #333;
+            --text-color: #e0e0e0;
+            --text-muted: #888;
+            --accent: #b71c1c;
+            --accent-hover: #d32f2f;
+            --row-hover: #252525;
+            --header-bg: #161616;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+        }
+
+        body {
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        .workspace {
+            width: 100%;
+            max-width: 900px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-sizing: border-box;
+        }
+
+        .header-area {
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            word-break: break-word;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        /* PANEL DE OPCIONES SUPERIOR */
+        .options-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background-color: var(--bg-color);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            width: 80px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.99);
+        }
+
+        .btn:disabled {
+            background-color: #444;
+            color: #777;
+            border-color: var(--border-color);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* EXPLORADOR DE ARCHIVOS */
+        .repo-box {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--panel-bg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin-bottom: 10px;
+        }
+
+        .repo-header, .repo-row {
+            display: grid;
+            grid-template-columns: 40px 85px 1fr;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+        }
+
+        .repo-header {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .thumb-header {
+            text-align: center;
+            width: 100%;
+        }
+
+        .sort-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: fit-content;
+            padding-left: 4px;
+        }
+
+        .sort-header:hover {
+            color: #fff;
+        }
+
+        .sort-icon {
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        .repo-body {
+            flex-grow: 1;
+            max-height: calc(100vh - 250px); 
+            overflow-y: auto;
+        }
+
+        .repo-row {
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            transition: background-color 0.15s;
+        }
+
+        .repo-row:last-child {
+            border-bottom: none;
+        }
+
+        .repo-row:hover {
+            background-color: var(--row-hover);
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.25);
+            accent-color: var(--accent);
+            cursor: pointer;
+            margin: 0;
+            display: block;
+        }
+
+        .thumb-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 54px;
+            height: 54px;
+            background-color: #141414;
+            border: 1px solid #2d2d2d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .sprite-thumb {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated; 
+        }
+
+        .file-link-container {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding-left: 4px;
+        }
+
+        .file-name-text {
+            color: #fff;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .repo-row:hover .file-name-text {
+            text-decoration: underline;
+        }
+
+        .empty-message {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE PC */
+        @media (min-width: 650px) {
+            body {
+                padding: 24px;
+            }
+
+            .workspace {
+                gap: 20px;
+            }
+
+            .options-panel {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 16px 20px;
+            }
+
+            .control-group {
+                width: auto;
+                justify-content: flex-start;
+                gap: 16px;
+            }
+
+            .btn {
+                width: auto;
+                padding: 10px 28px;
+                font-size: 14px;
+            }
+
+            .repo-header, .repo-row {
+                grid-template-columns: 50px 105px 1fr;
+                padding: 12px 24px;
+                gap: 16px;
+            }
+
+            .repo-header {
+                font-size: 13px;
+            }
+
+            .repo-body {
+                max-height: calc(100vh - 220px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="workspace">
+        <div class="header-area">
+            <h1>🎨 TBOI - Asset Compiler For Photoshop</h1>
+            <div class="subtitle">Compilador automatizado con vista previa de miniaturas para Photoshop</div>
+        </div>
+
+        <div class="options-panel">
+            <div class="control-group">
+                <label for="scale-input">Escala Pixel-Art:</label>
+                <input type="number" id="scale-input" value="1" min="1" max="50">
+            </div>
+
+            <button class="btn" id="generate-btn" disabled>Generate Script (.jsx)</button>
+        </div>
+
+        <div class="repo-box">
+            <div class="repo-header">
+                <div>
+                    <input type="checkbox" id="select-all-master" title="Seleccionar todos los sprites">
+                </div>
+                <div class="thumb-header">Miniatura</div>
+                <div class="sort-header" id="sort-name-btn" title="Haga clic para ordenar alfabéticamente">
+                    <span>Nombre</span>
+                    <span class="sort-icon" id="sort-direction-icon">▲</span>
+                </div>
+            </div>
+
+            <div class="repo-body" id="files-container-list">
+                <div class="empty-message">Buscando imágenes en la carpeta local /public...</div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="processor-canvas" style="display:none;"></canvas>
+
+    <script>
+        const filesContainer = document.getElementById('files-container-list');
+        const generateBtn = document.getElementById('generate-btn');
+        const scaleInput = document.getElementById('scale-input');
+        const selectAllMaster = document.getElementById('select-all-master');
+        const sortNameBtn = document.getElementById('sort-name-btn');
+        const sortDirectionIcon = document.getElementById('sort-direction-icon');
+        const canvas = document.getElementById('processor-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let listaSpritesRaw = []; 
+        let ordenAscendente = true; 
+
+        async function fetchSprites() {
+            try {
+                const response = await fetch('/api/sprites');
+                listaSpritesRaw = await response.json();
+                
+                if (listaSpritesRaw.length === 0) {
+                    filesContainer.innerHTML = '<div class="empty-message">La carpeta /public está vacía. Guarda tus archivos .png ahí dentro.</div>';
+                    generateBtn.disabled = true;
+                    return;
+                }
+
+                generateBtn.disabled = false;
+                renderizarListaDeSprites();
+
+            } catch (error) {
+                console.error(error);
+                filesContainer.innerHTML = '<div class="empty-message" style="color: var(--accent);">Error de enlace: No se pudo conectar con el servidor backend de Node.</div>';
+            }
+        }
+
+        function renderizarListaDeSprites() {
+            listaSpritesRaw.sort((a, b) => {
+                return ordenAscendente ? a.localeCompare(b) : b.localeCompare(a);
+            });
+
+            filesContainer.innerHTML = '';
+
+            listaSpritesRaw.forEach((filename) => {
+                const row = document.createElement('div');
+                row.className = 'repo-row';
+
+                row.innerHTML = `
+                    <div>
+                        <input type="checkbox" class="sprite-checkbox" value="${filename}">
+                    </div>
+                    <div class="thumb-container">
+                        <img class="sprite-thumb" src="/public/${filename}" alt="preview">
+                    </div>
+                    <div class="file-link-container">
+                        <span class="file-name-text" title="${filename}">${filename}</span>
+                    </div>
+                `;
+
+                row.addEventListener('click', function(e) {
+                    if (e.target.type !== 'checkbox') {
+                        const cb = row.querySelector('.sprite-checkbox');
+                        cb.checked = !cb.checked;
+                        actualizarEstadoMasterCheckbox();
+                    }
+                });
+
+                row.querySelector('.sprite-checkbox').addEventListener('change', actualizarEstadoMasterCheckbox);
+
+                filesContainer.appendChild(row);
+            });
+
+            actualizarEstadoMasterCheckbox();
+        }
+
+        sortNameBtn.addEventListener('click', function() {
+            ordenAscendente = !ordenAscendente;
+            sortDirectionIcon.innerText = ordenAscendente ? "▲" : "▼";
+            renderizarListaDeSprites();
+        });
+
+        selectAllMaster.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.sprite-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = selectAllMaster.checked;
+            });
+        });
+
+        function actualizarEstadoMasterCheckbox() {
+            const checkboxes = document.querySelectorAll('.sprite-checkbox');
+            if (checkboxes.length === 0) {
+                selectAllMaster.checked = false;
+                return;
+            }
+            const checkedCount = document.querySelectorAll('.sprite-checkbox:checked').length;
+            selectAllMaster.checked = (checkedCount === checkboxes.length);
+        }
+
+        function procesarImagenPromesa(filename, scaleFactor) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = function () {
+                    const originalW = img.width;
+                    const originalH = img.height;
+
+                    canvas.width = originalW * scaleFactor;
+                    canvas.height = originalH * scaleFactor;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.imageSmoothingEnabled = false; 
+
+                    ctx.drawImage(
+                        img,
+                        0, 0, originalW, originalH,
+                        0, 0, canvas.width, canvas.height
+                    );
+
+                    const dataUrl = canvas.toDataURL("image/png");
+                    const base64Pura = dataUrl.replace(/^data:image\/png;base64,/, "");
+                    const cleanName = filename.replace(/\.[^/.]+$/, ""); 
+
+                    resolve({ name: cleanName, b64: base64Pura });
+                };
+                img.src = `/public/${filename}`;
+            });
+        }
+
+        generateBtn.addEventListener('click', async function () {
+            const checkboxesChecked = document.querySelectorAll('.sprite-checkbox:checked');
+            
+            if (checkboxesChecked.length === 0) {
+                alert("Por favor, selecciona al menos un archivo de la lista para compilar.");
+                return;
+            }
+
+            generateBtn.disabled = true;
+            generateBtn.innerText = "Compiling...";
+
+            const scale = Math.max(1, parseInt(scaleInput.value) || 1);
+            let payloadMasivo = [];
+
+            for (let i = 0; i < checkboxesChecked.length; i++) {
+                const filename = checkboxesChecked[i].value;
+                const resultado = await procesarImagenPromesa(filename, scale);
+                payloadMasivo.push(resultado);
+            }
+
+            const codigoJSX = `// Script de Inyeccion Masiva Rasterizada - TBOI
+function importarSpritesAAltar() {
+    if (app.documents.length === 0) {
+        alert("¡Error! Debes tener un lienzo de trabajo abierto en Photoshop antes de ejecutar el script.");
+        return;
+    }
+
+    var docActivo = app.activeDocument;
+    var assets = ${JSON.stringify(payloadMasivo, null, 4)};
+
+    function decodeB64(input) {
+        var keystr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var output = "";
+        var chr1, chr2, chr3;
+        var enc1, enc2, enc3, enc4;
+        var i = 0;
+        while (i < input.length) {
+            enc1 = keystr.indexOf(input.charAt(i++));
+            enc2 = keystr.indexOf(input.charAt(i++));
+            enc3 = keystr.indexOf(input.charAt(i++));
+            enc4 = keystr.indexOf(input.charAt(i++));
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+            output += String.fromCharCode(chr1);
+            if (enc3 != 64) output += String.fromCharCode(chr2);
+            if (enc4 != 64) output += String.fromCharCode(chr3);
+        }
+        return output;
+    }
+
+    for (var i = 0; i < assets.length; i++) {
+        var item = assets[i];
+        
+        var binaryData = decodeB64(item.b64);
+        var tempFile = new File(Folder.temp + "/tboi_bulk_asset_" + i + ".png");
+        tempFile.encoding = "binary";
+        tempFile.open("w");
+        tempFile.write(binaryData);
+        tempFile.close();
+
+        var docTemporal = app.open(tempFile);
+        docTemporal.activeLayer.duplicate(docActivo);
+        
+        docTemporal.saved = true;
+        docTemporal.close();
+
+        docActivo.activeLayer.name = item.name;
+        
+        tempFile.remove();
+    }
+}
+importarSpritesAAltar();`;
+
+            const blob = new Blob([codigoJSX], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement('a');
+            link.download = `Importacion_TBOI_Masiva.jsx`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+
+            generateBtn.disabled = false;
+            generateBtn.innerText = "Generate Script (.jsx)";
+        });
+
+        fetchSprites();
+    </script>
+</body>
+
+</html>
