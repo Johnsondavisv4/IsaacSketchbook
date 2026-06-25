@@ -10,10 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname)));
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
 app.get('/api/sprites', (req, res) => {
-    const publicPath = path.join(__dirname, 'public');
+    const publicPath = path.join(__dirname, '..', 'public');
     
     if (!fs.existsSync(publicPath)) {
         fs.mkdirSync(publicPath);
@@ -32,6 +32,8 @@ app.get('/api/sprites', (req, res) => {
 app.listen(PORT, () => {
     console.log(`==================================================`);
     console.log(`🎮 Servidor de Sprites TBOI listo y corriendo!`);
-    console.log(`🌐 Abre en tu navegador: http://localhost:${PORT}`);
+    console.log(`🌐 Panel de Control: http://localhost:${PORT}`);
+    console.log(`🎨 Explorador: http://localhost:${PORT}/asset-exporter`);
+    console.log(`📜 Post-it: http://localhost:${PORT}/postit-generator`);
     console.log(`==================================================`);
 });
