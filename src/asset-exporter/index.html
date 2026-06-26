@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBOI - Asset Exporter</title>
+    <link rel="stylesheet" href="exporter.css">
+</head>
+
+<body>
+
+    <div class="back-nav">
+        <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+    </div>
+
+    <div class="workspace">
+        <div class="header-area">
+            <h1>📁 Asset Exporter</h1>
+            <div class="subtitle">Escanea la carpeta local e indexa elementos con escalas personalizadas al carrito
+            </div>
+        </div>
+
+        <div class="options-panel">
+            <div class="info-group">
+                <span class="info-label">Instrucciones:</span>
+                <p class="info-text">Selecciona los sprites de la lista y ajusta la escala individual de cada uno antes
+                    de enviarlos a la cola.</p>
+            </div>
+            <button class="btn btn-cart-add" id="add-to-cart-btn" disabled>🛒 Añadir Selección al Carrito</button>
+        </div>
+
+        <div class="repo-box">
+            <div class="repo-header">
+                <div>
+                    <input type="checkbox" id="select-all-master" title="Seleccionar todos los sprites">
+                </div>
+                <div class="thumb-header">Miniatura</div>
+                <div class="sort-header" id="sort-name-btn" title="Haga clic para ordenar alfabéticamente">
+                    <span>Nombre del Archivo</span>
+                    <span class="sort-icon" id="sort-direction-icon">▲</span>
+                </div>
+                <div class="scale-header">Escala</div>
+            </div>
+
+            <div class="repo-body" id="files-container-list">
+                <div class="empty-message">Buscando imágenes en la carpeta local /public...</div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="processor-canvas" style="display:none;"></canvas>
+
+    <script defer src="exporter.js"></script>
+</body>
+
+</html>
