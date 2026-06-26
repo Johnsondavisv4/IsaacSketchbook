@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Post-it para Photoshop (.jsx) - TBOI</title>
+    <link rel="stylesheet" href="postit.css">
+</head>
+
+<body>
+
+    <div class="back-nav">
+        <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+    </div>
+
+    <h1>Generador de Post-it de Completado</h1>
+
+    <div class="container">
+        <div class="canvas-section">
+            <canvas id="postit-canvas" width="96" height="96"></canvas>
+            <button class="btn btn-export" id="export-btn" disabled>🛒 Añadir al Carrito (1x)</button>
+            <button class="btn btn-export-hd" id="export-btn-hd" disabled>🛒 Añadir al Carrito (4x)</button>
+        </div>
+
+        <div class="controls-section">
+            <div id="ui-container">
+
+                <div class="top-controls">
+                    <div class="control-group-box">
+                        <span class="control-label">Personaje:</span>
+                        <label>
+                            <input type="radio" name="character-type" value="0" checked onchange="drawCanvas()"> Normal
+                        </label>
+                        <label>
+                            <input type="radio" name="character-type" value="5" onchange="drawCanvas()"> Tainted
+                        </label>
+                    </div>
+
+                    <div class="control-group-box">
+                        <span class="control-label">Sin Marca:</span>
+                        <label>
+                            <input type="radio" name="nomark-style" value="silhouette" onchange="drawCanvas()"> Silueta
+                        </label>
+                        <label>
+                            <input type="radio" name="nomark-style" value="invisible" checked onchange="drawCanvas()">
+                            Invisible
+                        </label>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>No Mark</th>
+                                <th>Normal</th>
+                                <th>Hard</th>
+                                <th>Online N.</th>
+                                <th>Online H.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marks-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="postit.js"></script>
+</body>
+
+</html>
