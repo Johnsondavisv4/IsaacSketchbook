@@ -6,12 +6,12 @@ const checkoutBtn = document.getElementById('checkout-btn');
 const clearCartBtn = document.getElementById('clear-cart-btn');
 
 function obtenerCarrito() {
-    const rawData = localStorage.getItem(CART_STORAGE_KEY);
+    const rawData = sessionStorage.getItem(CART_STORAGE_KEY);
     return rawData ? JSON.parse(rawData) : [];
 }
 
 function guardarCarrito(carrito) {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
+    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
 }
 
 function actualizarInterfazDashboard() {
@@ -64,7 +64,7 @@ function eliminarItemDelCarrito(index) {
 
 clearCartBtn.addEventListener('click', function () {
     if (confirm("¿Estás seguro de que deseas vaciar toda la cola de inyección?")) {
-        localStorage.removeItem(CART_STORAGE_KEY);
+        sessionStorage.removeItem(CART_STORAGE_KEY);
         actualizarInterfazDashboard();
     }
 });

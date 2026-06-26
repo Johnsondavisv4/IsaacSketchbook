@@ -136,7 +136,7 @@ addToCartBtn.addEventListener('click', async function () {
     addToCartBtn.disabled = true;
     addToCartBtn.innerText = "Procesando Selección...";
 
-    const rawCart = localStorage.getItem(CART_STORAGE_KEY);
+    const rawCart = sessionStorage.getItem(CART_STORAGE_KEY);
     let carrito = rawCart ? JSON.parse(rawCart) : [];
 
     for (let i = 0; i < checkboxesChecked.length; i++) {
@@ -154,7 +154,7 @@ addToCartBtn.addEventListener('click', async function () {
         });
     }
 
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
+    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
 
     alert(`🛒 ¡Éxito! Se añadieron ${checkboxesChecked.length} sprites al Carrito de Inyección.`);
 

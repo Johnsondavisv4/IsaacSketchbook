@@ -118,7 +118,7 @@ function empujarPostitAlCarrito(canvasObjetivo, labelEscala) {
     const charOffset = parseInt(document.querySelector('input[name="character-type"]:checked').value);
     const tipoLabel = charOffset === 0 ? "normal" : "tainted";
 
-    const rawCart = localStorage.getItem(CART_STORAGE_KEY);
+    const rawCart = sessionStorage.getItem(CART_STORAGE_KEY);
     let carrito = rawCart ? JSON.parse(rawCart) : [];
 
     const prefijoBúsqueda = `Post-it Note ${tipoLabel}`;
@@ -133,7 +133,7 @@ function empujarPostitAlCarrito(canvasObjetivo, labelEscala) {
         b64: base64Pura
     });
 
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
+    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
 
     alert(`🛒 ¡Añadido al carrito con éxito!\nRegistrado como: "${nombreFinalCapa}"`);
 }
