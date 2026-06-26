@@ -11,6 +11,37 @@ const ctx = canvas.getContext('2d');
 let listaSpritesRaw = [];
 let ordenAscendente = true;
 
+function mostrarToast(mensaje, tipo = 'success') {
+    let container = document.getElementById('toast-container');
+
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    toast.innerHTML = `
+        <div class="toast__title">${tipo === 'error' ? 'Error' : 'Éxito'}</div>
+        <div class="toast__message">${mensaje}</div>
+    `;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('is-visible');
+    });
+
+    window.setTimeout(() => {
+        toast.classList.remove('is-visible');
+        window.setTimeout(() => toast.remove(), 220);
+    }, 3000);
+}
+
+window.mostrarToast = mostrarToast;
+
 async function fetchSprites() {
     try {
         const response = await fetch('/api/sprites');
@@ -129,7 +160,7 @@ addToCartBtn.addEventListener('click', async function () {
     const checkboxesChecked = document.querySelectorAll('.sprite-checkbox:checked');
 
     if (checkboxesChecked.length === 0) {
-        alert("Por favor, selecciona al menos un archivo de la lista para añadir al carrito.");
+        mostrarToast("Por favor, selecciona al menos un archivo de la lista para añadir al carrito.", 'error');
         return;
     }
 
@@ -156,7 +187,7 @@ addToCartBtn.addEventListener('click', async function () {
 
     sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
 
-    alert(`🛒 ¡Éxito! Se añadieron ${checkboxesChecked.length} sprites al Carrito de Inyección.`);
+    mostrarToast(`Se añadieron ${checkboxesChecked.length} sprites al Carrito de Inyección.`, 'success');
 
     checkboxesChecked.forEach(cb => cb.checked = false);
     selectAllMaster.checked = false;

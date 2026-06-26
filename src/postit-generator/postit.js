@@ -27,6 +27,37 @@ const MARKS_DATA = [
 const STATES_Y_CROP = [112, 112, 96, 320, 336];
 const STATES_ALPHA = [105 / 255, 1.0, 1.0, 1.0, 1.0];
 
+function mostrarToast(mensaje, tipo = 'success') {
+    let container = document.getElementById('toast-container');
+
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    toast.innerHTML = `
+        <div class="toast__title">${tipo === 'error' ? 'Error' : 'Éxito'}</div>
+        <div class="toast__message">${mensaje}</div>
+    `;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('is-visible');
+    });
+
+    window.setTimeout(() => {
+        toast.classList.remove('is-visible');
+        window.setTimeout(() => toast.remove(), 220);
+    }, 3000);
+}
+
+window.mostrarToast = mostrarToast;
+
 window.onload = function () {
     spritesheet.onload = function () {
         document.getElementById('ui-container').style.display = 'block';
@@ -135,7 +166,7 @@ function empujarPostitAlCarrito(canvasObjetivo, labelEscala) {
 
     sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
 
-    alert(`🛒 ¡Añadido al carrito con éxito!\nRegistrado como: "${nombreFinalCapa}"`);
+    mostrarToast(`Añadido al carrito con éxito. Registrado como: "${nombreFinalCapa}"`, 'success');
 }
 
 document.getElementById('export-btn').addEventListener('click', function () {

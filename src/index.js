@@ -4,6 +4,9 @@ const cartStatusText = document.getElementById('cart-status-text');
 const cartItemsList = document.getElementById('cart-items-list');
 const checkoutBtn = document.getElementById('checkout-btn');
 const clearCartBtn = document.getElementById('clear-cart-btn');
+const customConfirmModal = document.getElementById('custom-confirm-modal');
+const customConfirmCancel = document.getElementById('custom-confirm-cancel');
+const customConfirmAccept = document.getElementById('custom-confirm-accept');
 
 function obtenerCarrito() {
     const rawData = sessionStorage.getItem(CART_STORAGE_KEY);
@@ -62,10 +65,29 @@ function eliminarItemDelCarrito(index) {
     actualizarInterfazDashboard();
 }
 
+function ocultarModalConfirmacion() {
+    customConfirmModal.classList.remove('is-open');
+    window.setTimeout(() => {
+        customConfirmModal.hidden = true;
+    }, 220);
+}
+
 clearCartBtn.addEventListener('click', function () {
-    if (confirm("¿Estás seguro de que deseas vaciar toda la cola de inyección?")) {
-        sessionStorage.removeItem(CART_STORAGE_KEY);
-        actualizarInterfazDashboard();
+    customConfirmModal.hidden = false;
+    requestAnimationFrame(() => customConfirmModal.classList.add('is-open'));
+});
+
+customConfirmCancel.addEventListener('click', ocultarModalConfirmacion);
+
+customConfirmAccept.addEventListener('click', function () {
+    sessionStorage.removeItem(CART_STORAGE_KEY);
+    actualizarInterfazDashboard();
+    ocultarModalConfirmacion();
+});
+
+customConfirmModal.addEventListener('click', function (event) {
+    if (event.target === customConfirmModal) {
+        ocultarModalConfirmacion();
     }
 });
 

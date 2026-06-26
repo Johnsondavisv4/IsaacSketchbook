@@ -300,6 +300,61 @@ input[type="number"].row-scale-input:focus {
     font-size: 14px;
 }
 
+.toast-container {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 3500;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 260px;
+    max-width: 340px;
+    background: #1a1a1a;
+    color: var(--text-color);
+    border: 1px solid #2a2a2a;
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+    pointer-events: auto;
+}
+
+.toast.is-visible {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.success {
+    border-left-color: #4caf50;
+}
+
+.toast.error {
+    border-left-color: #d32f2f;
+}
+
+.toast__title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.toast__message {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-color);
+}
+
 @media (min-width: 650px) {
     body {
         padding: 24px;
