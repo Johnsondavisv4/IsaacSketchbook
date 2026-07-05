@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Manager - TBOI Modding Suite</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="back-nav">
+        <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+    </div>
+
+    <div class="workspace">
+        <div class="header-area">
+            <h1>📈 Progress Manager</h1>
+            <div class="subtitle">Catálogo generado desde <strong>players.xml</strong>, edición directa con PouchDB local y exportación JSX para Photoshop.</div>
+        </div>
+
+        <div class="options-panel">
+            <div class="info-group">
+                <span class="info-label">Catálogo</span>
+                <p class="info-text">Filtra personajes entre normales y tainted, revisa si ya existe progreso guardado y abre el editor de post-it.</p>
+            </div>
+            <div class="toolbar">
+                <div class="toolbar__filters">
+                    <span class="toolbar__label">Filtrar catálogo</span>
+                    <label class="radio-chip">
+                        <input type="radio" name="catalog-filter" value="normal" checked>
+                        <span>Normales</span>
+                    </label>
+                    <label class="radio-chip">
+                        <input type="radio" name="catalog-filter" value="tainted">
+                        <span>Tainted</span>
+                    </label>
+                </div>
+                <div class="toolbar__meta">
+                    <span class="meta-pill" id="catalog-count-pill">0 personajes</span>
+                    <span class="meta-pill meta-pill--muted" id="sync-status-pill">Cargando catálogo...</span>
+                    <button type="button" class="toolbar-action-btn" id="export-db-btn">Exportar BDD JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="repo-box">
+            <div class="repo-header repo-header--progress">
+                <div class="repo-column repo-column--thumb">Sprite / Post-it</div>
+                <div class="repo-column">Personaje</div>
+                <div class="repo-column repo-column--status">Estado</div>
+                <div class="repo-column repo-column--actions">Editar</div>
+                <div class="repo-column repo-column--actions">Descargar</div>
+            </div>
+
+            <div class="catalog-table-wrap">
+                <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor-modal" class="modal-overlay" hidden>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="editor-modal-title">
+            <header class="modal-header">
+                <div>
+                    <p class="eyebrow">Editar post-it</p>
+                    <h2 id="editor-modal-title">Personaje</h2>
+                </div>
+                <button type="button" class="icon-button" id="editor-close-btn">✕</button>
+            </header>
+
+            <div class="editor-layout">
+                <section class="preview-card">
+                    <div class="preview-card__top">
+                        <span class="preview-card__label">Vista previa</span>
+                        <span class="preview-card__badge" id="editor-type-badge">normal</span>
+                    </div>
+                    <canvas id="preview-canvas" width="96" height="96"></canvas>
+                    <p class="preview-note">Canvas conectado a /public/completion_widget.png.</p>
+                </section>
+
+                <section class="editor-card">
+                    <div class="editor-card__top">
+                        <div>
+                            <h3>Marcas</h3>
+                            <p>Selecciona el estado de cada marca y guarda el documento completo en PouchDB.</p>
+                        </div>
+                    </div>
+
+                    <div class="mark-table-wrap">
+                        <table class="mark-table">
+                            <thead>
+                                <tr>
+                                    <th>Marca</th>
+                                    <th>No Mark</th>
+                                    <th>Normal</th>
+                                    <th>Hard</th>
+                                    <th>Online N.</th>
+                                    <th>Online H.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marks-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="editor-actions">
+                        <button type="button" class="btn btn-secondary" id="editor-cancel-btn">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="editor-save-btn">💾 Guardar en Base de Datos</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div id="sprite-choice-modal" class="modal-overlay" hidden>
+        <div class="modal-dialog modal-dialog--choice" role="dialog" aria-modal="true" aria-labelledby="sprite-choice-title">
+            <header class="modal-header">
+                <div>
+                    <p class="eyebrow">Exportación con variante</p>
+                    <h2 id="sprite-choice-title">¿Qué versión del sprite deseas exportar?</h2>
+                </div>
+                <button type="button" class="icon-button" id="sprite-choice-close-btn">✕</button>
+            </header>
+            <div class="choice-grid" id="sprite-choice-grid"></div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="script.js" defer></script>
+</body>
+
+</html>
