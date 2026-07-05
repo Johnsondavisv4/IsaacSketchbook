@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Post-it para Photoshop (.jsx) - TBOI</title>
+    <link rel="stylesheet" href="../index.css">
     <link rel="stylesheet" href="postit.css">
 </head>
 
@@ -17,13 +18,13 @@
     <h1>Generador de Post-it de Completado</h1>
 
     <div class="container">
-        <div class="canvas-section">
+        <div class="canvas-section panel">
             <canvas id="postit-canvas" width="96" height="96"></canvas>
-            <button class="btn btn-export" id="export-btn" disabled>🛒 Añadir al Carrito (1x)</button>
-            <button class="btn btn-export-hd" id="export-btn-hd" disabled>🛒 Añadir al Carrito (4x)</button>
+            <button class="btn btn-secondary" id="export-btn" disabled style="margin-bottom: 10px;">🛒 Añadir al Carrito (1x)</button>
+            <button class="btn btn-primary" id="export-btn-hd" disabled>🛒 Añadir al Carrito (4x)</button>
         </div>
 
-        <div class="controls-section">
+        <div class="controls-section panel">
             <div id="ui-container">
 
                 <div class="top-controls">

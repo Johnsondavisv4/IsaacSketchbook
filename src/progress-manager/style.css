@@ -92,15 +92,7 @@ h1 {
 	line-height: 1.45;
 }
 
-.options-panel,
-.repo-box,
-.preview-card,
-.editor-card {
-	background: var(--panel-bg);
-	border: 1px solid var(--border-color);
-	border-radius: 10px;
-	box-shadow: var(--shadow-lg);
-}
+
 
 .options-panel {
 	padding: 16px;
@@ -242,7 +234,7 @@ h1 {
 }
 
 .repo-box {
-	overflow: hidden;
+	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
 	min-height: 0;
@@ -265,16 +257,30 @@ h1 {
 	font-size: 11px;
 	font-weight: 700;
 	user-select: none;
+	text-transform: uppercase;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.repo-header .repo-column--thumb,
+.catalog-row .thumb-pair {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.repo-header .repo-column--actions,
+.catalog-row .row-actions {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
 }
 
 .catalog-table-wrap {
 	min-height: 0;
-	overflow: hidden;
-}
-
-.catalog-list {
-	max-height: calc(100vh - 320px);
-	overflow-y: auto;
 }
 
 .catalog-row {
@@ -373,7 +379,7 @@ h1 {
 
 .row-actions {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: center;
 }
 
 .btn {

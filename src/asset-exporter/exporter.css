@@ -83,14 +83,10 @@ h1 {
 }
 
 .options-panel {
-    background-color: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
     padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 14px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     box-sizing: border-box;
     flex-shrink: 0;
 }
@@ -117,43 +113,16 @@ h1 {
 }
 
 .btn-cart-add {
-    background-color: var(--accent);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 14px 24px;
     font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background-color 0.2s, transform 0.1s;
     width: 100%;
     text-align: center;
     box-sizing: border-box;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.btn-cart-add:hover:not(:disabled) {
-    background-color: var(--accent-hover);
-}
-
-.btn-cart-add:active:not(:disabled) {
-    transform: scale(0.99);
-}
-
-.btn-cart-add:disabled {
-    background-color: #444;
-    color: #777;
-    border-color: var(--border-color);
-    cursor: not-allowed;
-    box-shadow: none;
 }
 
 .repo-box {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--panel-bg);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    max-height: calc(100vh - 250px);
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -182,12 +151,23 @@ h1 {
     letter-spacing: 0.8px;
     user-select: none;
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.thumb-header,
-.scale-header {
+.thumb-header {
     text-align: center;
     width: 100%;
+}
+
+.scale-header,
+.repo-row > div:nth-child(4) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
 }
 
 .sort-header {
@@ -210,8 +190,6 @@ h1 {
 
 .repo-body {
     flex-grow: 1;
-    max-height: calc(100vh - 250px);
-    overflow-y: auto;
 }
 
 .repo-row {
