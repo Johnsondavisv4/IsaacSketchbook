@@ -220,38 +220,35 @@ function refreshCatalogCache() {
 
 async function seedDefaultProgressDocuments() {
     const info = await db.info();
-    if (info.doc_count > 0) {
-        return;
-    }
+    if (info.doc_count > 0) return;
 
     const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
+    let docsToCreate = null;
+
     if (fs.existsSync(backupPath)) {
         try {
-            const rawData = fs.readFileSync(backupPath, 'utf8');
-            const backupDocs = JSON.parse(rawData);
-            
-            const docsToCreate = backupDocs.map(doc => {
+            const backupDocs = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+            docsToCreate = backupDocs.map(doc => {
                 const catalogEntry = getCatalogEntryByProgressId(doc._id || '');
-                if (catalogEntry) {
-                    const normalized = normalizeProgressDoc(doc, catalogEntry);
-                    delete normalized._rev;
-                    return normalized;
-                }
-                return null;
+                if (!catalogEntry) return null;
+                const normalized = normalizeProgressDoc(doc, catalogEntry);
+                delete normalized._rev;
+                return normalized;
             }).filter(Boolean);
 
-            if (docsToCreate.length > 0) {
-                await db.bulkDocs(docsToCreate);
-                console.log('Base de datos inicializada desde el archivo de backup local.');
-                return;
-            }
+            if (docsToCreate.length === 0) docsToCreate = null;
         } catch (error) {
             console.error('Error al intentar leer el backup inicial', error);
         }
     }
 
-    console.log('Inicializando base de datos con valores por defecto.');
-    const docsToCreate = catalogCache.map((entry) => normalizeProgressDoc(null, entry));
+    if (docsToCreate) {
+        console.log('Base de datos inicializada desde el archivo de backup local.');
+    } else {
+        console.log('Inicializando base de datos con valores por defecto.');
+        docsToCreate = catalogCache.map((entry) => normalizeProgressDoc(null, entry));
+    }
+
     await db.bulkDocs(docsToCreate);
 }
 
@@ -291,41 +288,31 @@ app.get('/api/progreso/:id', async (req, res) => {
     }
 });
 
+async function getAllProgressDocs() {
+    return Promise.all(catalogCache.map(async (entry) => {
+        const storedDoc = await db.get(entry._id).catch(e => (e.status === 404 ? null : Promise.reject(e)));
+        return normalizeProgressDoc(storedDoc, entry);
+    }));
+}
+
 app.get('/api/progreso/export', async (req, res) => {
     try {
-        const docs = await Promise.all(catalogCache.map(async (entry) => {
-            try {
-                const storedDoc = await db.get(entry._id);
-                return normalizeProgressDoc(storedDoc, entry);
-            } catch (error) {
-                if (error.status === 404) {
-                    return normalizeProgressDoc(null, entry);
-                }
-
-                throw error;
-            }
-        }));
-
-        return res.json(docs);
+        res.json(await getAllProgressDocs());
     } catch (error) {
         console.error('Error exportando progreso', error);
-        return res.status(500).json({ error: 'No se pudo exportar el progreso' });
+        res.status(500).json({ error: 'No se pudo exportar el progreso' });
     }
 });
 
-app.post('/api/progreso/export-local', (req, res) => {
-    const docs = req.body;
-    if (!Array.isArray(docs)) {
-        return res.status(400).json({ error: 'El payload debe ser un array de documentos' });
-    }
-
+app.post('/api/progreso/export-local', async (req, res) => {
     try {
+        const docs = await getAllProgressDocs();
         const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
         fs.writeFileSync(backupPath, JSON.stringify(docs, null, 2), 'utf-8');
-        return res.json({ message: 'Backup guardado exitosamente en la raíz' });
+        res.json({ message: 'Backup guardado exitosamente en la raíz' });
     } catch (error) {
         console.error('Error escribiendo backup en disco', error);
-        return res.status(500).json({ error: 'No se pudo guardar el archivo' });
+        res.status(500).json({ error: 'No se pudo guardar el archivo' });
     }
 });
 

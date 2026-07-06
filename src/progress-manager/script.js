@@ -191,32 +191,6 @@ function closeModal(modal) {
     }, 180);
 }
 
-function mostrarToast(message, type = 'success') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <p class="toast__title">${type === 'error' ? 'Error' : type === 'info' ? 'Aviso' : 'Éxito'}</p>
-        <p class="toast__message">${message}</p>
-    `;
-
-    container.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('is-visible'));
-
-    window.setTimeout(() => {
-        toast.classList.remove('is-visible');
-        window.setTimeout(() => toast.remove(), 220);
-    }, 3000);
-}
-
-window.mostrarToast = mostrarToast;
 
 async function fetchJson(url, options) {
     const response = await fetch(url, options);
@@ -586,19 +560,10 @@ async function exportProgressDatabase() {
     exportDbBtn.textContent = 'Exportando...';
 
     try {
-        const docs = state.catalog.map((character) => {
-            const savedDoc = state.progressById.get(character._id) || null;
-            return normalizeDocument(character, savedDoc);
-        });
-        
         const response = await fetch('/api/progreso/export-local', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(docs)
+            method: 'POST'
         });
-        
+
         if (!response.ok) {
             throw new Error('Error guardando backup');
         }

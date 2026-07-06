@@ -1,5 +1,3 @@
-const CART_STORAGE_KEY = 'tboi_sketchbook_cart';
-
 const canvas = document.getElementById('postit-canvas');
 const ctx = canvas.getContext('2d');
 let spritesheet = new Image();
@@ -26,37 +24,6 @@ const MARKS_DATA = [
 
 const STATES_Y_CROP = [112, 112, 96, 320, 336];
 const STATES_ALPHA = [105 / 255, 1.0, 1.0, 1.0, 1.0];
-
-function mostrarToast(mensaje, tipo = 'success') {
-    let container = document.getElementById('toast-container');
-
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${tipo}`;
-    toast.innerHTML = `
-        <div class="toast__title">${tipo === 'error' ? 'Error' : 'Éxito'}</div>
-        <div class="toast__message">${mensaje}</div>
-    `;
-
-    container.appendChild(toast);
-
-    requestAnimationFrame(() => {
-        toast.classList.add('is-visible');
-    });
-
-    window.setTimeout(() => {
-        toast.classList.remove('is-visible');
-        window.setTimeout(() => toast.remove(), 220);
-    }, 3000);
-}
-
-window.mostrarToast = mostrarToast;
 
 window.onload = function () {
     spritesheet.onload = function () {
@@ -149,8 +116,7 @@ function empujarPostitAlCarrito(canvasObjetivo, labelEscala) {
     const charOffset = parseInt(document.querySelector('input[name="character-type"]:checked').value);
     const tipoLabel = charOffset === 0 ? "normal" : "tainted";
 
-    const rawCart = sessionStorage.getItem(CART_STORAGE_KEY);
-    let carrito = rawCart ? JSON.parse(rawCart) : [];
+    let carrito = TBOIUtils.obtenerCarrito();
 
     const prefijoBúsqueda = `Post-it Note ${tipoLabel}`;
     const cantidadExistentes = carrito.filter(item => item.name.startsWith(prefijoBúsqueda)).length;
@@ -164,7 +130,7 @@ function empujarPostitAlCarrito(canvasObjetivo, labelEscala) {
         b64: base64Pura
     });
 
-    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
+    TBOIUtils.guardarCarrito(carrito);
 
     mostrarToast(`Añadido al carrito con éxito. Registrado como: "${nombreFinalCapa}"`, 'success');
 }

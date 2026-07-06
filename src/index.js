@@ -1,5 +1,3 @@
-const CART_STORAGE_KEY = 'tboi_sketchbook_cart';
-
 const cartStatusText = document.getElementById('cart-status-text');
 const cartItemsList = document.getElementById('cart-items-list');
 const checkoutBtn = document.getElementById('checkout-btn');
@@ -8,14 +6,6 @@ const customConfirmModal = document.getElementById('custom-confirm-modal');
 const customConfirmCancel = document.getElementById('custom-confirm-cancel');
 const customConfirmAccept = document.getElementById('custom-confirm-accept');
 
-function obtenerCarrito() {
-    const rawData = sessionStorage.getItem(CART_STORAGE_KEY);
-    return rawData ? JSON.parse(rawData) : [];
-}
-
-function guardarCarrito(carrito) {
-    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
-}
 
 function actualizarInterfazDashboard() {
     const carrito = obtenerCarrito();
@@ -80,7 +70,7 @@ clearCartBtn.addEventListener('click', function () {
 customConfirmCancel.addEventListener('click', ocultarModalConfirmacion);
 
 customConfirmAccept.addEventListener('click', function () {
-    sessionStorage.removeItem(CART_STORAGE_KEY);
+    guardarCarrito([]);
     actualizarInterfazDashboard();
     ocultarModalConfirmacion();
 });

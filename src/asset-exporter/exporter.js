@@ -1,5 +1,3 @@
-const CART_STORAGE_KEY = 'tboi_sketchbook_cart';
-
 const filesContainer = document.getElementById('files-container-list');
 const addToCartBtn = document.getElementById('add-to-cart-btn');
 const selectAllMaster = document.getElementById('select-all-master');
@@ -10,37 +8,6 @@ const ctx = canvas.getContext('2d');
 
 let listaSpritesRaw = [];
 let ordenAscendente = true;
-
-function mostrarToast(mensaje, tipo = 'success') {
-    let container = document.getElementById('toast-container');
-
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${tipo}`;
-    toast.innerHTML = `
-        <div class="toast__title">${tipo === 'error' ? 'Error' : 'Éxito'}</div>
-        <div class="toast__message">${mensaje}</div>
-    `;
-
-    container.appendChild(toast);
-
-    requestAnimationFrame(() => {
-        toast.classList.add('is-visible');
-    });
-
-    window.setTimeout(() => {
-        toast.classList.remove('is-visible');
-        window.setTimeout(() => toast.remove(), 220);
-    }, 3000);
-}
-
-window.mostrarToast = mostrarToast;
 
 async function fetchSprites() {
     try {
@@ -167,8 +134,7 @@ addToCartBtn.addEventListener('click', async function () {
     addToCartBtn.disabled = true;
     addToCartBtn.innerText = "Procesando Selección...";
 
-    const rawCart = sessionStorage.getItem(CART_STORAGE_KEY);
-    let carrito = rawCart ? JSON.parse(rawCart) : [];
+    let carrito = TBOIUtils.obtenerCarrito();
 
     for (let i = 0; i < checkboxesChecked.length; i++) {
         const filename = checkboxesChecked[i].value;
@@ -185,7 +151,7 @@ addToCartBtn.addEventListener('click', async function () {
         });
     }
 
-    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(carrito));
+    TBOIUtils.guardarCarrito(carrito);
 
     mostrarToast(`Se añadieron ${checkboxesChecked.length} sprites al Carrito de Inyección.`, 'success');
 
