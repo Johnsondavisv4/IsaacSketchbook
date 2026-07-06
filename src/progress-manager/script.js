@@ -590,15 +590,26 @@ async function exportProgressDatabase() {
             const savedDoc = state.progressById.get(character._id) || null;
             return normalizeDocument(character, savedDoc);
         });
-        const filename = `isaac_progress_manager_${new Date().toISOString().slice(0, 10)}.json`;
-        downloadTextFile(filename, JSON.stringify(docs, null, 2));
-        mostrarToast('BDD exportada correctamente en JSON.', 'success');
+        
+        const response = await fetch('/api/progreso/export-local', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(docs)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error guardando backup');
+        }
+
+        mostrarToast('Backup guardado exitosamente en la raíz.', 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast('No se pudo exportar la BDD a JSON.', 'error');
+        mostrarToast('No se pudo guardar el backup.', 'error');
     } finally {
         exportDbBtn.disabled = false;
-        exportDbBtn.textContent = 'Exportar BDD JSON';
+        exportDbBtn.textContent = 'Generar Backup Local';
     }
 }
 
