@@ -171,10 +171,10 @@
       "Hush": "Hard",
       "Mother": "Hard",
       "The Beast": "Hard",
-      "Ultra Greed": "Normal",
+      "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-faeb7d30ef98e1e56f08ad209a366a17"
+    "_rev": "2-1079877c86625977a365fa206fcc4287"
   },
   {
     "id": 8,
@@ -235,12 +235,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-3007132263fece715ddfe4f68e34781d"
+    "_rev": "2-240361a4500f17c2fbb436b5f5276b1b"
   },
   {
     "id": 13,
@@ -250,19 +250,19 @@
     "sprite": "Lilith_01.png",
     "marcas": {
       "Heart": "Hard",
-      "Isaac": "No Mark",
-      "???": "No Mark",
+      "Isaac": "Hard",
+      "???": "Hard",
       "Satan": "No Mark",
       "The lamb": "No Mark",
       "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Boss Rush": "Hard",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "Hard",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     },
-    "_rev": "1-8bc1a2a050f2b46f534e026540125de8"
+    "_rev": "2-1fea0691597336cd6bc8afb069080a93"
   },
   {
     "id": 14,
@@ -341,16 +341,16 @@
       "Isaac": "No Mark",
       "???": "No Mark",
       "Satan": "Hard",
-      "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
+      "The lamb": "Hard",
+      "Mega Satan": "Hard",
       "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     },
-    "_rev": "1-e76369d18d34cc8575d1c97bdb3a96bf"
+    "_rev": "2-f7dd0b7209b5123c3baed83ef532d8d3"
   },
   {
     "id": 19,
