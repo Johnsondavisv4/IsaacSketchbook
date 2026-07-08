@@ -52,18 +52,18 @@
     "marcas": {
       "Heart": "Hard",
       "Isaac": "Hard",
-      "???": "No Mark",
+      "???": "Hard",
       "Satan": "Hard",
       "The lamb": "Hard",
-      "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
+      "Mega Satan": "Hard",
+      "Boss Rush": "Hard",
       "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "Normal",
       "Delirium": "Hard"
     },
-    "_rev": "1-36381dc2de6bc3476ce0f335d50f711d"
+    "_rev": "2-34cd9397b1cd10fe6320a9ea7e07615f"
   },
   {
     "id": 3,
@@ -174,7 +174,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-1079877c86625977a365fa206fcc4287"
+    "_rev": "1-119ac524e4ed9fa68bc746b58a7f1603"
   },
   {
     "id": 8,
@@ -193,10 +193,10 @@
       "Hush": "Hard",
       "Mother": "Hard",
       "The Beast": "Hard",
-      "Ultra Greed": "No Mark",
+      "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-0217698c458ba3d619e9924bc0fca8e9"
+    "_rev": "2-6ca34a2d437fefb1a03e6e2100ba44d4"
   },
   {
     "id": 9,
@@ -240,7 +240,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-240361a4500f17c2fbb436b5f5276b1b"
+    "_rev": "1-bd79fa709b6b23dda0c74340ff8a7ce3"
   },
   {
     "id": 13,
@@ -262,7 +262,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-1fea0691597336cd6bc8afb069080a93"
+    "_rev": "1-5714a66e10d632308d83bfab2774e6dd"
   },
   {
     "id": 14,
@@ -350,7 +350,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-f7dd0b7209b5123c3baed83ef532d8d3"
+    "_rev": "1-d7f201bf4913e606ac046dd70e689a0f"
   },
   {
     "id": 19,
@@ -369,10 +369,10 @@
       "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
-      "Ultra Greed": "No Mark",
+      "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-2ce35bce108712338e547d0a73239c31"
+    "_rev": "2-b94bed217b9c60f4d104a04a82e53db7"
   },
   {
     "id": 21,
