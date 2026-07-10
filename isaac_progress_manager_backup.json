@@ -59,11 +59,11 @@
       "Boss Rush": "Hard",
       "Hush": "Hard",
       "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "The Beast": "Hard",
       "Ultra Greed": "Normal",
       "Delirium": "Hard"
     },
-    "_rev": "2-34cd9397b1cd10fe6320a9ea7e07615f"
+    "_rev": "3-f6d3ef14ae7d142cba3b74623729b5d6"
   },
   {
     "id": 3,
@@ -324,11 +324,11 @@
       "Boss Rush": "Hard",
       "Hush": "No Mark",
       "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "The Beast": "Hard",
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "1-e9653d5f78759642e1fcb1d7be394223"
+    "_rev": "2-bc32956edab97f8bd8d0d91cdb746946"
   },
   {
     "id": 18,
