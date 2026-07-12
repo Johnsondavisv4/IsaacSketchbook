@@ -41,7 +41,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-e2c8c2349b7c01775efe2f3a7949ef66"
+    "_rev": "1-f01915847ef6a10db0fa72118489850c"
   },
   {
     "id": 2,
@@ -63,7 +63,7 @@
       "Ultra Greed": "Normal",
       "Delirium": "Hard"
     },
-    "_rev": "3-f6d3ef14ae7d142cba3b74623729b5d6"
+    "_rev": "1-eda507c2162aa4a1874406551ca2a81f"
   },
   {
     "id": 3,
@@ -130,7 +130,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-8b1fae3cae9fc22501134db76a87b6ff"
+    "_rev": "1-0091b8c19590d34929c63207d7d71fc4"
   },
   {
     "id": 6,
@@ -142,8 +142,8 @@
       "Heart": "Hard",
       "Isaac": "Hard",
       "???": "Hard",
-      "Satan": "No Mark",
-      "The lamb": "No Mark",
+      "Satan": "Hard",
+      "The lamb": "Hard",
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
@@ -152,7 +152,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-9635e659cef56721c8b2d80b31abc40d"
+    "_rev": "2-41e1b160b22e4c2a855e78ac21f78815"
   },
   {
     "id": 7,
@@ -196,7 +196,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-60e3409f9cc3bca42fc78b21c2b287d9"
+    "_rev": "1-235fa79baacf796044a76322e4025f51"
   },
   {
     "id": 9,
@@ -302,11 +302,11 @@
       "Boss Rush": "No Mark",
       "Hush": "No Mark",
       "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "The Beast": "Hard",
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "1-af2311cbb206d52c388828898560fe6a"
+    "_rev": "2-c07367914d0b23c5f573b526bb48bc5f"
   },
   {
     "id": 16,
@@ -328,7 +328,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-bc32956edab97f8bd8d0d91cdb746946"
+    "_rev": "1-f00bef3b077b3fa56a9a61bb586bad5c"
   },
   {
     "id": 18,
@@ -372,7 +372,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-b94bed217b9c60f4d104a04a82e53db7"
+    "_rev": "1-42cc7acb7c089e5c7434a4f1932d8c38"
   },
   {
     "id": 21,
