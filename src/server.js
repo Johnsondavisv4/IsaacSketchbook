@@ -308,6 +308,11 @@ app.post('/api/progreso/export-local', async (req, res) => {
     try {
         const docs = await getAllProgressDocs();
         const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
+
+        if (fs.existsSync(backupPath)) {
+            fs.unlinkSync(backupPath);
+        }
+
         fs.writeFileSync(backupPath, JSON.stringify(docs, null, 2), 'utf-8');
         res.json({ message: 'Backup guardado exitosamente en la raíz' });
     } catch (error) {
