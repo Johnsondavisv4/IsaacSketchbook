@@ -365,14 +365,14 @@
       "Satan": "Hard",
       "The lamb": "Hard",
       "Mega Satan": "Hard",
-      "Boss Rush": "No Mark",
+      "Boss Rush": "Hard",
       "Hush": "Hard",
       "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-30db880f49a5747449caf006f4de8b3c"
+    "_rev": "3-d557cf6bb6a3960db7c6f94a63d0c8ac"
   },
   {
     "id": 21,
