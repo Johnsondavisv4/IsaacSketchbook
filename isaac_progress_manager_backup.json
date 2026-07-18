@@ -41,7 +41,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-f9c5e2a07bbeaaac261c9cae06419fe3"
+    "_rev": "1-d539715f317f0b783390d6b7f8d9a5b9"
   },
   {
     "id": 2,
@@ -63,7 +63,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-8966d4fab1db3008a5c2ddaeddf30c38"
+    "_rev": "1-a1e89381a51bb228e81b0f4fdb6078d3"
   },
   {
     "id": 3,
@@ -152,7 +152,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-41e1b160b22e4c2a855e78ac21f78815"
+    "_rev": "1-0d6f011ba81fee2db633f06c1d93d15b"
   },
   {
     "id": 7,
@@ -218,7 +218,7 @@
       "Ultra Greed": "Normal",
       "Delirium": "Hard"
     },
-    "_rev": "2-1030a7e222596ee26a61d63581e801d8"
+    "_rev": "1-c8214e24e22eb1f46c2472ec562ebe8c"
   },
   {
     "id": 10,
@@ -262,7 +262,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-857ea495be41da0b02179a5fcd6ecda8"
+    "_rev": "1-88f3728021974645a3c88a948dc73f85"
   },
   {
     "id": 14,
@@ -306,7 +306,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-c07367914d0b23c5f573b526bb48bc5f"
+    "_rev": "1-daf403136fc10a43e49f619a85e8dd2a"
   },
   {
     "id": 16,
@@ -328,7 +328,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-29a7fca5a5fc4ccaed2b7edbc1eb617e"
+    "_rev": "1-62f9efb6d1bcf6d5dfa445ed46415497"
   },
   {
     "id": 18,
@@ -350,7 +350,7 @@
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "2-3b8b4dab9084fdd264adaaf88e22845b"
+    "_rev": "1-def7bc1a5e4ab27d9bd42616e20997b5"
   },
   {
     "id": 19,
@@ -367,12 +367,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-d557cf6bb6a3960db7c6f94a63d0c8ac"
+    "_rev": "2-3110c808b856a7ef575c23897782cdd7"
   },
   {
     "id": 21,
