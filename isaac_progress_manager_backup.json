@@ -80,13 +80,13 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "Mother": "Hard",
+      "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
     "sprite2": "Judas_03.png",
-    "_rev": "1-71913f54164d357092739c28406009a4"
+    "_rev": "2-ae3a544eceb9ca7b0b4a0b9f55e4321a"
   },
   {
     "id": 4,
@@ -296,17 +296,17 @@
       "Heart": "Hard",
       "Isaac": "Hard",
       "???": "Hard",
-      "Satan": "No Mark",
-      "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
+      "Satan": "Hard",
+      "The lamb": "Hard",
+      "Mega Satan": "Hard",
       "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "Hard",
       "Ultra Greed": "No Mark",
       "Delirium": "Hard"
     },
-    "_rev": "1-daf403136fc10a43e49f619a85e8dd2a"
+    "_rev": "2-94e63c130d5fd7488ad1d01f6b64b5da"
   },
   {
     "id": 16,
