@@ -147,12 +147,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-d80d272e3e166a9a8a325cf65af2bf7a"
+    "_rev": "3-2964675d636e8ed66108d6461d274bc1"
   },
   {
     "id": 7,
@@ -299,14 +299,14 @@
       "Satan": "Hard",
       "The lamb": "Hard",
       "Mega Satan": "Hard",
-      "Boss Rush": "No Mark",
+      "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-4910217440e64bea6b12c10679f51108"
+    "_rev": "4-bc975586c302ee1fb3a2b812f83681fc"
   },
   {
     "id": 16,
@@ -322,13 +322,13 @@
       "The lamb": "Hard",
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
-      "Hush": "No Mark",
+      "Hush": "Hard",
       "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-fe9727647f82b8518d38b39ec0dee022"
+    "_rev": "3-bd795693591cd410c089c88dea037102"
   },
   {
     "id": 18,
@@ -338,8 +338,8 @@
     "sprite": "Bethany_01.png",
     "marcas": {
       "Heart": "Hard",
-      "Isaac": "No Mark",
-      "???": "No Mark",
+      "Isaac": "Hard",
+      "???": "Hard",
       "Satan": "Hard",
       "The lamb": "Hard",
       "Mega Satan": "Hard",
@@ -350,7 +350,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-cc69f5a82f3353bfad914a1892b7f82a"
+    "_rev": "4-25099a2ef6c5e674164782ad96688ab9"
   },
   {
     "id": 19,
