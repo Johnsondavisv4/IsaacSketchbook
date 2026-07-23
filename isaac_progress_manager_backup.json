@@ -254,7 +254,7 @@
       "???": "Hard",
       "Satan": "Hard",
       "The lamb": "Hard",
-      "Mega Satan": "No Mark",
+      "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
       "Mother": "No Mark",
@@ -262,7 +262,7 @@
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-88f3728021974645a3c88a948dc73f85"
+    "_rev": "2-2cbce293f8665d08c54b780c02ed013b"
   },
   {
     "id": 14,
@@ -323,12 +323,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "No Mark",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "1-62f9efb6d1bcf6d5dfa445ed46415497"
+    "_rev": "2-fe9727647f82b8518d38b39ec0dee022"
   },
   {
     "id": 18,
