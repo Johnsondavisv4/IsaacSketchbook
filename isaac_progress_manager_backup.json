@@ -35,13 +35,13 @@
       "The lamb": "Hard",
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
-      "Hush": "No Mark",
-      "Mother": "No Mark",
+      "Hush": "Hard",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-755f8ff93f678c85e1bb791663cfd4bb"
+    "_rev": "4-c67ba456ee8fc6ebfa452bb5dfedc8dc"
   },
   {
     "id": 2,
@@ -102,13 +102,13 @@
       "The lamb": "Hard",
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
-      "Hush": "No Mark",
-      "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "Hush": "Hard",
+      "Mother": "Hard",
+      "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "2-d50c874cbc2783cd6dd0b381edf076f6"
+    "_rev": "5-804d11156758b79b0b13af94ee21c0d3"
   },
   {
     "id": 5,
@@ -257,12 +257,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "3-34c4ba15fc09fe709910c10bda4599c1"
+    "_rev": "4-ee64e46d688bcac5509561aacfd0a3f9"
   },
   {
     "id": 14,
@@ -345,12 +345,12 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
+      "Mother": "Hard",
       "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     },
-    "_rev": "4-25099a2ef6c5e674164782ad96688ab9"
+    "_rev": "5-d532728c8dec23833cf0d1f890e41fdf"
   },
   {
     "id": 19,
