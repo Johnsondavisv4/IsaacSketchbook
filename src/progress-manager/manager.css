@@ -136,6 +136,65 @@ h1 {
 	flex-wrap: wrap;
 }
 
+.indicators-bar {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	flex-wrap: wrap;
+	padding-top: 10px;
+	border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.indicator-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 14px;
+	border: 1px solid #2b2b2b;
+	border-radius: 8px;
+	background: #161616;
+	transition: border-color 0.2s, background 0.2s, transform 0.15s;
+	user-select: none;
+}
+
+.indicator-chip:hover {
+	background: #1f1f1f;
+	border-color: #3d3d3d;
+	transform: translateY(-1px);
+}
+
+.indicator-icon {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+	image-rendering: pixelated;
+}
+
+.indicator-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.indicator-label {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+.indicator-value {
+	font-size: 13px;
+	font-weight: 700;
+	color: #fff;
+	font-family: monospace, monospace;
+}
+
 .toolbar__filters {
 	display: flex;
 	gap: 10px;

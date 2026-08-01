@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..');
 const POUCH_DB_NAME = 'isaac_progress_manager';
 
-const db = new PouchDB(POUCH_DB_NAME);
+const db = new PouchDB(path.join(ROOT_DIR, POUCH_DB_NAME));
 
 const PLAYER_LABELS = {
     1: 'Isaac',
@@ -266,7 +266,9 @@ function refreshCatalogCache() {
 
 async function seedDefaultProgressDocuments() {
     const info = await db.info();
-    if (info.doc_count > 0) return;
+    if (info.doc_count > 0) {
+        return;
+    }
 
     const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
     let docsToCreate = [];
@@ -274,9 +276,10 @@ async function seedDefaultProgressDocuments() {
     if (fs.existsSync(backupPath)) {
         try {
             const backupDocs = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
-            if (Array.isArray(backupDocs)) {
+            if (Array.isArray(backupDocs) && backupDocs.length > 0) {
                 const backupStateDoc = backupDocs.find(d => d && d._id === 'estado_0');
                 const storedMenu = backupStateDoc ? (backupStateDoc['Menu Actual'] || backupStateDoc.MenuActual) : 'normal';
+
                 docsToCreate.push({
                     id: 0,
                     _id: 'estado_0',
@@ -291,26 +294,25 @@ async function seedDefaultProgressDocuments() {
                 }
 
                 for (const catalogEntry of catalogCache) {
-                    const existingDoc = backupDocsMap.get(catalogEntry._id);
-                    const normalized = normalizeProgressDoc(existingDoc || null, catalogEntry);
+                    const existingBackupDoc = backupDocsMap.get(catalogEntry._id);
+                    const normalized = normalizeProgressDoc(existingBackupDoc || null, catalogEntry);
                     delete normalized._rev;
                     docsToCreate.push(normalized);
                 }
+                console.log('Base de datos inicializada desde el archivo de backup local.');
             }
         } catch (error) {
-            console.error('Error al intentar leer el backup inicial', error);
+            console.error('Error al intentar leer el backup inicial, usando seeder por defecto', error);
             docsToCreate = [];
         }
     }
 
     if (docsToCreate.length === 0) {
-        console.log('Inicializando base de datos con valores por defecto.');
+        console.log('Inicializando base de datos con valores por defecto (No Marks, contadores en 0).');
         docsToCreate = [
             { id: 0, _id: 'estado_0', 'Menu Actual': 'normal' },
             ...catalogCache.map((entry) => normalizeProgressDoc(null, entry))
         ];
-    } else {
-        console.log('Base de datos inicializada desde el archivo de backup local.');
     }
 
     await db.bulkDocs(docsToCreate);
@@ -349,26 +351,6 @@ app.post('/api/estado', async (req, res) => {
     } catch (error) {
         console.error('Error guardando estado', error);
         res.status(500).json({ error: 'No se pudo guardar el estado' });
-    }
-});
-
-app.get('/api/progreso/:id', async (req, res) => {
-    const catalogEntry = getCatalogEntryByProgressId(req.params.id);
-
-    if (!catalogEntry) {
-        return res.status(404).json({ error: 'Personaje no encontrado' });
-    }
-
-    try {
-        const storedDoc = await db.get(catalogEntry._id);
-        return res.json(normalizeProgressDoc(storedDoc, catalogEntry));
-    } catch (error) {
-        if (error.status === 404) {
-            return res.status(404).json({ error: 'No existe progreso guardado para este personaje' });
-        }
-
-        console.error('Error leyendo progreso', error);
-        return res.status(500).json({ error: 'No se pudo leer el progreso' });
     }
 });
 
@@ -421,6 +403,26 @@ app.post('/api/progreso/export-local', async (req, res) => {
     } catch (error) {
         console.error('Error escribiendo backup en disco', error);
         res.status(500).json({ error: 'No se pudo guardar el archivo' });
+    }
+});
+
+app.get('/api/progreso/:id', async (req, res) => {
+    const catalogEntry = getCatalogEntryByProgressId(req.params.id);
+
+    if (!catalogEntry) {
+        return res.status(404).json({ error: 'Personaje no encontrado' });
+    }
+
+    try {
+        const storedDoc = await db.get(catalogEntry._id);
+        return res.json(normalizeProgressDoc(storedDoc, catalogEntry));
+    } catch (error) {
+        if (error.status === 404) {
+            return res.status(404).json({ error: 'No existe progreso guardado para este personaje' });
+        }
+
+        console.error('Error leyendo progreso', error);
+        return res.status(500).json({ error: 'No se pudo leer el progreso' });
     }
 });
 

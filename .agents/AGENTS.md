@@ -12,12 +12,15 @@ Estas son las reglas y patrones arquitectónicos para el proyecto **Isaac Sketch
 ## 2. Reglas Técnicas Principales
 - **Tecnologías Web Vanilla:** Mantén el uso de Vanilla JS, HTML y CSS para el frontend. No introduzcas frameworks a menos que el usuario lo pida explícitamente.
 - **Integración con Photoshop:** El objetivo principal de las herramientas es generar scripts `.jsx` que inyecten imágenes codificadas en base64 directamente en un documento activo de Adobe Photoshop. Usa `src/index.js` como referencia para ver cómo se genera y descarga este código.
-- **Uso de PouchDB:** `Progress Manager` maneja el estado usando una instancia local de PouchDB en el servidor.
-  - Asegúrate de respetar la estructura de los documentos (donde el `_id` es `progreso_{id}`).
-  - La base se inicializa con valores por defecto solo si está vacía.
-- **Restricciones del Servidor:**
+- **Uso de PouchDB:** `Progress Manager` maneja el estado usando una instancia local de PouchDB en el servidor (`path.join(ROOT_DIR, 'isaac_progress_manager')`).
+  - **ID 0 (`estado_0`)**: Guarda el menú activo (`"Menu Actual"`) y los indicadores globales calculados (`"Mega Blast"`, `"Mega Mush"`, `"Death Certificate"`).
+  - **Personajes (`progreso_1` a `progreso_34`)**: IDs 1–17 para Normales y 18–34 para Tainted. Incluyen el campo booleano `"Completado": true|false` (calculado si las 12 marcas son `Hard` o `Online Hard`).
+  - La base se inicializa desde `isaac_progress_manager_backup.json` solo si está vacía. Si no hay backup, se sembrará con la plantilla por defecto (marcas en `No Mark` y contadores en 0).
+- **Restricciones del Servidor y API:**
   - El servidor se levanta localmente mediante `pnpm start` (que ejecuta `node src/server.js`).
-  - Mantén las rutas en la API sencillas (ej. `/api/progreso`, `/api/sprites`).
+  - Rutas globales y de estado: `/api/estado` (GET/POST).
+  - Carga y backup masivo: `/api/progreso/export` (GET) y `/api/progreso/export-local` (POST).
+  - **Orden de Rutas en Express**: Las rutas estáticas masivas (`/export`, `/export-local`) deben definirse **antes** que las rutas dinámicas parametrizadas (`/api/progreso/:id`).
 
 ## 3. Estructura de Directorios y Patrones
 - `public/`: Ubica aquí cualquier nuevo sprite o asset de imagen. Asegúrate de que sean `.png`.

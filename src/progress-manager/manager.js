@@ -223,7 +223,17 @@ function getFilteredCatalog() {
     return state.catalog.filter((character) => character.tipo === state.filter);
 }
 
+function updateIndicatorsVisibility() {
+    const isNormalTab = state.filter === 'normal';
+    const megaBlastChip = document.getElementById('indicator-mega-blast');
+    const megaMushChip = document.getElementById('indicator-mega-mush');
+
+    if (megaBlastChip) megaBlastChip.hidden = !isNormalTab;
+    if (megaMushChip) megaMushChip.hidden = !isNormalTab;
+}
+
 function renderCatalog() {
+    updateIndicatorsVisibility();
     const catalog = getFilteredCatalog();
     catalogCountPill.textContent = `${catalog.length} personajes`;
     syncStatusPill.textContent = state.catalogReady ? 'PouchDB sembrada y sincronizada' : 'Cargando catálogo...';
@@ -243,7 +253,7 @@ function renderCatalog() {
         row.className = 'catalog-row';
 
         const saved = state.progressById.get(character._id) || null;
-        const active = hasAnyProgressDocument(saved);
+        const active = hasSavedMarks(saved);
         const progressDocument = normalizeDocument(character, saved);
 
         row.innerHTML = `
@@ -414,6 +424,19 @@ function closeEditor() {
     closeModal(editorModal);
 }
 
+function updateIndicators(estadoDoc) {
+    if (!estadoDoc) return;
+    const megaBlastEl = document.getElementById('mega-blast-value');
+    const megaMushEl = document.getElementById('mega-mush-value');
+    const deathCertEl = document.getElementById('death-certificate-value');
+
+    if (megaBlastEl) megaBlastEl.textContent = estadoDoc['Mega Blast'] || '0/17';
+    if (megaMushEl) megaMushEl.textContent = estadoDoc['Mega Mush'] || '0/17';
+    if (deathCertEl) deathCertEl.textContent = estadoDoc['Death Certificate'] || '0/34';
+
+    updateIndicatorsVisibility();
+}
+
 async function saveCurrentDocument() {
     if (!state.activeCharacter || !state.activeDocument) {
         return;
@@ -435,6 +458,14 @@ async function saveCurrentDocument() {
         state.progressById.set(state.activeCharacter._id, saved);
         state.activeDocument = saved;
         renderCatalog();
+
+        try {
+            const nuevoEstado = await fetchJson('/api/estado');
+            updateIndicators(nuevoEstado);
+        } catch (e) {
+            console.error('Error recalculando indicadores', e);
+        }
+
         mostrarToast(`Progreso guardado para ${state.activeCharacter.nombre}.`, 'success');
         closeEditor();
     } catch (error) {
@@ -739,12 +770,15 @@ async function init() {
             fetchJson('/api/progreso/export').catch(() => [])
         ]);
 
-        if (estadoDoc && (estadoDoc['Menu Actual'] || estadoDoc.MenuActual)) {
-            state.filter = estadoDoc['Menu Actual'] || estadoDoc.MenuActual;
-            const radio = document.querySelector(`input[name="catalog-filter"][value="${state.filter}"]`);
-            if (radio) {
-                radio.checked = true;
+        if (estadoDoc) {
+            if (estadoDoc['Menu Actual'] || estadoDoc.MenuActual) {
+                state.filter = estadoDoc['Menu Actual'] || estadoDoc.MenuActual;
+                const radio = document.querySelector(`input[name="catalog-filter"][value="${state.filter}"]`);
+                if (radio) {
+                    radio.checked = true;
+                }
             }
+            updateIndicators(estadoDoc);
         }
 
         state.catalog = catalog;
