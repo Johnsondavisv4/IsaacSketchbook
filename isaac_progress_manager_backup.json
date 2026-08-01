@@ -733,19 +733,19 @@
     "tipo": "tainted",
     "sprite": "Jacob_02.png",
     "marcas": {
-      "Heart": "No Mark",
-      "Isaac": "No Mark",
-      "???": "No Mark",
+      "Heart": "Hard",
+      "Isaac": "Hard",
+      "???": "Hard",
       "Satan": "No Mark",
       "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Mega Satan": "Hard",
+      "Boss Rush": "Hard",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
       "Delirium": "No Mark"
     },
-    "_rev": "1-062ef04e04ec6c365e115eb50909f2fc"
+    "_rev": "3-26e83c9d212637f430e36427ec6d34e0"
   }
 ]
