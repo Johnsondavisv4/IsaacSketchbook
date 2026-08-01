@@ -14,79 +14,78 @@ const POUCH_DB_NAME = 'isaac_progress_manager';
 
 const db = new PouchDB(POUCH_DB_NAME);
 
-const OMITTED_PLAYER_IDS = new Set([11, 12, 17, 20, 38, 39, 40]);
 const PLAYER_LABELS = {
-    0: 'Isaac',
-    1: 'Magdalene',
-    2: 'Cain',
-    3: 'Judas',
-    4: 'Blue Baby',
-    5: 'Eve',
-    6: 'Samson',
-    7: 'Azazel',
-    8: 'Lazarus',
-    9: 'Eden',
-    10: 'The Lost',
-    13: 'Lilith',
-    14: 'Keeper',
-    15: 'Apollyon',
-    16: 'The Forgotten',
-    18: 'Bethany',
-    19: 'Jacob and Esau',
-    21: 'Isaac',
-    22: 'Magdalene',
-    23: 'Cain',
-    24: 'Judas',
-    25: 'Blue Baby',
-    26: 'Eve',
-    27: 'Samson',
-    28: 'Azazel',
-    29: 'Lazarus',
-    30: 'Eden',
-    31: 'The Lost',
-    32: 'Lilith',
-    33: 'Keeper',
-    34: 'Apollyon',
-    35: 'The Forgotten',
-    36: 'Bethany',
-    37: 'Jacob'
+    1: 'Isaac',
+    2: 'Magdalene',
+    3: 'Cain',
+    4: 'Judas',
+    5: 'Blue Baby',
+    6: 'Eve',
+    7: 'Samson',
+    8: 'Azazel',
+    9: 'Lazarus',
+    10: 'Eden',
+    11: 'The Lost',
+    12: 'Lilith',
+    13: 'Keeper',
+    14: 'Apollyon',
+    15: 'The Forgotten',
+    16: 'Bethany',
+    17: 'Jacob and Esau',
+    18: 'Isaac',
+    19: 'Magdalene',
+    20: 'Cain',
+    21: 'Judas',
+    22: 'Blue Baby',
+    23: 'Eve',
+    24: 'Samson',
+    25: 'Azazel',
+    26: 'Lazarus',
+    27: 'Eden',
+    28: 'The Lost',
+    29: 'Lilith',
+    30: 'Keeper',
+    31: 'Apollyon',
+    32: 'The Forgotten',
+    33: 'Bethany',
+    34: 'Jacob'
 };
 
 const SPRITE_FILES = {
-    0: 'Isaac_01.png',
-    1: 'Maggy_01.png',
-    2: 'Cain_01.png',
-    3: 'Judas_01.png',
-    4: 'Blue_Baby_01.png',
-    5: 'Eve_01.png',
-    6: 'Samson_01.png',
-    7: 'Azazel_01.png',
-    8: 'Lazarus_01.png',
-    9: 'Eden_01.png',
-    10: 'The_Lost_01.png',
-    13: 'Lilith_01.png',
-    14: 'Keeper_01.png',
-    15: 'Apollyon_01.png',
-    16: 'The_Forgotten_01.png',
-    18: 'Bethany_01.png',
-    19: 'Jacob_and_Esau_01.png',
-    21: 'Isaac_02.png',
-    22: 'Maggy_02.png',
-    23: 'Cain_02.png',
-    24: 'Judas_02.png',
-    25: 'Blue_Baby_02.png',
-    26: 'Eve_02.png',
-    27: 'Samson_02.png',
-    28: 'Azazel_02.png',
-    29: 'Lazarus_02.png',
-    30: 'Eden_02.png',
-    31: 'The_Lost_02.png',
-    32: 'Lilith_02.png',
-    33: 'Keeper_02.png',
-    34: 'Apollyon_02.png',
-    35: 'The_Forgotten_02.png',
-    36: 'Bethany_02.png',
-    37: 'Jacob_02.png'
+    1: 'Isaac_01.png',
+    2: 'Maggy_01.png',
+    3: 'Cain_01.png',
+    4: 'Judas_01.png',
+    5: 'Blue_Baby_01.png',
+    6: 'Eve_01.png',
+    7: 'Samson_01.png',
+    8: 'Azazel_01.png',
+    9: 'Lazarus_01.png',
+    10: 'Eden_01.png',
+    11: 'The_Lost_01.png',
+    12: 'Lilith_01.png',
+    13: 'Keeper_01.png',
+    14: 'Apollyon_01.png',
+    15: 'The_Forgotten_01.png',
+    16: 'Bethany_01.png',
+    17: 'Jacob_and_Esau_01.png',
+    18: 'Isaac_02.png',
+    19: 'Maggy_02.png',
+    20: 'Cain_02.png',
+    21: 'Judas_02.png',
+    22: 'Blue_Baby_02.png',
+    23: 'Eve_02.png',
+    24: 'Samson_02.png',
+    25: 'Azazel_02.png',
+    26: 'Lazarus_02.png',
+    27: 'Eden_02.png',
+    28: 'The_Lost_02.png',
+    29: 'Lilith_02.png',
+    30: 'Keeper_02.png',
+    31: 'Apollyon_02.png',
+    32: 'The_Forgotten_02.png',
+    33: 'Bethany_02.png',
+    34: 'Jacob_02.png'
 };
 
 const MARK_TEMPLATE = {
@@ -132,7 +131,7 @@ function buildCatalogFromHardcodedMaps() {
 
     for (const [idText, sprite] of Object.entries(SPRITE_FILES)) {
         const id = Number(idText);
-        if (!Number.isFinite(id) || OMITTED_PLAYER_IDS.has(id)) {
+        if (!Number.isFinite(id)) {
             continue;
         }
 
@@ -145,9 +144,9 @@ function buildCatalogFromHardcodedMaps() {
             id,
             _id: `progreso_${id}`,
             nombre,
-            tipo: id < 21 ? 'normal' : 'tainted',
+            tipo: id <= 17 ? 'normal' : 'tainted',
             sprite,
-            ...(id === 3 ? { sprite2: 'Judas_03.png' } : {})
+            ...(id === 4 ? { sprite2: 'Judas_03.png' } : {})
         });
     }
 
@@ -158,48 +157,31 @@ function createEmptyMarks() {
     return { ...MARK_TEMPLATE };
 }
 
+function isHardMark(value) {
+    return value === 'Hard' || value === 'Online Hard';
+}
+
 function normalizeProgressDoc(doc, catalogEntry) {
-    const base = {
+    const marcasNormalized = {
+        ...createEmptyMarks(),
+        ...Object.fromEntries(
+            Object.entries(doc?.marcas || {}).map(([key, value]) => [key, normalizeMarkValue(value)])
+        )
+    };
+
+    const completado = Object.values(marcasNormalized).length === 12 &&
+        Object.values(marcasNormalized).every(isHardMark);
+
+    return {
         id: catalogEntry.id,
         _id: catalogEntry._id,
         nombre: catalogEntry.nombre,
         tipo: catalogEntry.tipo,
         sprite: catalogEntry.sprite,
-        marcas: createEmptyMarks()
+        ...(catalogEntry.sprite2 ? { sprite2: catalogEntry.sprite2 } : {}),
+        Completado: completado,
+        marcas: marcasNormalized
     };
-
-    if (catalogEntry.sprite2) {
-        base.sprite2 = catalogEntry.sprite2;
-    }
-
-    if (!doc) {
-        return base;
-    }
-
-    const normalized = {
-        ...base,
-        ...doc,
-        marcas: {
-            ...createEmptyMarks(),
-            ...Object.fromEntries(
-                Object.entries(doc.marcas || {}).map(([key, value]) => [key, normalizeMarkValue(value)])
-            )
-        }
-    };
-
-    if (catalogEntry.sprite2) {
-        normalized.sprite2 = catalogEntry.sprite2;
-    } else {
-        delete normalized.sprite2;
-    }
-
-    normalized.id = catalogEntry.id;
-    normalized._id = catalogEntry._id;
-    normalized.nombre = catalogEntry.nombre;
-    normalized.tipo = catalogEntry.tipo;
-    normalized.sprite = catalogEntry.sprite;
-
-    return normalized;
 }
 
 function getCatalogEntryByProgressId(id) {
@@ -209,6 +191,70 @@ function getCatalogEntryByProgressId(id) {
     }
 
     return catalogCache.find((entry) => entry.id === numericId) || null;
+}
+
+function hasAll12HardMarks(doc) {
+    if (!doc || !doc.marcas) return false;
+    const values = Object.values(doc.marcas);
+    return values.length === 12 && values.every(isHardMark);
+}
+
+async function getStateDoc() {
+    const keys = ['estado_0', ...catalogCache.map((entry) => entry._id)];
+    const result = await db.allDocs({ include_docs: true, keys });
+
+    const docMap = new Map();
+    for (const row of result.rows) {
+        if (row.doc) {
+            docMap.set(row.id, row.doc);
+        }
+    }
+
+    const storedState = docMap.get('estado_0') || null;
+    const progressDocs = catalogCache.map((entry) => {
+        const storedDoc = docMap.get(entry._id) || null;
+        return normalizeProgressDoc(storedDoc, entry);
+    });
+
+    const normalDocs = progressDocs.filter(d => d.tipo === 'normal');
+    const totalNormales = normalDocs.length;
+    const totalPersonajes = progressDocs.length;
+
+    const megaBlastHardCount = normalDocs.filter(d => isHardMark(d.marcas?.['Mega Satan'])).length;
+    const megaMushCount = normalDocs.filter(d => hasAll12HardMarks(d)).length;
+    const deathCertificateCount = progressDocs.filter(d => hasAll12HardMarks(d)).length;
+
+    const storedMenu = storedState && (storedState['Menu Actual'] || storedState.MenuActual);
+    const menuActual = (storedMenu === 'tainted' || storedMenu === 'normal')
+        ? storedMenu
+        : 'normal';
+
+    return {
+        id: 0,
+        _id: 'estado_0',
+        'Menu Actual': menuActual,
+        'Mega Blast': `${megaBlastHardCount}/${totalNormales}`,
+        'Mega Mush': `${megaMushCount}/${totalNormales}`,
+        'Death Certificate': `${deathCertificateCount}/${totalPersonajes}`
+    };
+}
+
+async function saveStateDoc(menuActualInput) {
+    const menuActual = menuActualInput === 'tainted' ? 'tainted' : 'normal';
+    const existing = await db.get('estado_0').catch(e => (e.status === 404 ? null : Promise.reject(e)));
+
+    const docToSave = {
+        id: 0,
+        _id: 'estado_0',
+        'Menu Actual': menuActual
+    };
+
+    if (existing && existing._rev) {
+        docToSave._rev = existing._rev;
+    }
+
+    await db.put(docToSave);
+    return getStateDoc();
 }
 
 let catalogCache = buildCatalogFromHardcodedMaps();
@@ -223,30 +269,48 @@ async function seedDefaultProgressDocuments() {
     if (info.doc_count > 0) return;
 
     const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
-    let docsToCreate = null;
+    let docsToCreate = [];
 
     if (fs.existsSync(backupPath)) {
         try {
             const backupDocs = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
-            docsToCreate = backupDocs.map(doc => {
-                const catalogEntry = getCatalogEntryByProgressId(doc._id || '');
-                if (!catalogEntry) return null;
-                const normalized = normalizeProgressDoc(doc, catalogEntry);
-                delete normalized._rev;
-                return normalized;
-            }).filter(Boolean);
+            if (Array.isArray(backupDocs)) {
+                const backupStateDoc = backupDocs.find(d => d && d._id === 'estado_0');
+                const storedMenu = backupStateDoc ? (backupStateDoc['Menu Actual'] || backupStateDoc.MenuActual) : 'normal';
+                docsToCreate.push({
+                    id: 0,
+                    _id: 'estado_0',
+                    'Menu Actual': storedMenu === 'tainted' ? 'tainted' : 'normal'
+                });
 
-            if (docsToCreate.length === 0) docsToCreate = null;
+                const backupDocsMap = new Map();
+                for (const d of backupDocs) {
+                    if (d && d._id && d._id !== 'estado_0') {
+                        backupDocsMap.set(d._id, d);
+                    }
+                }
+
+                for (const catalogEntry of catalogCache) {
+                    const existingDoc = backupDocsMap.get(catalogEntry._id);
+                    const normalized = normalizeProgressDoc(existingDoc || null, catalogEntry);
+                    delete normalized._rev;
+                    docsToCreate.push(normalized);
+                }
+            }
         } catch (error) {
             console.error('Error al intentar leer el backup inicial', error);
+            docsToCreate = [];
         }
     }
 
-    if (docsToCreate) {
-        console.log('Base de datos inicializada desde el archivo de backup local.');
-    } else {
+    if (docsToCreate.length === 0) {
         console.log('Inicializando base de datos con valores por defecto.');
-        docsToCreate = catalogCache.map((entry) => normalizeProgressDoc(null, entry));
+        docsToCreate = [
+            { id: 0, _id: 'estado_0', 'Menu Actual': 'normal' },
+            ...catalogCache.map((entry) => normalizeProgressDoc(null, entry))
+        ];
+    } else {
+        console.log('Base de datos inicializada desde el archivo de backup local.');
     }
 
     await db.bulkDocs(docsToCreate);
@@ -266,6 +330,26 @@ app.get('/progress-manager', (req, res) => {
 
 app.get('/api/catalogo-progreso', (req, res) => {
     res.json(refreshCatalogCache());
+});
+
+app.get('/api/estado', async (req, res) => {
+    try {
+        res.json(await getStateDoc());
+    } catch (error) {
+        console.error('Error obteniendo estado', error);
+        res.status(500).json({ error: 'No se pudo obtener el estado' });
+    }
+});
+
+app.post('/api/estado', async (req, res) => {
+    try {
+        const menuActual = req.body?.['Menu Actual'] || req.body?.MenuActual;
+        const updated = await saveStateDoc(menuActual);
+        res.json(updated);
+    } catch (error) {
+        console.error('Error guardando estado', error);
+        res.status(500).json({ error: 'No se pudo guardar el estado' });
+    }
 });
 
 app.get('/api/progreso/:id', async (req, res) => {
@@ -289,10 +373,20 @@ app.get('/api/progreso/:id', async (req, res) => {
 });
 
 async function getAllProgressDocs() {
-    return Promise.all(catalogCache.map(async (entry) => {
-        const storedDoc = await db.get(entry._id).catch(e => (e.status === 404 ? null : Promise.reject(e)));
+    const keys = catalogCache.map((entry) => entry._id);
+    const result = await db.allDocs({ include_docs: true, keys });
+
+    const docMap = new Map();
+    for (const row of result.rows) {
+        if (row.doc) {
+            docMap.set(row.id, row.doc);
+        }
+    }
+
+    return catalogCache.map((entry) => {
+        const storedDoc = docMap.get(entry._id) || null;
         return normalizeProgressDoc(storedDoc, entry);
-    }));
+    });
 }
 
 app.get('/api/progreso/export', async (req, res) => {
@@ -306,14 +400,23 @@ app.get('/api/progreso/export', async (req, res) => {
 
 app.post('/api/progreso/export-local', async (req, res) => {
     try {
+        const stateDoc = await getStateDoc();
         const docs = await getAllProgressDocs();
+        const cleanDocs = [
+            stateDoc,
+            ...docs.map(doc => {
+                const copy = { ...doc };
+                delete copy._rev;
+                return copy;
+            })
+        ];
         const backupPath = path.join(ROOT_DIR, 'isaac_progress_manager_backup.json');
 
         if (fs.existsSync(backupPath)) {
             fs.unlinkSync(backupPath);
         }
 
-        fs.writeFileSync(backupPath, JSON.stringify(docs, null, 2), 'utf-8');
+        fs.writeFileSync(backupPath, JSON.stringify(cleanDocs, null, 2), 'utf-8');
         res.json({ message: 'Backup guardado exitosamente en la raíz' });
     } catch (error) {
         console.error('Error escribiendo backup en disco', error);

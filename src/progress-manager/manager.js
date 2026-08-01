@@ -204,28 +204,19 @@ async function loadCatalog() {
     const catalog = await fetchJson(API_CATALOG);
     state.catalog = catalog;
     state.catalogReady = true;
-    renderCatalog();
 }
 
 async function preloadProgressState() {
-    const jobs = state.catalog.map(async (character) => {
-        try {
-            const doc = await fetch(`${API_PROGRESS}/${encodeURIComponent(character._id)}`);
-            if (doc.status === 404) {
-                return;
+    try {
+        const docs = await fetchJson('/api/progreso/export');
+        for (const doc of docs) {
+            if (doc && doc._id) {
+                state.progressById.set(doc._id, doc);
             }
-            if (!doc.ok) {
-                throw new Error(`HTTP ${doc.status}`);
-            }
-            const parsed = await doc.json();
-            state.progressById.set(character._id, parsed);
-        } catch (error) {
-            console.error('No se pudo sincronizar el progreso', error);
         }
-    });
-
-    await Promise.allSettled(jobs);
-    renderCatalog();
+    } catch (error) {
+        console.error('No se pudo sincronizar el progreso', error);
+    }
 }
 
 function getFilteredCatalog() {
@@ -692,9 +683,18 @@ catalogList.addEventListener('click', (event) => {
 });
 
 document.querySelectorAll('input[name="catalog-filter"]').forEach((input) => {
-    input.addEventListener('change', () => {
+    input.addEventListener('change', async () => {
         state.filter = input.value;
         renderCatalog();
+        try {
+            await fetchJson('/api/estado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ MenuActual: state.filter })
+            });
+        } catch (error) {
+            console.error('Error guardando estado del menú', error);
+        }
     });
 });
 
@@ -733,9 +733,30 @@ if (exportDbBtn) {
 
 async function init() {
     try {
-        await loadCatalog();
-        syncStatusPill.textContent = 'Catálogo sincronizado';
-        await preloadProgressState();
+        const [estadoDoc, catalog, progressDocs] = await Promise.all([
+            fetchJson('/api/estado').catch(() => null),
+            fetchJson(API_CATALOG),
+            fetchJson('/api/progreso/export').catch(() => [])
+        ]);
+
+        if (estadoDoc && (estadoDoc['Menu Actual'] || estadoDoc.MenuActual)) {
+            state.filter = estadoDoc['Menu Actual'] || estadoDoc.MenuActual;
+            const radio = document.querySelector(`input[name="catalog-filter"][value="${state.filter}"]`);
+            if (radio) {
+                radio.checked = true;
+            }
+        }
+
+        state.catalog = catalog;
+        state.catalogReady = true;
+
+        for (const doc of progressDocs) {
+            if (doc && doc._id) {
+                state.progressById.set(doc._id, doc);
+            }
+        }
+
+        syncStatusPill.textContent = 'PouchDB sembrada y sincronizada';
         await ensureWidgetReady();
         renderCatalog();
     } catch (error) {
