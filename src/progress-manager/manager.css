@@ -71,6 +71,12 @@ body {
 	gap: 16px;
 	flex: 1;
 	min-height: 0;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.workspace.is-loaded {
+	opacity: 1;
 }
 
 .header-area {

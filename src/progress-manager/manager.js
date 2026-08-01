@@ -793,9 +793,11 @@ async function init() {
         syncStatusPill.textContent = 'PouchDB sembrada y sincronizada';
         await ensureWidgetReady();
         renderCatalog();
+        document.querySelector('.workspace')?.classList.add('is-loaded');
     } catch (error) {
         console.error(error);
         mostrarToast('No se pudo inicializar Progress Manager.', 'error');
+        document.querySelector('.workspace')?.classList.add('is-loaded');
     }
 }
 
