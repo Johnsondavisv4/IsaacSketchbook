@@ -5,7 +5,7 @@
     "Menu Actual": "tainted",
     "Mega Blast": "17/17",
     "Mega Mush": "17/17",
-    "Death Certificate": "17/34"
+    "Death Certificate": "18/34"
   },
   {
     "id": 1,
@@ -610,18 +610,18 @@
     "sprite": "The_Lost_02.png",
     "Completado": false,
     "marcas": {
-      "Heart": "No Mark",
-      "Isaac": "No Mark",
-      "???": "No Mark",
-      "Satan": "No Mark",
-      "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Heart": "Hard",
+      "Isaac": "Hard",
+      "???": "Hard",
+      "Satan": "Hard",
+      "The lamb": "Hard",
+      "Mega Satan": "Hard",
+      "Boss Rush": "Hard",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     }
   },
   {
@@ -740,7 +740,7 @@
     "nombre": "Jacob",
     "tipo": "tainted",
     "sprite": "Jacob_02.png",
-    "Completado": false,
+    "Completado": true,
     "marcas": {
       "Heart": "Hard",
       "Isaac": "Hard",
@@ -750,8 +750,8 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "Mother": "Hard",
+      "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     }
