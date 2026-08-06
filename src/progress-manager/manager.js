@@ -277,7 +277,11 @@ function renderCatalog() {
                 <button type="button" class="btn btn-secondary" data-action="edit" data-id="${character._id}">📝 Editar Post-it</button>
             </div>
             <div class="row-actions">
-                <button type="button" class="btn btn-primary" data-action="download" data-id="${character._id}">⬇ Descargar .jsx</button>
+                <div class="btn-group-download">
+                    <button type="button" class="btn-opt btn-opt--sprite" data-action="download-sprite" data-id="${character._id}" title="Descargar solo el sprite en JSX">🖼️ Sprite</button>
+                    <button type="button" class="btn-opt btn-opt--postit" data-action="download-postit" data-id="${character._id}" title="Descargar solo la nota de Post-it en JSX">📜 Post-it</button>
+                    <button type="button" class="btn-opt btn-opt--full" data-action="download-full" data-id="${character._id}" title="Descargar Pack Completo (Post-it + Sprite)">📦 Pack</button>
+                </div>
             </div>
         `;
 
@@ -498,12 +502,7 @@ async function fetchImageBase64(src) {
     return blobToBase64(await response.blob());
 }
 
-function buildJsxScript(character, selectedSprite, postitBase64, spriteBase64) {
-    const assets = [
-        { name: `${character.nombre} - Post-it`, b64: postitBase64 },
-        { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
-    ];
-
+function buildJsxFromAssets(assets) {
     return `
 (function () {
     if (app.documents.length === 0) {
@@ -652,7 +651,80 @@ function openSpriteChoice(character) {
     });
 }
 
-async function exportCharacter(character, selectedSpriteKey) {
+async function handleDownloadPostit(characterId) {
+    const character = getCharacterById(characterId);
+    if (!character) return;
+
+    try {
+        const progressDocument = state.progressById.get(character._id) || createDefaultDocument(character);
+        const normalized = normalizeDocument(character, progressDocument);
+
+        const postitCanvas = document.createElement('canvas');
+        postitCanvas.width = 384;
+        postitCanvas.height = 384;
+        const postitContext = postitCanvas.getContext('2d');
+
+        await ensureWidgetReady();
+        drawPreview(postitContext, normalized, 4);
+
+        const postitBase64 = postitCanvas.toDataURL('image/png').split(',')[1];
+        const assets = [
+            { name: `${character.nombre} - Post-it`, b64: postitBase64 }
+        ];
+
+        const jsx = buildJsxFromAssets(assets);
+        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Postit.jsx`, jsx);
+        mostrarToast(`Script JSX (Solo Post-it) exportado para ${character.nombre}.`, 'success');
+    } catch (error) {
+        console.error(error);
+        mostrarToast(`No se pudo exportar el Post-it de ${character.nombre}.`, 'error');
+    }
+}
+
+async function handleDownloadSprite(characterId) {
+    const character = getCharacterById(characterId);
+    if (!character) return;
+
+    let selectedSpriteKey = 'sprite';
+    if (character.sprite2) {
+        const choice = await openSpriteChoice(character);
+        if (!choice) {
+            mostrarToast('Exportación cancelada.', 'info');
+            return;
+        }
+        selectedSpriteKey = choice;
+    }
+
+    try {
+        const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
+        const spriteBase64 = await fetchImageBase64(`${PUBLIC_BASE}/${selectedSprite}`);
+        const assets = [
+            { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
+        ];
+
+        const jsx = buildJsxFromAssets(assets);
+        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Sprite.jsx`, jsx);
+        mostrarToast(`Script JSX (Solo Sprite) exportado para ${character.nombre}.`, 'success');
+    } catch (error) {
+        console.error(error);
+        mostrarToast(`No se pudo exportar el Sprite de ${character.nombre}.`, 'error');
+    }
+}
+
+async function handleDownloadFull(characterId) {
+    const character = getCharacterById(characterId);
+    if (!character) return;
+
+    let selectedSpriteKey = 'sprite';
+    if (character.sprite2) {
+        const choice = await openSpriteChoice(character);
+        if (!choice) {
+            mostrarToast('Exportación cancelada.', 'info');
+            return;
+        }
+        selectedSpriteKey = choice;
+    }
+
     try {
         const progressDocument = state.progressById.get(character._id) || createDefaultDocument(character);
         const normalized = normalizeDocument(character, progressDocument);
@@ -668,33 +740,18 @@ async function exportCharacter(character, selectedSpriteKey) {
         const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
         const spriteBase64 = await fetchImageBase64(`${PUBLIC_BASE}/${selectedSprite}`);
         const postitBase64 = postitCanvas.toDataURL('image/png').split(',')[1];
-        const jsx = buildJsxScript(character, selectedSprite, postitBase64, spriteBase64);
+        const assets = [
+            { name: `${character.nombre} - Post-it`, b64: postitBase64 },
+            { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
+        ];
 
-        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Progress_Manager.jsx`, jsx);
-        mostrarToast(`Script JSX exportado para ${character.nombre}.`, 'success');
+        const jsx = buildJsxFromAssets(assets);
+        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Full.jsx`, jsx);
+        mostrarToast(`Script JSX (Pack Completo) exportado para ${character.nombre}.`, 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast(`No se pudo exportar ${character.nombre}.`, 'error');
+        mostrarToast(`No se pudo exportar el Pack Completo de ${character.nombre}.`, 'error');
     }
-}
-
-async function handleDownload(characterId) {
-    const character = getCharacterById(characterId);
-    if (!character) {
-        return;
-    }
-
-    let selectedSpriteKey = 'sprite';
-    if (character.sprite2) {
-        const choice = await openSpriteChoice(character);
-        if (!choice) {
-            mostrarToast('Exportación cancelada.', 'info');
-            return;
-        }
-        selectedSpriteKey = choice;
-    }
-
-    await exportCharacter(character, selectedSpriteKey);
 }
 
 catalogList.addEventListener('click', (event) => {
@@ -704,12 +761,16 @@ catalogList.addEventListener('click', (event) => {
     }
 
     const characterId = button.dataset.id;
-    if (button.dataset.action === 'edit') {
-        openEditor(characterId);
-    }
+    const action = button.dataset.action;
 
-    if (button.dataset.action === 'download') {
-        handleDownload(characterId);
+    if (action === 'edit') {
+        openEditor(characterId);
+    } else if (action === 'download-postit') {
+        handleDownloadPostit(characterId);
+    } else if (action === 'download-sprite') {
+        handleDownloadSprite(characterId);
+    } else if (action === 'download-full' || action === 'download') {
+        handleDownloadFull(characterId);
     }
 });
 
