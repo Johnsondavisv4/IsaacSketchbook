@@ -5,7 +5,7 @@
     "Menu Actual": "tainted",
     "Mega Blast": "17/17",
     "Mega Mush": "17/17",
-    "Death Certificate": "18/34"
+    "Death Certificate": "19/34"
   },
   {
     "id": 1,
@@ -608,7 +608,7 @@
     "nombre": "The Lost",
     "tipo": "tainted",
     "sprite": "The_Lost_02.png",
-    "Completado": false,
+    "Completado": true,
     "marcas": {
       "Heart": "Hard",
       "Isaac": "Hard",
@@ -618,8 +618,8 @@
       "Mega Satan": "Hard",
       "Boss Rush": "Hard",
       "Hush": "Hard",
-      "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "Mother": "Hard",
+      "The Beast": "Hard",
       "Ultra Greed": "Hard",
       "Delirium": "Hard"
     }
