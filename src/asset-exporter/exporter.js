@@ -115,7 +115,7 @@ function procesarImagenPromesa(filename, scaleFactor) {
 
             const dataUrl = canvas.toDataURL("image/png");
             const base64Pura = dataUrl.replace(/^data:image\/png;base64,/, "");
-            const cleanName = filename.replace(/\.[^/.]+$/, "");
+            const cleanName = filename.replace(/\//g, '_').replace(/\.[^/.]+$/, "");
 
             resolve({ name: cleanName, b64: base64Pura });
         };
@@ -137,10 +137,12 @@ addToCartBtn.addEventListener('click', async function () {
     let carrito = TBOIUtils.obtenerCarrito();
 
     for (let i = 0; i < checkboxesChecked.length; i++) {
-        const filename = checkboxesChecked[i].value;
+        const cb = checkboxesChecked[i];
+        const filename = cb.value;
 
-        const scaleInput = document.querySelector(`input[type="number"].row-scale-input[data-filename="${filename}"]`);
-        const scale = Math.max(1, parseInt(scaleInput.value) || 1);
+        const row = cb.closest('.repo-row');
+        const scaleInput = row ? row.querySelector('.row-scale-input') : null;
+        const scale = Math.max(1, parseInt(scaleInput ? scaleInput.value : '1') || 1);
 
         const resultado = await procesarImagenPromesa(filename, scale);
 

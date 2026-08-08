@@ -461,6 +461,25 @@ app.post('/api/progreso', async (req, res) => {
     }
 });
 
+function getAllPngFiles(dir, baseDir = dir) {
+    let results = [];
+    if (!fs.existsSync(dir)) return results;
+
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            results = results.concat(getAllPngFiles(fullPath, baseDir));
+        } else if (entry.isFile() && path.extname(entry.name).toLowerCase() === '.png') {
+            const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
+            results.push(relativePath);
+        }
+    }
+
+    return results;
+}
+
 app.get('/api/sprites', (req, res) => {
     const publicPath = path.join(ROOT_DIR, 'public');
 
@@ -470,10 +489,10 @@ app.get('/api/sprites', (req, res) => {
     }
 
     try {
-        const files = fs.readdirSync(publicPath);
-        const pngFiles = files.filter(file => path.extname(file).toLowerCase() === '.png');
+        const pngFiles = getAllPngFiles(publicPath);
         res.json(pngFiles);
     } catch (error) {
+        console.error('Error leyendo la carpeta public y subcarpetas', error);
         res.status(500).json({ error: "No se pudo leer la carpeta public" });
     }
 });

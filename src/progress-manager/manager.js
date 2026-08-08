@@ -1,6 +1,7 @@
 const API_CATALOG = '/api/catalogo-progreso';
 const API_PROGRESS = '/api/progreso';
 const PUBLIC_BASE = '/public';
+const CHARACTER_SRC = `${PUBLIC_BASE}/Characters`;
 const WIDGET_SRC = `${PUBLIC_BASE}/completion_widget.png`;
 
 const MARKS = [
@@ -259,7 +260,7 @@ function renderCatalog() {
         row.innerHTML = `
             <div class="thumb-pair">
                 <div class="thumb-container thumb-container--character">
-                    <img class="sprite-thumb" src="${PUBLIC_BASE}/${character.sprite}" alt="${character.nombre}" loading="lazy" decoding="async">
+                    <img class="sprite-thumb" src="${CHARACTER_SRC}/${character.sprite}" alt="${character.nombre}" loading="lazy" decoding="async">
                 </div>
                 <div class="thumb-container thumb-container--postit">
                     <canvas class="postit-thumb" width="85" height="85" aria-label="${character.nombre} post-it preview"></canvas>
@@ -502,6 +503,30 @@ async function fetchImageBase64(src) {
     return blobToBase64(await response.blob());
 }
 
+function fetchAndScaleSpriteBase64(src, scaleFactor = 10) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const originalW = img.naturalWidth || img.width;
+            const originalH = img.naturalHeight || img.height;
+
+            const spriteCanvas = document.createElement('canvas');
+            spriteCanvas.width = originalW * scaleFactor;
+            spriteCanvas.height = originalH * scaleFactor;
+
+            const ctx = spriteCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0, originalW, originalH, 0, 0, spriteCanvas.width, spriteCanvas.height);
+
+            const dataUrl = spriteCanvas.toDataURL('image/png');
+            resolve(dataUrl.split(',')[1] || '');
+        };
+        img.onerror = () => reject(new Error(`No se pudo cargar la imagen: ${src}`));
+        img.src = src;
+    });
+}
+
+
 function buildJsxFromAssets(assets) {
     return `
 (function () {
@@ -607,7 +632,7 @@ function buildSpriteChoiceModal(character) {
             key: 'sprite',
             title: 'Versión principal',
             subtitle: character.sprite,
-            src: `${PUBLIC_BASE}/${character.sprite}`
+            src: `${CHARACTER_SRC}/${character.sprite}`
         }
     ];
 
@@ -616,7 +641,7 @@ function buildSpriteChoiceModal(character) {
             key: 'sprite2',
             title: 'Dark Judas',
             subtitle: character.sprite2,
-            src: `${PUBLIC_BASE}/${character.sprite2}`
+            src: `${CHARACTER_SRC}/${character.sprite2}`
         });
     }
 
@@ -697,7 +722,7 @@ async function handleDownloadSprite(characterId) {
 
     try {
         const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
-        const spriteBase64 = await fetchImageBase64(`${PUBLIC_BASE}/${selectedSprite}`);
+        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${selectedSprite}`, 10);
         const assets = [
             { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
         ];
@@ -738,7 +763,7 @@ async function handleDownloadFull(characterId) {
         drawPreview(postitContext, normalized, 4);
 
         const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
-        const spriteBase64 = await fetchImageBase64(`${PUBLIC_BASE}/${selectedSprite}`);
+        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${selectedSprite}`, 10);
         const postitBase64 = postitCanvas.toDataURL('image/png').split(',')[1];
         const assets = [
             { name: `${character.nombre} - Post-it`, b64: postitBase64 },
