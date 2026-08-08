@@ -320,14 +320,25 @@ h1 {
 
 /* Dashboard Tools Grid (index.html specific) */
 .tools-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 16px;
 }
 
 @media (min-width: 650px) {
     .tools-grid {
-        flex-direction: row;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Cuando hay 4 módulos, se hace una segunda línea quedando 2 arriba y 2 abajo */
+    .tools-grid:has(.tool-card:nth-child(4):last-child) {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 

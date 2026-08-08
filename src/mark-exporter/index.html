@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Exporter - Isaac Sketchbook</title>
+    <link rel="stylesheet" href="../index.css">
+    <link rel="stylesheet" href="../../public/utils.css">
+    <link rel="stylesheet" href="mark.css">
+    <script src="../../public/utils.js"></script>
+</head>
+
+<body>
+
+    <div class="back-nav">
+        <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+    </div>
+
+    <div class="workspace">
+        <div class="header-area">
+            <h1>🎯 Extractor de Marcas (Mark Exporter)</h1>
+            <div class="subtitle">Extrae marcas de completado oficiales pixel-perfect individualmente, amplíalas a la escala deseada e inyéctalas al carrito o descárgalas en PNG.</div>
+        </div>
+
+        <div class="mark-exporter-container panel">
+            <div class="preview-section">
+                <canvas id="preview-canvas" width="16" height="16"></canvas>
+                <span class="preview-label">Vista Previa (16x16)</span>
+                <span id="resolution-preview" class="resolution-text">Resolución final: 64x64 px</span>
+            </div>
+
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="select-mark">Marca a extraer:</label>
+                    <select id="select-mark">
+                        <option value="0">Heart (Mom's Heart)</option>
+                        <option value="1">Isaac</option>
+                        <option value="2">??? (Blue Baby)</option>
+                        <option value="3">Satan</option>
+                        <option value="4">The Lamb</option>
+                        <option value="5">Mega Satan</option>
+                        <option value="6">Boss Rush</option>
+                        <option value="7">Hush</option>
+                        <option value="8">Mother</option>
+                        <option value="9">The Beast</option>
+                        <option value="10">Ultra Greed</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="select-state">Modo / Dificultad:</label>
+                    <select id="select-state">
+                        <option value="0">Normal</option>
+                        <option value="1">Hard</option>
+                        <option value="2">Online Normal</option>
+                        <option value="3">Online Hard</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="input-scale">Multiplicador de Ampliación Personalizado:</label>
+                    <div class="input-row">
+                        <input type="number" id="input-scale" value="4" min="1" max="200">
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <button class="btn btn-primary" id="add-cart-btn" disabled>🛒 Añadir al Carrito</button>
+                    <button class="btn btn-secondary" id="export-btn" disabled>📥 Descargar PNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script defer src="mark.js"></script>
+</body>
+
+</html>

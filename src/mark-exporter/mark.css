@@ -1,0 +1,138 @@
+/* Component-specific styles for Mark Exporter */
+
+.mark-exporter-container {
+    display: flex;
+    gap: 30px;
+    padding: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--panel-alt);
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    min-width: 200px;
+}
+
+canvas#preview-canvas {
+    image-rendering: pixelated;
+    width: 160px;
+    height: 160px;
+    background: #151515;
+    border: 2px dashed #444;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.preview-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.resolution-text {
+    color: #4caf50;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.controls-section {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    flex: 1;
+    min-width: 280px;
+    max-width: 500px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #aaa;
+    font-weight: bold;
+}
+
+select,
+input[type="number"] {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: #121212;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:focus,
+input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(183, 28, 28, 0.3);
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-row input {
+    width: 100px;
+    text-align: center;
+}
+
+.actions-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.actions-row .btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .mark-exporter-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .preview-section {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .controls-section {
+        max-width: 100%;
+    }
+
+    .actions-row {
+        flex-direction: column;
+    }
+
+    .actions-row .btn {
+        width: 100%;
+    }
+}
