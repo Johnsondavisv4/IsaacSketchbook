@@ -260,7 +260,7 @@ function renderCatalog() {
         row.innerHTML = `
             <div class="thumb-pair">
                 <div class="thumb-container thumb-container--character">
-                    <img class="sprite-thumb" src="${CHARACTER_SRC}/${character.sprite}" alt="${character.nombre}" loading="lazy" decoding="async">
+                    <canvas class="sprite-thumb" width="85" height="85" aria-label="${character.nombre} sprite preview"></canvas>
                 </div>
                 <div class="thumb-container thumb-container--postit">
                     <canvas class="postit-thumb" width="85" height="85" aria-label="${character.nombre} post-it preview"></canvas>
@@ -287,6 +287,11 @@ function renderCatalog() {
         `;
 
         catalogList.appendChild(row);
+
+        const spriteCanvas = row.querySelector('canvas.sprite-thumb');
+        if (spriteCanvas) {
+            drawSpritePreview(spriteCanvas, `${CHARACTER_SRC}/${character.sprite}`);
+        }
 
         const postitCanvas = row.querySelector('canvas.postit-thumb');
         if (postitCanvas) {
@@ -336,6 +341,57 @@ function buildMarkTable(progressDocument) {
 
         marksTableBody.appendChild(row);
     });
+}
+
+const spriteCache = new Map();
+
+function drawSpritePreview(canvas, src) {
+    const ctx = canvas.getContext('2d');
+    const targetW = canvas.width || 85;
+    const targetH = canvas.height || 85;
+
+    ctx.clearRect(0, 0, targetW, targetH);
+    ctx.imageSmoothingEnabled = false;
+
+    const render = (img) => {
+        const w = img.naturalWidth || img.width;
+        const h = img.naturalHeight || img.height;
+        if (!w || !h) return;
+
+        let scale;
+        if (w > targetW || h > targetH) {
+            scale = Math.min(targetW / w, targetH / h);
+        } else {
+            scale = Math.floor(Math.min(targetW / w, targetH / h));
+            if (scale < 1) scale = 1;
+        }
+
+        const drawW = w * scale;
+        const drawH = h * scale;
+        const posX = Math.floor((targetW - drawW) / 2);
+        const posY = Math.floor((targetH - drawH) / 2);
+
+        ctx.clearRect(0, 0, targetW, targetH);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, w, h, posX, posY, drawW, drawH);
+    };
+
+    if (spriteCache.has(src)) {
+        const cachedImg = spriteCache.get(src);
+        if (cachedImg.complete) {
+            render(cachedImg);
+        } else {
+            cachedImg.addEventListener('load', () => render(cachedImg));
+        }
+    } else {
+        const img = new Image();
+        img.decoding = 'async';
+        img.onload = () => {
+            spriteCache.set(src, img);
+            render(img);
+        };
+        img.src = src;
+    }
 }
 
 function drawPreview(context, progressDocument, scale) {

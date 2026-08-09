@@ -29,6 +29,57 @@ async function fetchSprites() {
     }
 }
 
+const spriteCache = new Map();
+
+function drawSpritePreview(canvas, src) {
+    const ctx = canvas.getContext('2d');
+    const targetW = canvas.width || 85;
+    const targetH = canvas.height || 85;
+
+    ctx.clearRect(0, 0, targetW, targetH);
+    ctx.imageSmoothingEnabled = false;
+
+    const render = (img) => {
+        const w = img.naturalWidth || img.width;
+        const h = img.naturalHeight || img.height;
+        if (!w || !h) return;
+
+        let scale;
+        if (w > targetW || h > targetH) {
+            scale = Math.min(targetW / w, targetH / h);
+        } else {
+            scale = Math.floor(Math.min(targetW / w, targetH / h));
+            if (scale < 1) scale = 1;
+        }
+
+        const drawW = w * scale;
+        const drawH = h * scale;
+        const posX = Math.floor((targetW - drawW) / 2);
+        const posY = Math.floor((targetH - drawH) / 2);
+
+        ctx.clearRect(0, 0, targetW, targetH);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, w, h, posX, posY, drawW, drawH);
+    };
+
+    if (spriteCache.has(src)) {
+        const cachedImg = spriteCache.get(src);
+        if (cachedImg.complete) {
+            render(cachedImg);
+        } else {
+            cachedImg.addEventListener('load', () => render(cachedImg));
+        }
+    } else {
+        const img = new Image();
+        img.decoding = 'async';
+        img.onload = () => {
+            spriteCache.set(src, img);
+            render(img);
+        };
+        img.src = src;
+    }
+}
+
 function renderizarListaDeSprites() {
     listaSpritesRaw.sort((a, b) => {
         return ordenAscendente ? a.localeCompare(b) : b.localeCompare(a);
@@ -45,7 +96,7 @@ function renderizarListaDeSprites() {
                 <input type="checkbox" class="sprite-checkbox" value="${filename}">
             </div>
             <div class="thumb-container">
-                <img class="sprite-thumb" src="/public/${filename}" alt="preview">
+                <canvas class="sprite-thumb" width="85" height="85" aria-label="${filename} preview"></canvas>
             </div>
             <div class="file-link-container">
                 <span class="file-name-text" title="${filename}">${filename}</span>
@@ -66,6 +117,11 @@ function renderizarListaDeSprites() {
         row.querySelector('.sprite-checkbox').addEventListener('change', actualizarEstadoMasterCheckbox);
 
         filesContainer.appendChild(row);
+
+        const spriteCanvas = row.querySelector('canvas.sprite-thumb');
+        if (spriteCanvas) {
+            drawSpritePreview(spriteCanvas, `/public/${filename}`);
+        }
     });
 
     actualizarEstadoMasterCheckbox();
