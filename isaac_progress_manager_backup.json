@@ -5,7 +5,7 @@
     "Menu Actual": "tainted",
     "Mega Blast": "17/17",
     "Mega Mush": "17/17",
-    "Death Certificate": "19/34"
+    "Death Certificate": "20/34"
   },
   {
     "id": 1,
@@ -396,10 +396,10 @@
       "Satan": "No Mark",
       "The lamb": "No Mark",
       "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
+      "Boss Rush": "Hard",
       "Hush": "No Mark",
       "Mother": "No Mark",
-      "The Beast": "No Mark",
+      "The Beast": "Hard",
       "Ultra Greed": "No Mark",
       "Delirium": "No Mark"
     }
@@ -432,7 +432,7 @@
     "nombre": "Cain",
     "tipo": "tainted",
     "sprite": "Cain_02.png",
-    "Completado": false,
+    "Completado": true,
     "marcas": {
       "Heart": "Hard",
       "Isaac": "Hard",
@@ -444,7 +444,7 @@
       "Hush": "Hard",
       "Mother": "Hard",
       "The Beast": "Hard",
-      "Ultra Greed": "No Mark",
+      "Ultra Greed": "Hard",
       "Delirium": "Hard"
     }
   },
