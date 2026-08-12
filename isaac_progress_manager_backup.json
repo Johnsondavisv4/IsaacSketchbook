@@ -522,18 +522,18 @@
     "sprite": "Samson_02.png",
     "Completado": false,
     "marcas": {
-      "Heart": "No Mark",
-      "Isaac": "No Mark",
-      "???": "No Mark",
+      "Heart": "Hard",
+      "Isaac": "Hard",
+      "???": "Hard",
       "Satan": "No Mark",
       "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
+      "Mega Satan": "Hard",
+      "Boss Rush": "Hard",
       "Hush": "No Mark",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     }
   },
   {
@@ -544,14 +544,14 @@
     "sprite": "Azazel_02.png",
     "Completado": false,
     "marcas": {
-      "Heart": "No Mark",
+      "Heart": "Hard",
       "Isaac": "No Mark",
       "???": "No Mark",
       "Satan": "No Mark",
       "The lamb": "No Mark",
       "Mega Satan": "No Mark",
       "Boss Rush": "No Mark",
-      "Hush": "No Mark",
+      "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
