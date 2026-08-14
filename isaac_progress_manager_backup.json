@@ -545,17 +545,17 @@
     "Completado": false,
     "marcas": {
       "Heart": "Hard",
-      "Isaac": "No Mark",
-      "???": "No Mark",
+      "Isaac": "Hard",
+      "???": "Hard",
       "Satan": "Hard",
       "The lamb": "Hard",
-      "Mega Satan": "No Mark",
-      "Boss Rush": "No Mark",
+      "Mega Satan": "Hard",
+      "Boss Rush": "Hard",
       "Hush": "Hard",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     }
   },
   {
