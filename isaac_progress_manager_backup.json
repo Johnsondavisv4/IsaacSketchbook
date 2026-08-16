@@ -500,18 +500,18 @@
     "sprite": "Eve_02.png",
     "Completado": false,
     "marcas": {
-      "Heart": "No Mark",
+      "Heart": "Hard",
       "Isaac": "No Mark",
       "???": "No Mark",
-      "Satan": "No Mark",
-      "The lamb": "No Mark",
-      "Mega Satan": "No Mark",
+      "Satan": "Hard",
+      "The lamb": "Hard",
+      "Mega Satan": "Hard",
       "Boss Rush": "No Mark",
       "Hush": "No Mark",
       "Mother": "No Mark",
       "The Beast": "No Mark",
       "Ultra Greed": "No Mark",
-      "Delirium": "No Mark"
+      "Delirium": "Hard"
     }
   },
   {
