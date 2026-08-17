@@ -3,6 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import PouchDB from 'pouchdb';
+import { getSettings, saveSettings, resolveSaveFilePath, getSaveFilename } from './services/save-parser/SettingsService.js';
+import { parseSaveFile } from './services/save-parser/SaveParser.js';
+import { Character } from './services/save-parser/models/Character.js';
 
 const app = express();
 const PORT = 3000;
@@ -505,6 +508,100 @@ app.get('/api/sprites', (req, res) => {
         console.error('Error leyendo la carpeta public y subcarpetas', error);
         res.status(500).json({ error: "No se pudo leer la carpeta public" });
     }
+});
+
+// ==========================================
+// CONFIGURACIÓN DE GUARDADO (SETTINGS)
+// ==========================================
+
+app.get('/api/settings', (req, res) => {
+    const settings = getSettings();
+    const status = resolveSaveFilePath(settings);
+    res.json({
+        configured: Boolean(settings),
+        settings: settings || { version: 'Repentance+', slot: 1 },
+        filename: status.filename || (settings ? getSaveFilename(settings) : 'rep+persistentgamedata1.dat'),
+        exists: status.exists,
+        fullPath: status.fullPath
+    });
+});
+
+app.post('/api/settings', (req, res) => {
+    const { version, slot, characterMenu } = req.body || {};
+    const current = getSettings() || {};
+    const targetVersion = version || current.version || 'Repentance+';
+    const targetSlot = slot !== undefined ? slot : (current.slot || 1);
+    const targetMenu = characterMenu || current.characterMenu || 'normal';
+
+    const saved = saveSettings({ version: targetVersion, slot: targetSlot, characterMenu: targetMenu });
+    const status = resolveSaveFilePath(saved);
+    res.json({
+        ok: true,
+        configured: true,
+        settings: saved,
+        filename: status.filename,
+        exists: status.exists,
+        fullPath: status.fullPath
+    });
+});
+
+app.post('/api/settings/check', (req, res) => {
+    const { version, slot } = req.body || {};
+    const status = resolveSaveFilePath({ version, slot });
+    res.json(status);
+});
+
+// ==========================================
+// PROGRESS MANAGER BETA (NATIVE MODELS & SAVE READ)
+// ==========================================
+
+app.get('/api/beta/progress', (req, res) => {
+    const settings = getSettings();
+    if (!settings) {
+        return res.json({
+            configured: false,
+            settings: { version: 'Repentance+', slot: 1, characterMenu: 'normal' },
+            saveFile: '',
+            saveExists: false,
+            characters: [],
+            achievements: [],
+            items: []
+        });
+    }
+
+    const status = resolveSaveFilePath(settings);
+
+    let parsed = null;
+    if (status.exists && status.fullPath) {
+        try {
+            const buf = fs.readFileSync(status.fullPath);
+            parsed = parseSaveFile(buf, settings.version);
+        } catch (e) {
+            console.error('Error parseando save en /api/beta/progress:', e);
+        }
+    }
+
+    let characters = [];
+    if (parsed && parsed.characters) {
+        characters = parsed.characters.map(c => c.toJSON());
+    } else {
+        for (let id = 0; id <= 33; id++) {
+            characters.push(new Character(id).toJSON());
+        }
+    }
+
+    let achievements = parsed?.achievements ? parsed.achievements.map(a => a.toJSON()) : [];
+    let items = parsed?.items ? parsed.items.map(i => i.toJSON()) : [];
+
+    res.json({
+        configured: true,
+        settings,
+        saveFile: status.filename,
+        saveExists: status.exists,
+        characters,
+        achievements,
+        items
+    });
 });
 
 async function startServer() {

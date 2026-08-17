@@ -18,126 +18,200 @@
 
     <div class="workspace">
         <div class="header-area">
-            <h1>📈 Progress Manager <span style="font-size: 16px; vertical-align: middle; background: #ff5252; color: #fff; padding: 2px 8px; border-radius: 4px;">BETA</span></h1>
-            <div class="subtitle">Catálogo generado desde <strong>players.xml</strong>, edición directa con PouchDB local y exportación JSX para Photoshop.</div>
+            <h1>📈 Progress Manager <span
+                    style="font-size: 16px; vertical-align: middle; background: #ff5252; color: #fff; padding: 2px 8px; border-radius: 4px;">BETA</span>
+            </h1>
+            <div class="subtitle">Sincronización automática de guardado de Steam (.dat), renderizado dual de Post-its
+                (Solo y Online) y exportación JSX para Photoshop.</div>
         </div>
 
-        <div class="options-panel panel">
-            <div class="info-group">
-                <span class="info-label">Catálogo</span>
-                <p class="info-text">Filtra personajes entre normales y tainted, revisa si ya existe progreso guardado y abre el editor de post-it.</p>
-            </div>
-            <div class="toolbar">
-                <div class="toolbar__filters">
-                    <span class="toolbar__label">Filtrar catálogo</span>
-                    <label class="radio-chip">
-                        <input type="radio" name="catalog-filter" value="normal" checked>
-                        <span>Normales</span>
-                    </label>
-                    <label class="radio-chip">
-                        <input type="radio" name="catalog-filter" value="tainted">
-                        <span>Tainted</span>
-                    </label>
-                </div>
-                <div class="toolbar__meta">
-                    <span class="meta-pill" id="catalog-count-pill">0 personajes</span>
-                    <span class="meta-pill meta-pill--muted" id="sync-status-pill">Cargando catálogo...</span>
-                    <button type="button" class="toolbar-action-btn" id="export-db-btn">Generar Backup Local</button>
-                </div>
-            </div>
-            <div class="indicators-bar">
-                <div class="indicator-chip" id="indicator-mega-blast" hidden>
-                    <img src="/public/MegaBlast.png" alt="Mega Blast" class="indicator-icon">
-                    <div class="indicator-info">
-                        <span class="indicator-label">Mega Blast</span>
-                        <span class="indicator-value" id="mega-blast-value">0/17</span>
-                    </div>
-                </div>
-                <div class="indicator-chip" id="indicator-mega-mush" hidden>
-                    <img src="/public/MegaMush.png" alt="Mega Mush" class="indicator-icon">
-                    <div class="indicator-info">
-                        <span class="indicator-label">Mega Mush</span>
-                        <span class="indicator-value" id="mega-mush-value">0/17</span>
-                    </div>
-                </div>
-                <div class="indicator-chip" id="indicator-death-certificate">
-                    <img src="/public/DeathCertificate.png" alt="Death Certificate" class="indicator-icon">
-                    <div class="indicator-info">
-                        <span class="indicator-label">Death Certificate</span>
-                        <span class="indicator-value" id="death-certificate-value">0/34</span>
-                    </div>
-                </div>
-            </div>
+        <!-- 3 Pestañas Principales -->
+        <div class="main-tabs-bar">
+            <button type="button" class="main-tab-btn active" data-tab="characters">🧙‍♂️ Personajes</button>
+            <button type="button" class="main-tab-btn" data-tab="items">📦 Items</button>
+            <button type="button" class="main-tab-btn" data-tab="achievements">🏆 Logros</button>
         </div>
 
-        <div class="repo-box panel">
-            <div class="repo-header repo-header--progress">
-                <div class="repo-column repo-column--thumb">Sprite / Post-it</div>
-                <div class="repo-column">Personaje</div>
-                <div class="repo-column repo-column--status">Estado</div>
-                <div class="repo-column repo-column--actions">Editar</div>
-                <div class="repo-column repo-column--actions">Descargar (.jsx)</div>
-            </div>
-
-            <div class="catalog-table-wrap">
-                <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="editor-modal" class="modal-overlay" hidden>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="editor-modal-title">
-            <header class="modal-header">
-                <div>
-                    <p class="eyebrow">Editar post-it</p>
-                    <h2 id="editor-modal-title">Personaje</h2>
+        <!-- SECCIÓN 1: PERSONAJES -->
+        <div id="tab-characters-content" class="tab-content active">
+            <div class="options-panel panel">
+                <div class="info-group">
+                    <span class="info-label">Catálogo de Personajes</span>
+                    <p class="info-text">Explora las marcas de completado en solitario y en cooperativo online obtenidas
+                        de tu partida de Steam.</p>
                 </div>
-                <button type="button" class="icon-button" id="editor-close-btn">✕</button>
-            </header>
-
-            <div class="editor-layout">
-                <section class="preview-card panel">
-                    <div class="preview-card__top">
-                        <span class="preview-card__label">Vista previa</span>
-                        <span class="preview-card__badge" id="editor-type-badge">normal</span>
+                <div class="toolbar">
+                    <div class="toolbar__filters">
+                        <span class="toolbar__label">Filtrar personajes</span>
+                        <label class="radio-chip">
+                            <input type="radio" name="catalog-filter" value="normal" checked>
+                            <span>Normales (17)</span>
+                        </label>
+                        <label class="radio-chip">
+                            <input type="radio" name="catalog-filter" value="tainted">
+                            <span>Tainted (17)</span>
+                        </label>
                     </div>
-                    <canvas id="preview-canvas" width="96" height="96"></canvas>
-                    <p class="preview-note">Canvas conectado a /public/completion_widget.png.</p>
-                </section>
-
-                <section class="editor-card panel">
-                    <div class="editor-card__top">
-                        <div>
-                            <h3>Marcas</h3>
-                            <p>Selecciona el estado de cada marca y guarda el documento completo en PouchDB.</p>
+                    <div class="toolbar__meta">
+                        <span class="meta-pill" id="catalog-count-pill">17 personajes</span>
+                        <span class="meta-pill" id="settings-status-pill" style="cursor: pointer;"
+                            title="Configuración de guardado de Steam (Versión y Slot)">⚙️ <span
+                                id="settings-status-text">Detectando...</span></span>
+                        <span class="meta-pill meta-pill--muted" id="sync-status-pill">Sincronizando con Steam...</span>
+                    </div>
+                </div>
+                <div class="indicators-bar">
+                    <div class="indicator-chip" id="indicator-mega-blast">
+                        <img src="/public/MegaBlast.png" alt="Mega Blast" class="indicator-icon">
+                        <div class="indicator-info">
+                            <span class="indicator-label">Mega Blast</span>
+                            <span class="indicator-value" id="mega-blast-value">0/17</span>
                         </div>
                     </div>
-
-                    <div class="mark-table-wrap">
-                        <table class="mark-table">
-                            <thead>
-                                <tr>
-                                    <th>Marca</th>
-                                    <th>No Mark</th>
-                                    <th>Normal</th>
-                                    <th>Hard</th>
-                                    <th>Online N.</th>
-                                    <th>Online H.</th>
-                                </tr>
-                            </thead>
-                            <tbody id="marks-table-body"></tbody>
-                        </table>
+                    <div class="indicator-chip" id="indicator-mega-mush">
+                        <img src="/public/MegaMush.png" alt="Mega Mush" class="indicator-icon">
+                        <div class="indicator-info">
+                            <span class="indicator-label">Mega Mush</span>
+                            <span class="indicator-value" id="mega-mush-value">0/17</span>
+                        </div>
                     </div>
-
-                    <div class="editor-actions">
-                        <button type="button" class="btn btn-secondary" id="editor-cancel-btn">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="editor-save-btn">💾 Guardar en Base de Datos</button>
+                    <div class="indicator-chip" id="indicator-death-certificate">
+                        <img src="/public/DeathCertificate.png" alt="Death Certificate" class="indicator-icon">
+                        <div class="indicator-info">
+                            <span class="indicator-label">Death Certificate</span>
+                            <span class="indicator-value" id="death-certificate-value">0/34</span>
+                        </div>
                     </div>
-                </section>
+                </div>
+            </div>
+
+            <div class="repo-box panel">
+                <div class="repo-header repo-header--dual-postit">
+                    <div class="repo-column repo-column--thumb">Sprite / Post-it</div>
+                    <div class="repo-column repo-column--char">Personaje</div>
+                    <div class="repo-column repo-column--status">Progreso</div>
+                    <div class="repo-column repo-column--actions">Descargar (.jsx)</div>
+                </div>
+
+                <div class="catalog-table-wrap">
+                    <div id="catalog-list" class="catalog-list" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: ITEMS (Preparado para la siguiente fase) -->
+        <div id="tab-items-content" class="tab-content" hidden>
+            <div class="options-panel panel">
+                <div class="info-group">
+                    <span class="info-label">Coleccionables (Items)</span>
+                    <p class="info-text">Compendio oficial de 732 coleccionables desbloqueados y vistos en partida.</p>
+                </div>
+                <div class="catalog-table-wrap" style="padding: 20px; text-align: center; color: #888;">
+                    <p>📦 Sección de Coleccionables en preparación...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: LOGROS (Preparado para la siguiente fase) -->
+        <div id="tab-achievements-content" class="tab-content" hidden>
+            <div class="options-panel panel">
+                <div class="info-group">
+                    <span class="info-label">Logros (Secretos)</span>
+                    <p class="info-text">Listado completo de logros con sus requisitos de desbloqueo oficiales.</p>
+                </div>
+                <div class="catalog-table-wrap" style="padding: 20px; text-align: center; color: #888;">
+                    <p>🏆 Sección de Logros en preparación...</p>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Configuración Inicial (Versión y Slot de Guardado) -->
+    <div id="settings-modal" class="modal-overlay" hidden>
+        <div class="modal-dialog modal-dialog--settings" role="dialog" aria-modal="true"
+            aria-labelledby="settings-modal-title">
+            <header class="modal-header">
+                <div>
+                    <p class="eyebrow">Ajustes de Sincronización</p>
+                    <h2 id="settings-modal-title">⚙️ Configuración del Archivo de Guardado</h2>
+                </div>
+                <button type="button" class="icon-button" id="settings-close-btn" aria-label="Cerrar">✕</button>
+            </header>
+
+            <div class="settings-modal-body">
+                <p class="settings-intro">Selecciona la versión del juego y el slot de guardado que deseas leer
+                    automáticamente de tu carpeta de Steam.</p>
+
+                <div class="settings-section">
+                    <label class="settings-section-title">1. Versión del Juego</label>
+                    <div class="settings-options-grid">
+                        <label class="settings-card-option">
+                            <input type="radio" name="setting-version" value="Repentance+">
+                            <div class="settings-card-content">
+                                <span class="settings-card-icon">🟢</span>
+                                <div>
+                                    <strong>The Binding of Isaac: Repentance+</strong>
+                                    <small>Versión actual con Cooperativo Online oficial (Prefijo "rep+")</small>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="settings-card-option">
+                            <input type="radio" name="setting-version" value="Repentance">
+                            <div class="settings-card-content">
+                                <span class="settings-card-icon">🔴</span>
+                                <div>
+                                    <strong>The Binding of Isaac: Repentance</strong>
+                                    <small>Versión base clásica sin cooperativo online (Prefijo "rep_")</small>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <label class="settings-section-title">2. Slot de Guardado</label>
+                    <div class="settings-slots-grid">
+                        <label class="slot-card-option">
+                            <input type="radio" name="setting-slot" value="1">
+                            <div class="slot-card-content">
+                                <strong>Slot 1</strong>
+                            </div>
+                        </label>
+                        <label class="slot-card-option">
+                            <input type="radio" name="setting-slot" value="2">
+                            <div class="slot-card-content">
+                                <strong>Slot 2</strong>
+                            </div>
+                        </label>
+                        <label class="slot-card-option">
+                            <input type="radio" name="setting-slot" value="3">
+                            <div class="slot-card-content">
+                                <strong>Slot 3</strong>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-preview-box">
+                    <div class="preview-row">
+                        <span class="preview-label">Archivo calculado:</span>
+                        <code class="preview-filename" id="preview-save-filename">rep+persistentgamedata1.dat</code>
+                    </div>
+                    <div class="preview-row">
+                        <span class="preview-label">Estado en Steam:</span>
+                        <span class="preview-status" id="preview-save-status">🔍 Comprobando...</span>
+                    </div>
+                </div>
+
+                <div class="settings-modal-actions">
+                    <button type="button" class="btn btn-secondary" id="settings-cancel-btn">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="settings-save-btn">💾 Guardar Configuración</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Selección de Variante de Sprite -->
     <div id="sprite-choice-modal" class="modal-overlay" hidden>
         <div class="modal-dialog modal-dialog--choice" role="dialog" aria-modal="true" aria-labelledby="sprite-choice-title">
             <header class="modal-header">

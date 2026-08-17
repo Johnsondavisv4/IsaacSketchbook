@@ -1,32 +1,21 @@
-const API_CATALOG = '/api/catalogo-progreso';
-const API_PROGRESS = '/api/progreso';
+const API_PROGRESS = '/api/beta/progress';
 const PUBLIC_BASE = '/public';
 const CHARACTER_SRC = `${PUBLIC_BASE}/Characters`;
 const WIDGET_SRC = `${PUBLIC_BASE}/completion_widget.png`;
 
 const MARKS = [
-    { key: 'Heart', label: 'Heart', x: 22, y: 7, cx: 64, visible: true },
-    { key: 'Isaac', label: 'Isaac', x: 34, y: 17, cx: 32, visible: true },
-    { key: '???', label: '???', x: 49, y: 20, cx: 0, visible: true },
-    { key: 'Satan', label: 'Satan', x: 25, y: 23, cx: 48, visible: true },
-    { key: 'The lamb', label: 'The Lamb', x: 37, y: 32, cx: 16, visible: true },
-    { key: 'Mega Satan', label: 'Mega Satan', x: 54, y: 37, cx: 112, visible: true },
-    { key: 'Boss Rush', label: 'Boss Rush', x: 14, y: 36, cx: 80, visible: true },
-    { key: 'Hush', label: 'Hush', x: 11, y: 51, cx: 128, visible: true },
-    { key: 'Mother', label: 'Mother', x: 27, y: 49, cx: 160, visible: true },
-    { key: 'The Beast', label: 'The Beast', x: 41, y: 54, cx: 176, visible: true },
-    { key: 'Ultra Greed', label: 'Ultra Greed', x: 64, y: 16, cx: 144, visible: true },
-    { key: 'Delirium', label: 'Delirium', visible: false }
-];
-
-const MARK_STATE_LABELS = ['No Mark', 'Normal', 'Hard', 'Online Normal', 'Online Hard'];
-
-const MARK_STATE_OPTIONS = [
-    { value: 'No Mark', label: 'No Mark' },
-    { value: 'Normal', label: 'Normal' },
-    { value: 'Hard', label: 'Hard' },
-    { value: 'Online Normal', label: 'Online Normal' },
-    { value: 'Online Hard', label: 'Online Hard' }
+    { key: "Mom's Heart", label: "Mom's Heart", x: 22, y: 7, cx: 64, visible: true },
+    { key: "Isaac", label: "Isaac", x: 34, y: 17, cx: 32, visible: true },
+    { key: "Blue Baby", label: "Blue Baby (???", x: 49, y: 20, cx: 0, visible: true },
+    { key: "Satan", label: "Satan", x: 25, y: 23, cx: 48, visible: true },
+    { key: "The Lamb", label: "The Lamb", x: 37, y: 32, cx: 16, visible: true },
+    { key: "Mega Satan", label: "Mega Satan", x: 54, y: 37, cx: 112, visible: true },
+    { key: "Boss Rush", label: "Boss Rush", x: 14, y: 36, cx: 80, visible: true },
+    { key: "Hush", label: "Hush", x: 11, y: 51, cx: 128, visible: true },
+    { key: "Mother", label: "Mother", x: 27, y: 49, cx: 160, visible: true },
+    { key: "The Beast", label: "The Beast", x: 41, y: 54, cx: 176, visible: true },
+    { key: "Greed", label: "Greed / Ultra Greed", x: 64, y: 16, cx: 144, visible: true },
+    { key: "Delirium", label: "Delirium", visible: false }
 ];
 
 const PAPER_CROPS = [
@@ -44,154 +33,108 @@ const PAPER_CROPS = [
 
 const STATE_Y_CROP = [112, 112, 96, 320, 336];
 const STATE_ALPHA = [105 / 255, 1, 1, 1, 1];
-const EMPTY_MARKS = {
-    Heart: 'No Mark',
-    Isaac: 'No Mark',
-    '???': 'No Mark',
-    Satan: 'No Mark',
-    'The lamb': 'No Mark',
-    'Mega Satan': 'No Mark',
-    'Boss Rush': 'No Mark',
-    Hush: 'No Mark',
-    Mother: 'No Mark',
-    'The Beast': 'No Mark',
-    'Ultra Greed': 'No Mark',
-    Delirium: 'No Mark'
-};
 
+// Elementos DOM
 const catalogList = document.getElementById('catalog-list');
 const catalogCountPill = document.getElementById('catalog-count-pill');
 const syncStatusPill = document.getElementById('sync-status-pill');
-const editorModal = document.getElementById('editor-modal');
-const editorTitle = document.getElementById('editor-modal-title');
-const editorTypeBadge = document.getElementById('editor-type-badge');
-const editorCloseBtn = document.getElementById('editor-close-btn');
-const editorCancelBtn = document.getElementById('editor-cancel-btn');
-const editorSaveBtn = document.getElementById('editor-save-btn');
-const exportDbBtn = document.getElementById('export-db-btn');
-const previewCanvas = document.getElementById('preview-canvas');
-const marksTableBody = document.getElementById('marks-table-body');
+const settingsStatusPill = document.getElementById('settings-status-pill');
+const settingsStatusText = document.getElementById('settings-status-text');
+
+const settingsModal = document.getElementById('settings-modal');
+const settingsCloseBtn = document.getElementById('settings-close-btn');
+const settingsCancelBtn = document.getElementById('settings-cancel-btn');
+const settingsSaveBtn = document.getElementById('settings-save-btn');
+const previewSaveFilename = document.getElementById('preview-save-filename');
+const previewSaveStatus = document.getElementById('preview-save-status');
+
 const spriteChoiceModal = document.getElementById('sprite-choice-modal');
 const spriteChoiceCloseBtn = document.getElementById('sprite-choice-close-btn');
 const spriteChoiceGrid = document.getElementById('sprite-choice-grid');
+
+const indicatorMegaBlast = document.getElementById('indicator-mega-blast');
+const indicatorMegaMush = document.getElementById('indicator-mega-mush');
+const indicatorDeathCert = document.getElementById('indicator-death-certificate');
+const megaBlastValue = document.getElementById('mega-blast-value');
+const megaMushValue = document.getElementById('mega-mush-value');
+const deathCertValue = document.getElementById('death-certificate-value');
 
 const widgetImage = new Image();
 widgetImage.decoding = 'async';
 widgetImage.src = WIDGET_SRC;
 
+const spriteCache = new Map();
+
 const state = {
+    activeTab: 'characters',
     filter: 'normal',
-    catalog: [],
-    progressById: new Map(),
-    activeCharacter: null,
-    activeDocument: null,
-    spriteChoiceResolver: null,
+    characters: [],
+    achievements: [],
+    items: [],
+    settings: { version: 'Repentance+', slot: 1 },
+    saveExists: false,
     widgetReady: false,
-    catalogReady: false
+    spriteChoiceResolver: null
 };
 
-function clone(value) {
-    return JSON.parse(JSON.stringify(value));
-}
+// ==========================================
+// INFORMACIÓN Y VARIANTES DE SPRITES
+// ==========================================
 
-function normalizeMarkValue(value) {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-        const index = Math.min(MARK_STATE_LABELS.length - 1, Math.max(0, value));
-        return MARK_STATE_LABELS[index];
+function getCharacterSpriteInfo(character) {
+    const name = character.character;
+    const baseSprite = name === 'Jacob & Esau' ? 'Jacob and Esau.png' : `${name}.png`;
+    const variants = [];
+
+    if (name === 'Judas') {
+        variants.push({ key: 'dark_judas', title: 'Dark Judas', file: 'Dark Judas.png' });
+    } else if (name === 'The Forgotten') {
+        variants.push({ key: 'forgotten_soul', title: 'The Soul', file: 'The Forgotten soul.png' });
+        variants.push({ key: 'forgotten_body', title: 'The Body', file: 'The Forgotten body.png' });
+    } else if (name === 'Lilith') {
+        variants.push({ key: 'lilith_a', title: 'Lilith (Alt)', file: 'Lilith a.png' });
+    } else if (name === 'Jacob & Esau') {
+        variants.push({ key: 'jacob', title: 'Jacob', file: 'Jacob.png' });
+        variants.push({ key: 'esau', title: 'Esau', file: 'Esau.png' });
+    } else if (name === 'Tainted Forgotten') {
+        variants.push({ key: 't_forgotten_soul', title: 'Tainted Soul', file: 'Tainted Forgotten soul.png' });
+        variants.push({ key: 't_forgotten_body', title: 'Tainted Body', file: 'Tainted Forgotten body.png' });
+    } else if (name === 'Tainted Lazarus') {
+        variants.push({ key: 't_lazarus_a', title: 'Tainted Lazarus A', file: 'Tainted Lazarus a.png' });
+        variants.push({ key: 't_lazarus_b', title: 'Tainted Lazarus B', file: 'Tainted Lazarus b.png' });
+    } else if (name === 'Tainted Lost') {
+        variants.push({ key: 't_lost_b', title: 'Tainted Lost (Alt)', file: 'Tainted Lost b.png' });
     }
 
-    if (typeof value === 'string') {
-        if (MARK_STATE_LABELS.includes(value)) {
-            return value;
-        }
-
-        const numericValue = Number(value);
-        if (Number.isFinite(numericValue)) {
-            const index = Math.min(MARK_STATE_LABELS.length - 1, Math.max(0, numericValue));
-            return MARK_STATE_LABELS[index];
-        }
-    }
-
-    return MARK_STATE_LABELS[0];
-}
-
-function createDefaultDocument(character) {
-    const document = {
-        id: character.id,
-        _id: character._id,
-        nombre: character.nombre,
-        tipo: character.tipo,
-        sprite: character.sprite,
-        marcas: clone(EMPTY_MARKS)
+    return {
+        sprite: baseSprite,
+        hasVariants: variants.length > 0,
+        variants
     };
-
-    if (character.sprite2) {
-        document.sprite2 = character.sprite2;
-    }
-
-    return document;
 }
 
-function normalizeDocument(character, doc) {
-    const base = createDefaultDocument(character);
-    if (!doc) {
-        return base;
-    }
+// ==========================================
+// UTILIDADES
+// ==========================================
 
-    const normalized = {
-        ...base,
-        ...doc,
-        marcas: {
-            ...clone(EMPTY_MARKS),
-            ...Object.fromEntries(
-                Object.entries(doc.marcas || {}).map(([key, value]) => [key, normalizeMarkValue(value)])
-            )
-        }
-    };
-
-    if (character.sprite2) {
-        normalized.sprite2 = character.sprite2;
-    } else {
-        delete normalized.sprite2;
-    }
-
-    normalized.id = character.id;
-    normalized._id = character._id;
-    normalized.nombre = character.nombre;
-    normalized.tipo = character.tipo;
-    normalized.sprite = character.sprite;
-
-    return normalized;
+function getMarkDifficultyCode(val) {
+    if (!val || val === 'None') return 0;
+    if (val === 'Normal') return 1;
+    if (val === 'Hard') return 2;
+    if (val === 'Online Normal') return 3;
+    if (val === 'Online Hard') return 4;
+    return 0;
 }
 
-function hasSavedMarks(document) {
-    return Boolean(document && document.marcas && Object.values(document.marcas).some((value) => normalizeMarkValue(value) !== 'No Mark'));
+function countHardMarks(marksObj) {
+    if (!marksObj) return 0;
+    return Object.values(marksObj).filter(v => v === 'Hard' || v === 'Online Hard').length;
 }
 
-function hasAnyProgressDocument(document) {
-    return Boolean(document && document._id);
+function countTotalMarks(marksObj) {
+    if (!marksObj) return 0;
+    return Object.values(marksObj).filter(v => v && v !== 'None').length;
 }
-
-function getMarkValue(document, key) {
-    return MARK_STATE_LABELS.indexOf(normalizeMarkValue(document?.marcas?.[key]));
-}
-
-function getCharacterById(characterId) {
-    return state.catalog.find((character) => character._id === characterId) || null;
-}
-
-function openModal(modal) {
-    modal.hidden = false;
-    requestAnimationFrame(() => modal.classList.add('is-open'));
-}
-
-function closeModal(modal) {
-    modal.classList.remove('is-open');
-    window.setTimeout(() => {
-        modal.hidden = true;
-    }, 180);
-}
-
 
 async function fetchJson(url, options) {
     const response = await fetch(url, options);
@@ -201,154 +144,40 @@ async function fetchJson(url, options) {
     return response.json();
 }
 
-async function loadCatalog() {
-    const catalog = await fetchJson(API_CATALOG);
-    state.catalog = catalog;
-    state.catalogReady = true;
-}
-
-async function preloadProgressState() {
-    try {
-        const docs = await fetchJson('/api/progreso/export');
-        for (const doc of docs) {
-            if (doc && doc._id) {
-                state.progressById.set(doc._id, doc);
-            }
-        }
-    } catch (error) {
-        console.error('No se pudo sincronizar el progreso', error);
-    }
-}
-
-function getFilteredCatalog() {
-    return state.catalog.filter((character) => character.tipo === state.filter);
-}
-
-function updateIndicatorsVisibility() {
-    const isNormalTab = state.filter === 'normal';
-    const megaBlastChip = document.getElementById('indicator-mega-blast');
-    const megaMushChip = document.getElementById('indicator-mega-mush');
-
-    if (megaBlastChip) megaBlastChip.hidden = !isNormalTab;
-    if (megaMushChip) megaMushChip.hidden = !isNormalTab;
-}
-
-function renderCatalog() {
-    updateIndicatorsVisibility();
-    const catalog = getFilteredCatalog();
-    catalogCountPill.textContent = `${catalog.length} personajes`;
-    syncStatusPill.textContent = state.catalogReady ? 'PouchDB sembrada y sincronizada' : 'Cargando catálogo...';
-
-    catalogList.innerHTML = '';
-
-    if (!catalog.length) {
-        const emptyRow = document.createElement('div');
-        emptyRow.className = 'catalog-row';
-        emptyRow.innerHTML = '<div class="character-copy"><strong>Sin resultados</strong><span>No hay personajes para este filtro.</span></div>';
-        catalogList.appendChild(emptyRow);
-        return;
-    }
-
-    for (const character of catalog) {
-        const row = document.createElement('div');
-        row.className = 'catalog-row';
-
-        const saved = state.progressById.get(character._id) || null;
-        const active = hasSavedMarks(saved);
-        const progressDocument = normalizeDocument(character, saved);
-
-        row.innerHTML = `
-            <div class="thumb-pair">
-                <div class="thumb-container thumb-container--character">
-                    <canvas class="sprite-thumb" width="85" height="85" aria-label="${character.nombre} sprite preview"></canvas>
-                </div>
-                <div class="thumb-container thumb-container--postit">
-                    <canvas class="postit-thumb" width="85" height="85" aria-label="${character.nombre} post-it preview"></canvas>
-                </div>
-            </div>
-            <div class="character-copy">
-                <strong>${character.nombre}</strong>
-                <span>${character.tipo} · ${character._id}</span>
-            </div>
-            <div class="save-indicator ${active ? 'is-active' : ''}" title="${active ? 'Progreso guardado' : 'Sin marcas guardadas'}">
-                <span class="save-indicator__dot"></span>
-                <span>${active ? 'Guardado' : 'Vacío'}</span>
-            </div>
-            <div class="row-actions">
-                <button type="button" class="btn btn-secondary" data-action="edit" data-id="${character._id}">📝 Editar Post-it</button>
-            </div>
-            <div class="row-actions">
-                <div class="btn-group-download">
-                    <button type="button" class="btn-opt btn-opt--sprite" data-action="download-sprite" data-id="${character._id}" title="Descargar solo el sprite en JSX">🖼️ Sprite</button>
-                    <button type="button" class="btn-opt btn-opt--postit" data-action="download-postit" data-id="${character._id}" title="Descargar solo la nota de Post-it en JSX">📜 Post-it</button>
-                    <button type="button" class="btn-opt btn-opt--full" data-action="download-full" data-id="${character._id}" title="Descargar Pack Completo (Post-it + Sprite)">📦 Pack</button>
-                </div>
-            </div>
-        `;
-
-        catalogList.appendChild(row);
-
-        const spriteCanvas = row.querySelector('canvas.sprite-thumb');
-        if (spriteCanvas) {
-            drawSpritePreview(spriteCanvas, `${CHARACTER_SRC}/${character.sprite}`);
-        }
-
-        const postitCanvas = row.querySelector('canvas.postit-thumb');
-        if (postitCanvas) {
-            drawPreview(postitCanvas.getContext('2d'), progressDocument, 85 / 96);
-        }
-    }
-}
-
-function buildMarkTable(progressDocument) {
-    marksTableBody.innerHTML = '';
-
-    MARKS.forEach((mark, index) => {
-        const row = document.createElement('tr');
-        row.className = 'mark-row';
-
-        const nameCell = document.createElement('td');
-        nameCell.textContent = mark.label;
-        row.appendChild(nameCell);
-
-        const groupName = mark.key === 'Delirium' ? 'mark-delirium' : `mark-${index}`;
-
-        for (const option of MARK_STATE_OPTIONS) {
-            const cell = document.createElement('td');
-
-            const label = document.createElement('label');
-            label.className = 'touch-label';
-
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.name = groupName;
-            input.value = String(option.value);
-            input.checked = normalizeMarkValue(progressDocument?.marcas?.[mark.key]) === option.value;
-            input.setAttribute('aria-label', `${mark.label} - ${option.label}`);
-
-            input.addEventListener('change', () => {
-                if (!state.activeDocument) {
-                    return;
-                }
-                state.activeDocument.marcas[mark.key] = option.value;
-                drawPreview(previewCanvas.getContext('2d'), state.activeDocument, 1);
-            });
-
-            label.appendChild(input);
-            cell.appendChild(label);
-            row.appendChild(cell);
-        }
-
-        marksTableBody.appendChild(row);
+function waitForImage(image) {
+    if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        image.addEventListener('load', () => resolve(), { once: true });
+        image.addEventListener('error', reject, { once: true });
     });
 }
 
-const spriteCache = new Map();
+async function ensureWidgetReady() {
+    if (state.widgetReady) return;
+    await waitForImage(widgetImage);
+    state.widgetReady = true;
+}
+
+function openModal(modal) {
+    if (!modal) return;
+    modal.hidden = false;
+    requestAnimationFrame(() => modal.classList.add('is-open'));
+}
+
+function closeModal(modal) {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    setTimeout(() => { modal.hidden = true; }, 180);
+}
+
+// ==========================================
+// RENDERIZADO DE SPRITES Y POST-ITS
+// ==========================================
 
 function drawSpritePreview(canvas, src) {
     const ctx = canvas.getContext('2d');
-    const targetW = canvas.width || 85;
-    const targetH = canvas.height || 85;
+    const targetW = canvas.width || 76;
+    const targetH = canvas.height || 76;
 
     ctx.clearRect(0, 0, targetW, targetH);
     ctx.imageSmoothingEnabled = false;
@@ -381,7 +210,7 @@ function drawSpritePreview(canvas, src) {
         if (cachedImg.complete) {
             render(cachedImg);
         } else {
-            cachedImg.addEventListener('load', () => render(cachedImg));
+            cachedImg.addEventListener('load', () => render(cachedImg), { once: true });
         }
     } else {
         const img = new Image();
@@ -394,40 +223,35 @@ function drawSpritePreview(canvas, src) {
     }
 }
 
-function drawPreview(context, progressDocument, scale) {
-    if (!widgetImage.complete) {
-        return;
-    }
+function drawPostitOnCanvas(canvas, character, marksObj) {
+    const context = canvas.getContext('2d');
+    if (!context || !state.widgetReady) return;
 
-    const canvasWidth = 96 * scale;
-    const canvasHeight = 96 * scale;
-    context.clearRect(0, 0, canvasWidth, canvasHeight);
+    const scale = canvas.width / 96;
+    context.clearRect(0, 0, canvas.width, canvas.height);
     context.imageSmoothingEnabled = false;
     context.globalAlpha = 1;
 
-    const typeOffset = progressDocument.tipo === 'tainted' ? 5 : 0;
-    const deliriumValue = getMarkValue(progressDocument, 'Delirium');
-    const paper = PAPER_CROPS[Math.max(0, Math.min(PAPER_CROPS.length - 1, typeOffset + deliriumValue))];
+    const typeOffset = character.tainted ? 5 : 0;
+    const deliriumCode = getMarkDifficultyCode(marksObj?.['Delirium']);
+    const paperIdx = Math.max(0, Math.min(PAPER_CROPS.length - 1, typeOffset + deliriumCode));
+    const paper = PAPER_CROPS[paperIdx];
 
     if (paper) {
-        context.drawImage(widgetImage, paper.x, paper.y, 96, 96, 0, 0, canvasWidth, canvasHeight);
+        context.drawImage(widgetImage, paper.x, paper.y, 96, 96, 0, 0, canvas.width, canvas.height);
     }
 
     for (const mark of MARKS) {
-        if (!mark.visible) {
-            continue;
-        }
+        if (!mark.visible) continue;
+        const markVal = marksObj?.[mark.key];
+        const code = getMarkDifficultyCode(markVal);
+        if (code === 0) continue;
 
-        const value = getMarkValue(progressDocument, mark.key);
-        if (value === 0) {
-            continue;
-        }
-
-        context.globalAlpha = STATE_ALPHA[value];
+        context.globalAlpha = STATE_ALPHA[code] || 1;
         context.drawImage(
             widgetImage,
             mark.cx,
-            STATE_Y_CROP[value],
+            STATE_Y_CROP[code],
             16,
             16,
             mark.x * scale,
@@ -439,125 +263,170 @@ function drawPreview(context, progressDocument, scale) {
     }
 }
 
-function waitForImage(image) {
-    if (image.complete && image.naturalWidth > 0) {
-        return Promise.resolve();
+function updateIndicators() {
+    const normalChars = state.characters.filter(c => !c.tainted);
+    const allChars = state.characters;
+
+    const megaBlastCount = normalChars.filter(c => {
+        const ms = c.soloMarks?.['Mega Satan'];
+        return ms === 'Hard' || ms === 'Online Hard';
+    }).length;
+    if (megaBlastValue) megaBlastValue.textContent = `${megaBlastCount}/17`;
+
+    const megaMushCount = normalChars.filter(c => countHardMarks(c.soloMarks) === 12).length;
+    if (megaMushValue) megaMushValue.textContent = `${megaMushCount}/17`;
+
+    const deathCertCount = allChars.filter(c => countHardMarks(c.soloMarks) === 12).length;
+    if (deathCertValue) deathCertValue.textContent = `${deathCertCount}/34`;
+
+    const isNormal = state.filter === 'normal';
+    if (indicatorMegaBlast) indicatorMegaBlast.hidden = !isNormal;
+    if (indicatorMegaMush) indicatorMegaMush.hidden = !isNormal;
+}
+
+function getFilteredCharacters() {
+    return state.characters.filter(c => state.filter === 'tainted' ? c.tainted : !c.tainted);
+}
+
+function renderCatalog() {
+    if (!catalogList) return;
+    catalogList.innerHTML = '';
+
+    const list = getFilteredCharacters();
+    catalogCountPill.textContent = `${list.length} personajes`;
+
+    updateIndicators();
+
+    for (const char of list) {
+        const spriteInfo = getCharacterSpriteInfo(char);
+        const row = document.createElement('div');
+        row.className = 'catalog-row catalog-row--dual';
+
+        const soloCount = countTotalMarks(char.soloMarks);
+        const soloHard = countHardMarks(char.soloMarks);
+        const onlineCount = countTotalMarks(char.onlineMarks);
+        const onlineHard = countHardMarks(char.onlineMarks);
+
+        row.innerHTML = `
+            <div class="thumb-pair">
+                <div class="thumb-container thumb-container--character">
+                    <canvas class="sprite-thumb" width="85" height="85" aria-label="${char.character} sprite preview"></canvas>
+                </div>
+                <div class="thumb-container thumb-container--postit">
+                    <canvas class="postit-thumb postit-thumb--solo" width="85" height="85" aria-label="${char.character} post-it solo preview"></canvas>
+                </div>
+                <div class="thumb-container thumb-container--postit">
+                    <canvas class="postit-thumb postit-thumb--online" width="85" height="85" aria-label="${char.character} post-it online preview"></canvas>
+                </div>
+            </div>
+            <div class="character-copy">
+                <strong>${char.character}</strong>
+                <span>${char.tainted ? 'Tainted' : 'Normal'}</span>
+            </div>
+            <div class="progress-split-badge">
+                <div class="progress-split-item progress-split-item--solo">
+                    <span>📜 Solo:</span>
+                    <strong>${soloHard}/12 Hard</strong>
+                </div>
+                <div class="progress-split-item progress-split-item--online">
+                    <span>🌐 Online:</span>
+                    <strong>${onlineHard}/12 Hard</strong>
+                </div>
+            </div>
+            <div class="row-actions">
+                <div class="btn-group-download">
+                    <button type="button" class="btn-opt btn-opt--sprite" data-action="download-sprite" data-id="${char.id}" title="Descargar Sprite en JSX">🖼️ Sprite</button>
+                    <button type="button" class="btn-opt btn-opt--postit" data-action="download-solo" data-id="${char.id}" title="Descargar Post-it Solo en JSX">📜 Solo</button>
+                    <button type="button" class="btn-opt btn-opt--online" data-action="download-online" data-id="${char.id}" title="Descargar Post-it Online en JSX">🌐 Online</button>
+                    <button type="button" class="btn-opt btn-opt--full" data-action="download-full" data-id="${char.id}" title="Descargar Pack Completo">📦 Pack</button>
+                </div>
+            </div>
+        `;
+
+        const spriteCanvas = row.querySelector('.sprite-thumb');
+        const soloCanvas = row.querySelector('.postit-thumb--solo');
+        const onlineCanvas = row.querySelector('.postit-thumb--online');
+
+        if (spriteCanvas) drawSpritePreview(spriteCanvas, `${CHARACTER_SRC}/${spriteInfo.sprite}`);
+        if (soloCanvas) drawPostitOnCanvas(soloCanvas, char, char.soloMarks);
+        if (onlineCanvas) drawPostitOnCanvas(onlineCanvas, char, char.onlineMarks);
+
+        catalogList.appendChild(row);
+    }
+}
+
+// ==========================================
+// MODAL DE SELECCIÓN DE VARIANTE DE SPRITE
+// ==========================================
+
+function buildSpriteChoiceModal(character, spriteInfo) {
+    if (!spriteChoiceGrid) return;
+    spriteChoiceGrid.innerHTML = '';
+
+    const choices = [
+        {
+            key: 'main',
+            title: 'Versión principal',
+            subtitle: spriteInfo.sprite,
+            src: `${CHARACTER_SRC}/${spriteInfo.sprite}`
+        }
+    ];
+
+    if (spriteInfo.variants) {
+        spriteInfo.variants.forEach(v => {
+            choices.push({
+                key: v.key,
+                title: v.title,
+                subtitle: v.file,
+                src: `${CHARACTER_SRC}/${v.file}`
+            });
+        });
     }
 
-    return new Promise((resolve, reject) => {
-        image.addEventListener('load', () => resolve(), { once: true });
-        image.addEventListener('error', reject, { once: true });
-    });
-}
+    for (const choice of choices) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice-button';
+        button.innerHTML = `
+            <img class="choice-button__image" src="${choice.src}" alt="${choice.title}" loading="lazy" decoding="async">
+            <div class="choice-button__title">${choice.title}</div>
+            <div class="choice-button__subtitle">${choice.subtitle}</div>
+        `;
 
-async function ensureWidgetReady() {
-    if (state.widgetReady) {
-        return;
-    }
-
-    await waitForImage(widgetImage);
-    state.widgetReady = true;
-}
-
-async function openEditor(characterId) {
-    const character = getCharacterById(characterId);
-    if (!character) {
-        return;
-    }
-
-    await ensureWidgetReady();
-    const serverDoc = state.progressById.get(character._id) || null;
-
-    state.activeCharacter = character;
-    state.activeDocument = normalizeDocument(character, serverDoc);
-
-    editorTitle.textContent = character.nombre;
-    editorTypeBadge.textContent = character.tipo;
-
-    buildMarkTable(state.activeDocument);
-    drawPreview(previewCanvas.getContext('2d'), state.activeDocument, 1);
-    openModal(editorModal);
-}
-
-function closeEditor() {
-    state.activeCharacter = null;
-    state.activeDocument = null;
-    closeModal(editorModal);
-}
-
-function updateIndicators(estadoDoc) {
-    if (!estadoDoc) return;
-    const megaBlastEl = document.getElementById('mega-blast-value');
-    const megaMushEl = document.getElementById('mega-mush-value');
-    const deathCertEl = document.getElementById('death-certificate-value');
-
-    if (megaBlastEl) megaBlastEl.textContent = estadoDoc['Mega Blast'] || '0/17';
-    if (megaMushEl) megaMushEl.textContent = estadoDoc['Mega Mush'] || '0/17';
-    if (deathCertEl) deathCertEl.textContent = estadoDoc['Death Certificate'] || '0/34';
-
-    updateIndicatorsVisibility();
-}
-
-async function saveCurrentDocument() {
-    if (!state.activeCharacter || !state.activeDocument) {
-        return;
-    }
-
-    editorSaveBtn.disabled = true;
-    editorSaveBtn.textContent = 'Guardando...';
-
-    try {
-        const payload = clone(state.activeDocument);
-        const saved = await fetchJson(API_PROGRESS, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+        button.addEventListener('click', () => {
+            const resolver = state.spriteChoiceResolver;
+            state.spriteChoiceResolver = null;
+            closeModal(spriteChoiceModal);
+            if (resolver) {
+                resolver(choice.subtitle);
+            }
         });
 
-        state.progressById.set(state.activeCharacter._id, saved);
-        state.activeDocument = saved;
-        renderCatalog();
-
-        try {
-            const nuevoEstado = await fetchJson('/api/estado');
-            updateIndicators(nuevoEstado);
-        } catch (e) {
-            console.error('Error recalculando indicadores', e);
-        }
-
-        mostrarToast(`Progreso guardado para ${state.activeCharacter.nombre}.`, 'success');
-        closeEditor();
-    } catch (error) {
-        console.error(error);
-        mostrarToast(`No se pudo guardar el progreso de ${state.activeCharacter.nombre}.`, 'error');
-    } finally {
-        editorSaveBtn.disabled = false;
-        editorSaveBtn.textContent = '💾 Guardar en Base de Datos';
+        spriteChoiceGrid.appendChild(button);
     }
 }
 
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const result = String(reader.result || '');
-            resolve(result.split(',')[1] || '');
-        };
-        reader.onerror = () => reject(reader.error || new Error('No se pudo leer el blob'));
-        reader.readAsDataURL(blob);
+function openSpriteChoice(character, spriteInfo) {
+    return new Promise((resolve) => {
+        state.spriteChoiceResolver = resolve;
+        buildSpriteChoiceModal(character, spriteInfo);
+        openModal(spriteChoiceModal);
     });
 }
 
-async function fetchImageBase64(src) {
-    const response = await fetch(src);
-    if (!response.ok) {
-        throw new Error(`No se pudo cargar ${src}`);
+async function resolveSpriteForExport(character) {
+    const spriteInfo = getCharacterSpriteInfo(character);
+    if (spriteInfo.hasVariants) {
+        const chosen = await openSpriteChoice(character, spriteInfo);
+        if (!chosen) return null;
+        return chosen;
     }
-
-    return blobToBase64(await response.blob());
+    return spriteInfo.sprite;
 }
+
+// ==========================================
+// EXPORTADOR JSX (PHOTOSHOP BASE64)
+// ==========================================
 
 function fetchAndScaleSpriteBase64(src, scaleFactor = 10) {
     return new Promise((resolve, reject) => {
@@ -581,7 +450,6 @@ function fetchAndScaleSpriteBase64(src, scaleFactor = 10) {
         img.src = src;
     });
 }
-
 
 function buildJsxFromAssets(assets) {
     return `
@@ -653,294 +521,370 @@ function downloadTextFile(filename, content) {
     URL.revokeObjectURL(url);
 }
 
-async function exportProgressDatabase() {
-    if (!exportDbBtn) {
-        return;
-    }
-
-    exportDbBtn.disabled = true;
-    exportDbBtn.textContent = 'Exportando...';
+// Descargas
+async function handleDownloadSprite(charId) {
+    const char = state.characters.find(c => c.id === charId);
+    if (!char) return;
 
     try {
-        const response = await fetch('/api/progreso/export-local', {
-            method: 'POST'
-        });
+        const spriteFile = await resolveSpriteForExport(char);
+        if (!spriteFile) return;
 
-        if (!response.ok) {
-            throw new Error('Error guardando backup');
+        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${spriteFile}`, 10);
+        const assets = [
+            { name: `${char.character} - Sprite (${spriteFile.replace(/\.png$/i, '')})`, b64: spriteBase64 }
+        ];
+
+        const jsx = buildJsxFromAssets(assets);
+        downloadTextFile(`${char.character.replace(/[\s&]+/g, '_')}_Sprite.jsx`, jsx);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`Script JSX (Solo Sprite) exportado para ${char.character}.`, 'success');
         }
-
-        mostrarToast('Backup guardado exitosamente en la raíz.', 'success');
     } catch (error) {
         console.error(error);
-        mostrarToast('No se pudo guardar el backup.', 'error');
-    } finally {
-        exportDbBtn.disabled = false;
-        exportDbBtn.textContent = 'Generar Backup Local';
-    }
-}
-
-function buildSpriteChoiceModal(character) {
-    spriteChoiceGrid.innerHTML = '';
-
-    const choices = [
-        {
-            key: 'sprite',
-            title: 'Versión principal',
-            subtitle: character.sprite,
-            src: `${CHARACTER_SRC}/${character.sprite}`
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`No se pudo exportar el Sprite de ${char.character}.`, 'error');
         }
-    ];
-
-    if (character.sprite2) {
-        choices.push({
-            key: 'sprite2',
-            title: 'Dark Judas',
-            subtitle: character.sprite2,
-            src: `${CHARACTER_SRC}/${character.sprite2}`
-        });
-    }
-
-    for (const choice of choices) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'choice-button';
-        button.innerHTML = `
-            <img class="choice-button__image" src="${choice.src}" alt="${choice.title}" loading="lazy" decoding="async">
-            <div class="choice-button__title">${choice.title}</div>
-            <div class="choice-button__subtitle">${choice.subtitle}</div>
-        `;
-
-        button.addEventListener('click', () => {
-            const resolver = state.spriteChoiceResolver;
-            state.spriteChoiceResolver = null;
-            closeModal(spriteChoiceModal);
-            if (resolver) {
-                resolver(choice.key);
-            }
-        });
-
-        spriteChoiceGrid.appendChild(button);
     }
 }
 
-function openSpriteChoice(character) {
-    return new Promise((resolve) => {
-        state.spriteChoiceResolver = resolve;
-        buildSpriteChoiceModal(character);
-        openModal(spriteChoiceModal);
-    });
-}
-
-async function handleDownloadPostit(characterId) {
-    const character = getCharacterById(characterId);
-    if (!character) return;
+async function handleDownloadSolo(charId) {
+    const char = state.characters.find(c => c.id === charId);
+    if (!char) return;
 
     try {
-        const progressDocument = state.progressById.get(character._id) || createDefaultDocument(character);
-        const normalized = normalizeDocument(character, progressDocument);
-
+        await ensureWidgetReady();
         const postitCanvas = document.createElement('canvas');
         postitCanvas.width = 384;
         postitCanvas.height = 384;
-        const postitContext = postitCanvas.getContext('2d');
-
-        await ensureWidgetReady();
-        drawPreview(postitContext, normalized, 4);
+        drawPostitOnCanvas(postitCanvas, char, char.soloMarks);
 
         const postitBase64 = postitCanvas.toDataURL('image/png').split(',')[1];
         const assets = [
-            { name: `${character.nombre} - Post-it`, b64: postitBase64 }
+            { name: `${char.character} - Post-it (Solo)`, b64: postitBase64 }
         ];
 
         const jsx = buildJsxFromAssets(assets);
-        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Postit.jsx`, jsx);
-        mostrarToast(`Script JSX (Solo Post-it) exportado para ${character.nombre}.`, 'success');
+        downloadTextFile(`${char.character.replace(/[\s&]+/g, '_')}_Postit_Solo.jsx`, jsx);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`Script JSX (Post-it Solo) exportado para ${char.character}.`, 'success');
+        }
     } catch (error) {
         console.error(error);
-        mostrarToast(`No se pudo exportar el Post-it de ${character.nombre}.`, 'error');
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`No se pudo exportar el Post-it Solo de ${char.character}.`, 'error');
+        }
     }
 }
 
-async function handleDownloadSprite(characterId) {
-    const character = getCharacterById(characterId);
-    if (!character) return;
-
-    let selectedSpriteKey = 'sprite';
-    if (character.sprite2) {
-        const choice = await openSpriteChoice(character);
-        if (!choice) {
-            mostrarToast('Exportación cancelada.', 'info');
-            return;
-        }
-        selectedSpriteKey = choice;
-    }
+async function handleDownloadOnline(charId) {
+    const char = state.characters.find(c => c.id === charId);
+    if (!char) return;
 
     try {
-        const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
-        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${selectedSprite}`, 10);
-        const assets = [
-            { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
-        ];
-
-        const jsx = buildJsxFromAssets(assets);
-        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Sprite.jsx`, jsx);
-        mostrarToast(`Script JSX (Solo Sprite) exportado para ${character.nombre}.`, 'success');
-    } catch (error) {
-        console.error(error);
-        mostrarToast(`No se pudo exportar el Sprite de ${character.nombre}.`, 'error');
-    }
-}
-
-async function handleDownloadFull(characterId) {
-    const character = getCharacterById(characterId);
-    if (!character) return;
-
-    let selectedSpriteKey = 'sprite';
-    if (character.sprite2) {
-        const choice = await openSpriteChoice(character);
-        if (!choice) {
-            mostrarToast('Exportación cancelada.', 'info');
-            return;
-        }
-        selectedSpriteKey = choice;
-    }
-
-    try {
-        const progressDocument = state.progressById.get(character._id) || createDefaultDocument(character);
-        const normalized = normalizeDocument(character, progressDocument);
-
+        await ensureWidgetReady();
         const postitCanvas = document.createElement('canvas');
         postitCanvas.width = 384;
         postitCanvas.height = 384;
-        const postitContext = postitCanvas.getContext('2d');
+        drawPostitOnCanvas(postitCanvas, char, char.onlineMarks);
 
-        await ensureWidgetReady();
-        drawPreview(postitContext, normalized, 4);
-
-        const selectedSprite = selectedSpriteKey === 'sprite2' ? character.sprite2 : character.sprite;
-        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${selectedSprite}`, 10);
         const postitBase64 = postitCanvas.toDataURL('image/png').split(',')[1];
         const assets = [
-            { name: `${character.nombre} - Post-it`, b64: postitBase64 },
-            { name: `${character.nombre} - Sprite (${selectedSprite.replace(/\.png$/i, '')})`, b64: spriteBase64 }
+            { name: `${char.character} - Post-it (Online)`, b64: postitBase64 }
         ];
 
         const jsx = buildJsxFromAssets(assets);
-        downloadTextFile(`${character.nombre.replace(/\s+/g, '_')}_Full.jsx`, jsx);
-        mostrarToast(`Script JSX (Pack Completo) exportado para ${character.nombre}.`, 'success');
+        downloadTextFile(`${char.character.replace(/[\s&]+/g, '_')}_Postit_Online.jsx`, jsx);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`Script JSX (Post-it Online) exportado para ${char.character}.`, 'success');
+        }
     } catch (error) {
         console.error(error);
-        mostrarToast(`No se pudo exportar el Pack Completo de ${character.nombre}.`, 'error');
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`No se pudo exportar el Post-it Online de ${char.character}.`, 'error');
+        }
     }
 }
 
-catalogList.addEventListener('click', (event) => {
-    const button = event.target.closest('button[data-action]');
-    if (!button) {
-        return;
+async function handleDownloadFull(charId) {
+    const char = state.characters.find(c => c.id === charId);
+    if (!char) return;
+
+    try {
+        const spriteFile = await resolveSpriteForExport(char);
+        if (!spriteFile) return;
+
+        await ensureWidgetReady();
+
+        const soloCanvas = document.createElement('canvas');
+        soloCanvas.width = 384;
+        soloCanvas.height = 384;
+        drawPostitOnCanvas(soloCanvas, char, char.soloMarks);
+        const soloBase64 = soloCanvas.toDataURL('image/png').split(',')[1];
+
+        const onlineCanvas = document.createElement('canvas');
+        onlineCanvas.width = 384;
+        onlineCanvas.height = 384;
+        drawPostitOnCanvas(onlineCanvas, char, char.onlineMarks);
+        const onlineBase64 = onlineCanvas.toDataURL('image/png').split(',')[1];
+
+        const spriteBase64 = await fetchAndScaleSpriteBase64(`${CHARACTER_SRC}/${spriteFile}`, 10);
+
+        const assets = [
+            { name: `${char.character} - Post-it Solo`, b64: soloBase64 },
+            { name: `${char.character} - Post-it Online`, b64: onlineBase64 },
+            { name: `${char.character} - Sprite (${spriteFile.replace(/\.png$/i, '')})`, b64: spriteBase64 }
+        ];
+
+        const jsx = buildJsxFromAssets(assets);
+        downloadTextFile(`${char.character.replace(/[\s&]+/g, '_')}_FullPack.jsx`, jsx);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`Script JSX (Pack Completo) exportado para ${char.character}.`, 'success');
+        }
+    } catch (error) {
+        console.error(error);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(`No se pudo exportar el Pack Completo de ${char.character}.`, 'error');
+        }
     }
+}
 
-    const characterId = button.dataset.id;
-    const action = button.dataset.action;
+// Event Delegation
+if (catalogList) {
+    catalogList.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
 
-    if (action === 'edit') {
-        openEditor(characterId);
-    } else if (action === 'download-postit') {
-        handleDownloadPostit(characterId);
-    } else if (action === 'download-sprite') {
-        handleDownloadSprite(characterId);
-    } else if (action === 'download-full' || action === 'download') {
-        handleDownloadFull(characterId);
-    }
-});
+        const charId = Number(button.dataset.id);
+        const action = button.dataset.action;
 
-document.querySelectorAll('input[name="catalog-filter"]').forEach((input) => {
-    input.addEventListener('change', async () => {
-        state.filter = input.value;
-        renderCatalog();
-        try {
-            await fetchJson('/api/estado', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ MenuActual: state.filter })
-            });
-        } catch (error) {
-            console.error('Error guardando estado del menú', error);
+        if (action === 'download-sprite') {
+            handleDownloadSprite(charId);
+        } else if (action === 'download-solo') {
+            handleDownloadSolo(charId);
+        } else if (action === 'download-online') {
+            handleDownloadOnline(charId);
+        } else if (action === 'download-full') {
+            handleDownloadFull(charId);
         }
     });
-});
+}
 
-editorCloseBtn.addEventListener('click', closeEditor);
-editorCancelBtn.addEventListener('click', closeEditor);
-editorModal.addEventListener('click', (event) => {
-    if (event.target === editorModal) {
-        closeEditor();
-    }
-});
-
-spriteChoiceCloseBtn.addEventListener('click', () => {
-    const resolver = state.spriteChoiceResolver;
-    state.spriteChoiceResolver = null;
-    closeModal(spriteChoiceModal);
-    if (resolver) {
-        resolver(null);
-    }
-});
-
-spriteChoiceModal.addEventListener('click', (event) => {
-    if (event.target === spriteChoiceModal) {
-        const resolver = state.spriteChoiceResolver;
+// Cerrar modal de variantes
+if (spriteChoiceCloseBtn) {
+    spriteChoiceCloseBtn.addEventListener('click', () => {
         state.spriteChoiceResolver = null;
         closeModal(spriteChoiceModal);
-        if (resolver) {
-            resolver(null);
-        }
-    }
-});
-
-editorSaveBtn.addEventListener('click', saveCurrentDocument);
-if (exportDbBtn) {
-    exportDbBtn.addEventListener('click', exportProgressDatabase);
+    });
 }
 
-async function init() {
+if (spriteChoiceModal) {
+    spriteChoiceModal.addEventListener('click', (event) => {
+        if (event.target === spriteChoiceModal) {
+            state.spriteChoiceResolver = null;
+            closeModal(spriteChoiceModal);
+        }
+    });
+}
+
+// ==========================================
+// CONTROLADOR DE PESTAÑAS (TABS)
+// ==========================================
+
+function setupTabs() {
+    const tabButtons = document.querySelectorAll('.main-tab-btn');
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            state.activeTab = targetTab;
+
+            tabButtons.forEach(b => b.classList.toggle('active', b === btn));
+
+            const tabCharacters = document.getElementById('tab-characters-content');
+            const tabItems = document.getElementById('tab-items-content');
+            const tabAchievements = document.getElementById('tab-achievements-content');
+
+            if (tabCharacters) tabCharacters.hidden = targetTab !== 'characters';
+            if (tabItems) tabItems.hidden = targetTab !== 'items';
+            if (tabAchievements) tabAchievements.hidden = targetTab !== 'achievements';
+        });
+    });
+}
+
+// ==========================================
+// CONTROLADOR DE CONFIGURACIÓN (SETTINGS)
+// ==========================================
+
+async function loadSettingsAndProgress() {
     try {
-        const [estadoDoc, catalog, progressDocs] = await Promise.all([
-            fetchJson('/api/estado').catch(() => null),
-            fetchJson(API_CATALOG),
-            fetchJson('/api/progreso/export').catch(() => [])
-        ]);
+        const data = await fetchJson(API_PROGRESS);
+        state.settings = data.settings || { version: 'Repentance+', slot: 1, characterMenu: 'normal' };
+        state.saveExists = data.saveExists;
+        state.characters = data.characters || [];
+        state.achievements = data.achievements || [];
+        state.items = data.items || [];
 
-        if (estadoDoc) {
-            if (estadoDoc['Menu Actual'] || estadoDoc.MenuActual) {
-                state.filter = estadoDoc['Menu Actual'] || estadoDoc.MenuActual;
-                const radio = document.querySelector(`input[name="catalog-filter"][value="${state.filter}"]`);
-                if (radio) {
-                    radio.checked = true;
-                }
-            }
-            updateIndicators(estadoDoc);
+        if (!data.configured) {
+            syncStatusPill.textContent = 'Configuración requerida';
+            syncStatusPill.classList.add('meta-pill--muted');
+            if (settingsStatusText) settingsStatusText.textContent = '⚙️ Configurar Partida';
+            if (settingsStatusPill) settingsStatusPill.classList.add('meta-pill--muted');
+            if (catalogList) catalogList.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: #888;">Configura tu versión y slot de guardado para comenzar.</div>';
+            openSettingsModal();
+            return;
         }
 
-        state.catalog = catalog;
-        state.catalogReady = true;
+        updateSettingsHeaderBadge(data);
 
-        for (const doc of progressDocs) {
-            if (doc && doc._id) {
-                state.progressById.set(doc._id, doc);
-            }
+        if (state.settings && state.settings.characterMenu) {
+            state.filter = state.settings.characterMenu === 'tainted' ? 'tainted' : 'normal';
+            const radio = document.querySelector(`input[name="catalog-filter"][value="${state.filter}"]`);
+            if (radio) radio.checked = true;
         }
 
-        syncStatusPill.textContent = 'PouchDB sembrada y sincronizada';
-        await ensureWidgetReady();
         renderCatalog();
-        document.querySelector('.workspace')?.classList.add('is-loaded');
-    } catch (error) {
-        console.error(error);
-        mostrarToast('No se pudo inicializar Progress Manager.', 'error');
-        document.querySelector('.workspace')?.classList.add('is-loaded');
+        syncStatusPill.textContent = data.saveExists ? `Sincronizado: ${data.saveFile}` : 'Modo fuera de línea';
+        syncStatusPill.classList.toggle('meta-pill--muted', !data.saveExists);
+    } catch (e) {
+        console.error('Error cargando progreso:', e);
+        syncStatusPill.textContent = 'Error de sincronización';
     }
+}
+
+function updateSettingsHeaderBadge(data) {
+    if (!settingsStatusText) return;
+
+    if (data.configured) {
+        const v = data.settings.version;
+        const icon = v === 'Repentance+' ? '🟢' : '🔴';
+        const statusIcon = data.saveExists ? '✔️' : '⚠️';
+        settingsStatusText.textContent = `${icon} ${v} · Slot ${data.settings.slot} ${statusIcon}`;
+        settingsStatusPill.classList.remove('meta-pill--muted');
+    } else {
+        settingsStatusText.textContent = '⚙️ Configurar Partida';
+        settingsStatusPill.classList.add('meta-pill--muted');
+    }
+}
+
+function openSettingsModal() {
+    if (!settingsModal) return;
+
+    const version = state.settings?.version || 'Repentance+';
+    const slot = state.settings?.slot || 1;
+
+    const versionRadio = document.querySelector(`input[name="setting-version"][value="${version}"]`);
+    if (versionRadio) versionRadio.checked = true;
+
+    const slotRadio = document.querySelector(`input[name="setting-slot"][value="${slot}"]`);
+    if (slotRadio) slotRadio.checked = true;
+
+    checkSettingsPreview();
+    openModal(settingsModal);
+}
+
+function closeSettingsModal() {
+    closeModal(settingsModal);
+}
+
+async function checkSettingsPreview() {
+    const selectedVersion = document.querySelector('input[name="setting-version"]:checked')?.value || 'Repentance+';
+    const selectedSlot = Number(document.querySelector('input[name="setting-slot"]:checked')?.value) || 1;
+
+    const prefix = selectedVersion === 'Repentance+' ? 'rep+' : 'rep_';
+    const expectedFilename = `${prefix}persistentgamedata${selectedSlot}.dat`;
+
+    if (previewSaveFilename) previewSaveFilename.textContent = expectedFilename;
+    if (previewSaveStatus) {
+        previewSaveStatus.className = 'preview-status';
+        previewSaveStatus.textContent = '🔍 Comprobando...';
+    }
+
+    try {
+        const res = await fetch('/api/settings/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ version: selectedVersion, slot: selectedSlot })
+        });
+        const status = await res.json();
+
+        if (previewSaveStatus) {
+            if (status.exists) {
+                previewSaveStatus.className = 'preview-status exists';
+                previewSaveStatus.textContent = '✔️ Encontrado en Steam';
+            } else {
+                previewSaveStatus.className = 'preview-status missing';
+                previewSaveStatus.textContent = '⚠️ No encontrado en Steam';
+            }
+        }
+    } catch (e) {
+        if (previewSaveStatus) {
+            previewSaveStatus.className = 'preview-status';
+            previewSaveStatus.textContent = 'Error al verificar';
+        }
+    }
+}
+
+async function saveSettingsFromModal() {
+    const selectedVersion = document.querySelector('input[name="setting-version"]:checked')?.value || 'Repentance+';
+    const selectedSlot = Number(document.querySelector('input[name="setting-slot"]:checked')?.value) || 1;
+
+    try {
+        settingsSaveBtn.disabled = true;
+        settingsSaveBtn.textContent = 'Guardando...';
+
+        const res = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ version: selectedVersion, slot: selectedSlot })
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+            closeSettingsModal();
+            if (typeof mostrarToast === 'function') {
+                mostrarToast(`Configuración guardada: ${data.settings.version} (Slot ${data.settings.slot})`, 'success');
+            }
+            await loadSettingsAndProgress();
+        }
+    } catch (e) {
+        console.error(e);
+        if (typeof mostrarToast === 'function') {
+            mostrarToast('Error al guardar la configuración.', 'error');
+        }
+    } finally {
+        settingsSaveBtn.disabled = false;
+        settingsSaveBtn.textContent = '💾 Guardar Configuración';
+    }
+}
+
+// Event Listeners
+if (settingsStatusPill) settingsStatusPill.addEventListener('click', openSettingsModal);
+if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', closeSettingsModal);
+if (settingsCancelBtn) settingsCancelBtn.addEventListener('click', closeSettingsModal);
+if (settingsSaveBtn) settingsSaveBtn.addEventListener('click', saveSettingsFromModal);
+
+document.querySelectorAll('input[name="setting-version"], input[name="setting-slot"]').forEach(input => {
+    input.addEventListener('change', checkSettingsPreview);
+});
+
+document.querySelectorAll('input[name="catalog-filter"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        state.filter = e.target.value;
+        renderCatalog();
+        // Guardar menú actual en settings.json
+        fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ characterMenu: state.filter })
+        }).catch(err => console.error('Error guardando menú en settings:', err));
+    });
+});
+
+async function init() {
+    setupTabs();
+    await ensureWidgetReady();
+    await loadSettingsAndProgress();
+    document.querySelector('.workspace')?.classList.add('is-loaded');
 }
 
 init();
