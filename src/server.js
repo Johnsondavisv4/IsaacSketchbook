@@ -321,6 +321,7 @@ async function seedDefaultProgressDocuments() {
 app.use(express.static(path.join(__dirname)));
 
 app.use('/progress-manager', express.static(path.join(__dirname, 'progress-manager')));
+app.use('/progress-manager-beta', express.static(path.join(__dirname, 'progress-manager-beta')));
 app.use('/mark-exporter', express.static(path.join(__dirname, 'mark-exporter')));
 
 app.use('/public', express.static(path.join(__dirname, '..', 'public')));
@@ -329,6 +330,10 @@ app.use(express.json({ limit: '2mb' }));
 
 app.get('/progress-manager', (req, res) => {
     res.redirect('/progress-manager/');
+});
+
+app.get('/progress-manager-beta', (req, res) => {
+    res.redirect('/progress-manager-beta/');
 });
 
 app.get('/mark-exporter', (req, res) => {
