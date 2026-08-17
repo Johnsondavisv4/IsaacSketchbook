@@ -60,7 +60,7 @@ function buildFolderMap() {
 
     allSprites.forEach(filePath => {
         const parts = filePath.split('/');
-        let folder = '(Raíz)';
+        let folder = '/';
         if (parts.length > 1) {
             folder = parts.slice(0, -1).join('/');
         }
@@ -79,7 +79,9 @@ function buildFolderMap() {
 // ==========================================
 
 function getFolderIcon(folderName) {
+    if (folderName === '/') return '🏠';
     const f = folderName.toLowerCase();
+    if (f.includes('trinket')) return '💍';
     if (f.includes('achievement')) return '🏆';
     if (f.includes('item') || f.includes('collectible')) return '📦';
     if (f.includes('character')) return '🧙‍♂️';
@@ -215,7 +217,7 @@ function renderCurrentView() {
 
         const parts = filePath.split('/');
         const fileName = parts[parts.length - 1];
-        const folderName = parts.length > 1 ? parts.slice(0, -1).join('/') : '';
+        const folderName = parts.length > 1 ? parts.slice(0, -1).join('/') : '/';
 
         row.innerHTML = `
             <div>
@@ -226,7 +228,7 @@ function renderCurrentView() {
             </div>
             <div class="file-link-container">
                 <span class="file-name-text" title="${filePath}">${fileName}</span>
-                ${folderName ? `<span class="file-folder-badge">📁 ${folderName}</span>` : ''}
+                <span class="file-folder-badge">📁 ${folderName}</span>
             </div>
             <div>
                 <input type="number" class="row-scale-input" value="${scaleVal}" min="1" max="50" data-filepath="${filePath}">
