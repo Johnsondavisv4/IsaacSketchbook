@@ -323,6 +323,7 @@ app.use(express.static(path.join(__dirname)));
 app.use('/progress-manager', express.static(path.join(__dirname, 'progress-manager')));
 app.use('/progress-manager-beta', express.static(path.join(__dirname, 'progress-manager-beta')));
 app.use('/mark-exporter', express.static(path.join(__dirname, 'mark-exporter')));
+app.use('/asset-exporter', express.static(path.join(__dirname, 'asset-exporter')));
 
 app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
@@ -338,6 +339,10 @@ app.get('/progress-manager-beta', (req, res) => {
 
 app.get('/mark-exporter', (req, res) => {
     res.redirect('/mark-exporter/');
+});
+
+app.get('/asset-exporter', (req, res) => {
+    res.redirect('/asset-exporter/');
 });
 
 app.get('/api/catalogo-progreso', (req, res) => {

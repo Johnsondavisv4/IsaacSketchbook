@@ -13,47 +13,88 @@
 
 <body>
 
-    <div class="back-nav">
-        <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+    <div class="top-nav-bar">
+        <div class="back-nav">
+            <a href="/" class="btn-back">⬅ Volver al Dashboard</a>
+        </div>
     </div>
 
-    <div class="workspace">
+    <div class="workspace" id="main-workspace">
         <div class="header-area">
             <h1>📁 Asset Exporter</h1>
-            <div class="subtitle">Escanea la carpeta local e indexa elementos con escalas personalizadas al carrito
-            </div>
+            <div class="subtitle">Explora las carpetas locales, ajusta escalas individuales y añade sprites a la cola de inyección</div>
         </div>
 
+        <!-- Barra de Acciones Globales / Carrito -->
         <div class="options-panel panel">
             <div class="info-group">
                 <span class="info-label">Instrucciones:</span>
-                <p class="info-text">Selecciona los sprites de la lista y ajusta la escala individual de cada uno antes
-                    de enviarlos a la cola.</p>
+                <p class="info-text">Selecciona una categoría en el panel lateral, filtra por nombre y ajusta la escala individual de cada sprite.</p>
             </div>
-            <button class="btn btn-primary btn-cart-add" id="add-to-cart-btn" disabled>🛒 Añadir Selección al Carrito</button>
+            <div class="cart-actions-group">
+                <span class="selected-counter" id="selected-counter-badge">0 seleccionados</span>
+                <button class="btn btn-primary btn-cart-add" id="add-to-cart-btn" disabled>🛒 Añadir Selección al Carrito</button>
+            </div>
         </div>
 
-        <div class="repo-box panel">
-            <div class="repo-header">
-                <div>
-                    <input type="checkbox" id="select-all-master" title="Seleccionar todos los sprites">
-                </div>
-                <div class="thumb-header">Miniatura</div>
-                <div class="sort-header" id="sort-name-btn" title="Haga clic para ordenar alfabéticamente">
-                    <span>Nombre del Archivo</span>
-                    <span class="sort-icon" id="sort-direction-icon">▲</span>
-                </div>
-                <div class="scale-header">Escala</div>
-            </div>
+        <!-- ==================== CONTENEDOR PRINCIPAL: SIDEBAR + TABLA ==================== -->
+        <div class="repo-layout-container">
 
-            <div class="repo-body" id="files-container-list">
-                <div class="empty-message">Buscando imágenes en la carpeta local /public...</div>
-            </div>
+            <!-- PANEL LATERAL DE CARPETAS / CATEGORÍAS -->
+            <aside class="sidebar-folder-tree panel" id="sidebar-folder-tree">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">📁 Categorías</span>
+                    <span class="total-badge" id="sidebar-total-badge">0</span>
+                </div>
+                <div class="sidebar-quick-actions">
+                    <button type="button" class="btn-sidebar-action" id="btn-select-folder">Marcar Carpeta</button>
+                    <button type="button" class="btn-sidebar-action" id="btn-clear-selection">Limpiar Todo</button>
+                </div>
+                <div class="tree-list" id="sidebar-tree-list">
+                    <!-- Lista de carpetas generada dinámicamente por JS -->
+                </div>
+            </aside>
+
+            <!-- PANEL DERECHO: CONTENIDO Y TABLA DE SPRITES -->
+            <main class="repo-main-panel panel" id="repo-box-panel">
+                
+                <!-- Barra de Búsqueda y Filtros de la Carpeta -->
+                <div class="folder-header-toolbar">
+                    <div class="folder-title-box">
+                        <h2 class="current-folder-heading" id="current-folder-title">Todos los Archivos</h2>
+                        <span class="folder-item-count" id="current-folder-count">0 elementos</span>
+                    </div>
+
+                    <div class="search-box-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-input" class="search-input" placeholder="Buscar por nombre, número... (ej: brimstone, 001, maggy)">
+                        <button type="button" class="btn-clear-search" id="clear-search-btn" style="display: none;">✖</button>
+                    </div>
+                </div>
+
+                <!-- Cabecera de la tabla de Sprites -->
+                <div class="repo-header" id="repo-table-header">
+                    <div>
+                        <input type="checkbox" id="select-all-master" title="Seleccionar todos los visibles de esta vista">
+                    </div>
+                    <div class="thumb-header">Miniatura</div>
+                    <div class="sort-header" id="sort-name-btn" title="Haga clic para ordenar alfabéticamente">
+                        <span>Nombre del Archivo</span>
+                        <span class="sort-icon" id="sort-direction-icon">▲</span>
+                    </div>
+                    <div class="scale-header">Escala</div>
+                </div>
+
+                <!-- Lista de filas de Sprites -->
+                <div class="repo-body" id="files-container-list">
+                    <div class="empty-message">Buscando imágenes en la carpeta local /public...</div>
+                </div>
+            </main>
+
         </div>
     </div>
 
     <canvas id="processor-canvas" style="display:none;"></canvas>
-
     <div id="toast-container" class="toast-container"></div>
 
     <script defer src="exporter.js"></script>
