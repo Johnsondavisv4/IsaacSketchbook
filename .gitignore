@@ -1,3 +1,8 @@
-/node_modules
-/isaac_progress_manager
-settings.json
+.DS_Store
+.env
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+/settings.json

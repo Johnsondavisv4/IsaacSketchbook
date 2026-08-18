@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Upheaval';
+  src: url('/fonts/upheavtt.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'isaac-game';
+  src: url('/fonts/IsaacGame.ttf') format('truetype');
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-upheaval: "Upheaval", sans-serif;
+  --font-isaac: "isaac-game", sans-serif;
+}
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@utility font-upheaval {
+  font-family: "Upheaval", sans-serif;
+}
+
+@utility font-isaac {
+  font-family: "isaac-game", sans-serif;
+}
+
+html,
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  color-scheme: dark;
+}
