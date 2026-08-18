@@ -1,45 +1,46 @@
-import { getItemName } from '../enums/EItems.js';
+import { Items } from '../enums/EItems.js';
 
 export class Item {
     /**
      * @param {number} id
-     * @param {string} [name]
      * @param {boolean} [seen=false]
      */
-    constructor(id, name, seen = false) {
-        this.id = id;
-        this.name = name ?? getItemName(id);
+    constructor(id, seen = false) {
+        this.id = Items.getIDfromIndex(id);
+        this.name = Items.getName(id);
+        this.sprite = Items.getSprite(this.id);
         this.seen = Boolean(seen);
     }
 
-    /**
-     * @returns {number}
-     */
-    getId() {
+    toggleSeen() {
+        this.seen = !this.seen;
+    }
+
+    setSeen(value) {
+        this.seen = Boolean(value);
+    }
+
+    getID() {
         return this.id;
     }
 
-    /**
-     * @returns {string}
-     */
     getName() {
         return this.name;
     }
 
-    /**
-     * @returns {boolean}
-     */
+    getSprite() {
+        return this.sprite;
+    }
+
     isSeen() {
         return this.seen;
     }
 
-    /**
-     * @returns {object}
-     */
     toJSON() {
         return {
             id: this.id,
             name: this.name,
+            sprite: this.sprite,
             seen: this.seen
         };
     }

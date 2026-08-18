@@ -1,6 +1,7 @@
 import { Character } from './models/Character.js';
 import { Achievement } from './models/Achievement.js';
 import { Item } from './models/Item.js';
+import { Items } from './enums/EItems.js';
 import { getSoloDifficulty, getOnlineDifficulty } from './enums/Difficulty.js';
 
 const SECTION_OFFSET = 0x14;
@@ -116,10 +117,10 @@ function parseAchievements(data, section0Offset, count) {
 function parseItems(data, section3Offset) {
     let offset = section3Offset;
     const items = [];
-    for (let i = 1; i <= NUM_ITEMS; i++) {
+    for (let i = 0; i < NUM_ITEMS; i++) {
         offset++;
         const seen = data[offset] === 1;
-        items.push(new Item(i, undefined, seen));
+        items.push(new Item(i + 1, seen));
     }
     return items;
 }

@@ -707,8 +707,74 @@ function setupTabs() {
             if (tabCharacters) tabCharacters.hidden = targetTab !== 'characters';
             if (tabItems) tabItems.hidden = targetTab !== 'items';
             if (tabAchievements) tabAchievements.hidden = targetTab !== 'achievements';
+
+            if (targetTab === 'items') {
+                renderItemsCatalog();
+            }
         });
     });
+}
+
+// ==========================================
+// RENDERIZADO DE COLECCIONABLES (ITEMS)
+// ==========================================
+
+function getSpriteFilename(id, name) {
+    const id3 = String(id).padStart(3, '0');
+    const safeName = name
+        .replace(/[<>:"/\\|*?]/g, '_')
+        .replace(/\s+/g, '_')
+        .trim();
+    return `${id3}_${safeName}.png`;
+}
+
+function renderItemsCatalog() {
+    const container = document.getElementById('items-collection-container');
+    if (!container) return;
+
+    let validItems = state.items.filter(i => i.id > 0);
+    container.innerHTML = '';
+
+    const PAGE_SIZE = 120;
+    const ROW_SIZE = 20;
+    const totalPages = Math.ceil(validItems.length / PAGE_SIZE);
+
+    for (let p = 0; p < totalPages; p++) {
+        const pageItems = validItems.slice(p * PAGE_SIZE, (p + 1) * PAGE_SIZE);
+
+        const pageCard = document.createElement('div');
+        pageCard.className = 'collection-page-card';
+        pageCard.dataset.page = String(p + 1);
+
+        const title = document.createElement('h2');
+        title.className = 'collection-page-title';
+        title.textContent = `PAGE ${p + 1}`;
+        pageCard.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'collection-page-grid';
+
+        for (const item of pageItems) {
+            const itemFile = getSpriteFilename(item.id, item.name);
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `collection-item ${item.seen ? 'is-seen' : 'is-unseen'}`;
+            itemDiv.title = `#${item.id} - ${item.name}`;
+            itemDiv.dataset.id = String(item.id);
+
+            const img = document.createElement('img');
+            img.className = 'collection-item__image';
+            img.src = `/public/Items/${itemFile}`;
+            img.alt = item.name;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            itemDiv.appendChild(img);
+            grid.appendChild(itemDiv);
+        }
+
+        pageCard.appendChild(grid);
+        container.appendChild(pageCard);
+    }
 }
 
 // ==========================================
@@ -743,6 +809,9 @@ async function loadSettingsAndProgress() {
         }
 
         renderCatalog();
+        if (state.activeTab === 'items') {
+            renderItemsCatalog();
+        }
         syncStatusPill.textContent = data.saveExists ? `Sincronizado: ${data.saveFile}` : 'Modo fuera de línea';
         syncStatusPill.classList.toggle('meta-pill--muted', !data.saveExists);
     } catch (e) {
