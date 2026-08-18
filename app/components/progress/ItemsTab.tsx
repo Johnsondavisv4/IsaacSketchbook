@@ -6,24 +6,39 @@ interface ItemsTabProps {
   items: ItemJSON[];
 }
 
+type FilterMode = 'all' | 'seen' | 'not_seen';
+
 export function ItemsTab({ configured, items }: ItemsTabProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState<FilterMode>('all');
 
   const validItems = items.filter((i) => i.id > 0);
   const seenCount = validItems.filter((i) => i.seen).length;
+  const notSeenCount = validItems.length - seenCount;
+
+  const filteredItems = validItems.filter((item) => {
+    if (filter === 'seen') return item.seen;
+    if (filter === 'not_seen') return !item.seen;
+    return true;
+  });
 
   const PAGE_SIZE = 120;
-  const totalPages = Math.max(1, Math.ceil(validItems.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
-  const pageItems = validItems.slice(
+  const pageItems = filteredItems.slice(
     (safeCurrentPage - 1) * PAGE_SIZE,
     safeCurrentPage * PAGE_SIZE
   );
 
+  const toggleFilter = (mode: 'seen' | 'not_seen') => {
+    setFilter((prev) => (prev === mode ? 'all' : mode));
+    setCurrentPage(1);
+  };
+
   return (
     <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-hidden shadow-xl">
-      {/* Top Header & Legend (Read-Only Status View) */}
+      {/* Top Header & Filter Controls */}
       <div className="shrink-0 p-4 sm:p-5 border-b border-neutral-800 flex flex-col gap-3 bg-neutral-950/40">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
@@ -38,15 +53,36 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
           </div>
 
           {configured && (
-            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-neutral-400">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-white shadow-sm" />
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+              {/* Seen Filter Button */}
+              <button
+                type="button"
+                onClick={() => toggleFilter('seen')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'seen'
+                  ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
+                  : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
+                  }`}
+                title={filter === 'seen' ? 'Quitar filtro (Mostrar todos)' : 'Filtrar solo Vistos'}
+              >
+                <div className={`w-2.5 h-2.5 rounded-full ${filter === 'seen' ? 'bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]' : 'bg-white/70'}`} />
                 <span>Seen</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-neutral-600" />
-                <span>Not seen (greyed)</span>
-              </div>
+                <span className="font-mono text-[11px] opacity-75">({seenCount})</span>
+              </button>
+
+              {/* Not Seen Filter Button */}
+              <button
+                type="button"
+                onClick={() => toggleFilter('not_seen')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'not_seen'
+                  ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
+                  : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
+                  }`}
+                title={filter === 'not_seen' ? 'Quitar filtro (Mostrar todos)' : 'Filtrar solo No vistos'}
+              >
+                <div className={`w-2.5 h-2.5 rounded-full ${filter === 'not_seen' ? 'bg-neutral-300 shadow-[0_0_6px_rgba(255,255,255,0.4)]' : 'bg-neutral-600'}`} />
+                <span>Not seen</span>
+                <span className="font-mono text-[11px] opacity-75">({notSeenCount})</span>
+              </button>
             </div>
           )}
         </div>
@@ -57,6 +93,10 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
         {!configured || validItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
             Configura tu versión y slot de guardado para comenzar.
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
+            No se encontraron items para este filtro.
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -87,9 +127,11 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                   </svg>
                 </button>
 
-                <h2 className="text-2xl sm:text-3xl font-upheaval text-gray-200 tracking-wider">
-                  Page {safeCurrentPage}
-                </h2>
+                <div className="flex items-baseline gap-2">
+                  <h2 className="text-2xl sm:text-3xl font-upheaval text-gray-200 tracking-wider">
+                    Page {safeCurrentPage}
+                  </h2>
+                </div>
 
                 <button
                   type="button"
@@ -122,7 +164,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                     <div
                       key={item.id}
                       className="p-1 sm:p-2 rounded overflow-hidden flex justify-center items-center transition-colors group shrink-0"
-                      title={`#${item.id} - ${item.name} (${item.seen ? 'Seen' : 'Not seen'})`}
+                      title={`${item.name}`}
                       data-id={item.id}
                     >
                       <img
@@ -130,38 +172,38 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                         decoding="async"
                         src={`/Items/${item.sprite}`}
                         alt={item.name}
-                        className={`object-cover w-10 h-10 sm:w-16 sm:h-16 pixelated transition-all duration-300 select-none ${
-                          !item.seen
-                            ? 'grayscale opacity-50 group-hover:opacity-75'
-                            : 'drop-shadow-md group-hover:scale-105'
-                        }`}
+                        className={`object-cover w-10 h-10 sm:w-16 sm:h-16 pixelated transition-all duration-300 select-none ${!item.seen
+                          ? 'grayscale opacity-50 group-hover:opacity-75'
+                          : 'drop-shadow-md group-hover:scale-105'
+                          }`}
                       />
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Pagination Dots at Bottom */}
-              <div className="flex items-center justify-center gap-2 pt-2 pb-1 select-none">
-                {Array.from({ length: totalPages }).map((_, idx) => {
-                  const pNum = idx + 1;
-                  const isActive = pNum === safeCurrentPage;
-                  return (
-                    <button
-                      key={pNum}
-                      type="button"
-                      onClick={() => setCurrentPage(pNum)}
-                      className={`transition-all duration-200 cursor-pointer rounded-full ${
-                        isActive
+              {/* Pagination Dots at Bottom (only when multiple pages exist) */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-2 pb-1 select-none">
+                  {Array.from({ length: totalPages }).map((_, idx) => {
+                    const pNum = idx + 1;
+                    const isActive = pNum === safeCurrentPage;
+                    return (
+                      <button
+                        key={pNum}
+                        type="button"
+                        onClick={() => setCurrentPage(pNum)}
+                        className={`transition-all duration-200 cursor-pointer rounded-full ${isActive
                           ? 'w-6 h-2.5 bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.6)]'
                           : 'w-2.5 h-2.5 bg-neutral-700 hover:bg-neutral-500'
-                      }`}
-                      title={`Página ${pNum}`}
-                      aria-label={`Ir a Página ${pNum}`}
-                    />
-                  );
-                })}
-              </div>
+                          }`}
+                        title={`Página ${pNum}`}
+                        aria-label={`Ir a Página ${pNum}`}
+                      />
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
