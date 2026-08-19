@@ -53,12 +53,12 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
           </div>
 
           {configured && (
-            <div className="flex items-center gap-2 font-upheaval text-xs tracking-wider">
+            <div className="flex items-center gap-2 font-upheaval text-sm sm:text-base tracking-wide">
               {/* Seen Filter Button */}
               <button
                 type="button"
                 onClick={() => toggleFilter('seen')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'seen'
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'seen'
                   ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
                   : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
                   }`}
@@ -66,14 +66,14 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               >
                 <div className={`w-2.5 h-2.5 rounded-full ${filter === 'seen' ? 'bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]' : 'bg-white/70'}`} />
                 <span>Seen</span>
-                <span className="font-mono text-[11px] opacity-75">({seenCount})</span>
+                <span className="font-mono text-xs opacity-80">({seenCount})</span>
               </button>
 
               {/* Not Seen Filter Button */}
               <button
                 type="button"
                 onClick={() => toggleFilter('not_seen')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'not_seen'
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'not_seen'
                   ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
                   : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
                   }`}
@@ -81,7 +81,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               >
                 <div className={`w-2.5 h-2.5 rounded-full ${filter === 'not_seen' ? 'bg-neutral-300 shadow-[0_0_6px_rgba(255,255,255,0.4)]' : 'bg-neutral-600'}`} />
                 <span>Not seen</span>
-                <span className="font-mono text-[11px] opacity-75">({notSeenCount})</span>
+                <span className="font-mono text-xs opacity-80">({notSeenCount})</span>
               </button>
             </div>
           )}

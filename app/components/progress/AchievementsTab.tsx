@@ -56,7 +56,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
           </div>
 
           {configured && (
-            <div className="flex flex-wrap items-center gap-2 font-upheaval text-xs tracking-wider">
+            <div className="flex flex-wrap items-center gap-2.5 font-upheaval text-sm sm:text-base tracking-wide">
               {/* Search input */}
               <div className="relative">
                 <input
@@ -64,7 +64,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar logro..."
-                  className="w-40 sm:w-48 px-3 py-1.5 pl-8 bg-neutral-950/80 border border-neutral-800 rounded-lg text-xs text-neutral-200 placeholder-neutral-500 font-upheaval tracking-wider focus:outline-none focus:border-red-500 transition-colors"
+                  className="w-44 sm:w-56 px-3.5 py-1.5 pl-8 bg-neutral-950/80 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 font-upheaval tracking-wide focus:outline-none focus:border-red-500 transition-colors"
                 />
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500 text-xs font-sans">
                   🔍
@@ -84,7 +84,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
               <button
                 type="button"
                 onClick={() => toggleFilter('unlocked')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'unlocked'
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'unlocked'
                     ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
                     : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
                   }`}
@@ -92,14 +92,14 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
               >
                 <div className={`w-2.5 h-2.5 rounded-full ${filter === 'unlocked' ? 'bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]' : 'bg-white/70'}`} />
                 <span>Unlocked</span>
-                <span className="font-mono text-[11px] opacity-75">({unlockedCount})</span>
+                <span className="font-mono text-xs opacity-80">({unlockedCount})</span>
               </button>
 
               {/* Locked Filter */}
               <button
                 type="button"
                 onClick={() => toggleFilter('locked')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'locked'
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${filter === 'locked'
                     ? 'bg-white/10 text-white border-white/40 shadow-sm ring-1 ring-white/30'
                     : 'bg-neutral-950/60 text-neutral-400 border-neutral-800 hover:text-neutral-200 hover:bg-neutral-800/60'
                   }`}
@@ -107,7 +107,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
               >
                 <div className={`w-2.5 h-2.5 rounded-full ${filter === 'locked' ? 'bg-neutral-300 shadow-[0_0_6px_rgba(255,255,255,0.4)]' : 'bg-neutral-600'}`} />
                 <span>Locked</span>
-                <span className="font-mono text-[11px] opacity-75">({lockedCount})</span>
+                <span className="font-mono text-xs opacity-80">({lockedCount})</span>
               </button>
             </div>
           )}

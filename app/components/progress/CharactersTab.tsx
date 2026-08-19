@@ -328,7 +328,7 @@ function CharacterRow({
           <button
             type="button"
             onClick={() => onExportAction('pack-solo', character)}
-            className="px-2 py-1.5 text-xs font-bold text-white bg-red-800 hover:bg-red-700 border border-red-700 rounded-md transition-all cursor-pointer shadow"
+            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
             title="Descargar script .jsx (Pack Solo: Sprite + Post-it Solo) para Photoshop"
           >
             📦 Pack (Solo)
@@ -336,7 +336,7 @@ function CharacterRow({
           <button
             type="button"
             onClick={() => onExportAction('pack-online', character)}
-            className="px-2 py-1.5 text-xs font-bold text-white bg-red-800 hover:bg-red-700 border border-red-700 rounded-md transition-all cursor-pointer shadow"
+            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
             title="Descargar script .jsx (Pack Online: Sprite + Post-it Online) para Photoshop"
           >
             📦 Pack (Online)
@@ -567,18 +567,18 @@ export function CharactersTab({
 
         {/* Global Item Unlock Indicators (only visible when configured) */}
         {configured && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
             {filter === 'normal' && (
-              <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-3 flex items-center gap-3">
-                <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
+              <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5">
+                <div className="w-11 h-11 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
                   <img
                     src="/MegaBlast.png"
                     alt="Mega Blast"
-                    className="max-w-full max-h-full pixelated"
+                    className="w-full h-full object-contain pixelated"
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide">Mega Blast</div>
+                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide leading-tight">Mega Blast</div>
                   <div
                     className={`text-xs font-mono font-bold mt-0.5 ${isMegaBlastReady ? 'text-emerald-400' : 'text-amber-400'
                       }`}
@@ -590,16 +590,16 @@ export function CharactersTab({
             )}
 
             {filter === 'normal' && (
-              <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-3 flex items-center gap-3">
-                <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
+              <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5">
+                <div className="w-11 h-11 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
                   <img
                     src="/MegaMush.png"
                     alt="Mega Mush"
-                    className="max-w-full max-h-full pixelated"
+                    className="w-full h-full object-contain pixelated"
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide">Mega Mush</div>
+                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide leading-tight">Mega Mush</div>
                   <div
                     className={`text-xs font-mono font-bold mt-0.5 ${isMegaMushReady ? 'text-emerald-400' : 'text-amber-400'
                       }`}
@@ -610,16 +610,16 @@ export function CharactersTab({
               </div>
             )}
 
-            <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-3 flex items-center gap-3 sm:col-span-2 md:col-span-1">
-              <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
+            <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5 sm:col-span-2 md:col-span-1">
+              <div className="w-11 h-11 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
                 <img
                   src="/DeathCertificate.png"
                   alt="Death Certificate"
-                  className="max-w-full max-h-full pixelated"
+                  className="w-full h-full object-contain pixelated"
                 />
               </div>
               <div className="min-w-0">
-                <div className="text-sm font-upheaval text-neutral-200 tracking-wide">
+                <div className="text-sm font-upheaval text-neutral-200 tracking-wide leading-tight">
                   Death Certificate
                 </div>
                 <div
@@ -643,7 +643,7 @@ export function CharactersTab({
         ) : (
           <>
             {/* Sticky Table Header inside the scroll container */}
-            <div className="sticky top-0 z-10 grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-xs text-neutral-400 tracking-wider select-none shrink-0 text-center">
+            <div className="sticky top-0 z-10 grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-sm sm:text-base text-neutral-300 tracking-wide select-none shrink-0 text-center">
               <div className="text-left pl-2">Personaje</div>
               <div>Sprite / Post-it Solo / Online</div>
               <div>Progreso</div>
