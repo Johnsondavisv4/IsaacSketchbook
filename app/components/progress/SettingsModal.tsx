@@ -101,8 +101,9 @@ export function SettingsModal({
             <span className="text-xs font-bold uppercase tracking-wider text-red-500">
               Ajustes de Sincronización
             </span>
-            <h2 className="text-lg font-bold text-white mt-0.5">
-              ⚙️ Archivo de Guardado de Steam
+            <h2 className="text-lg font-bold text-white mt-0.5 flex items-center gap-2">
+              <i className="bi bi-gear-fill text-neutral-400"></i>
+              <span>Archivo de Guardado de Steam</span>
             </h2>
           </div>
           <button
@@ -137,7 +138,7 @@ export function SettingsModal({
                 />
                 <div className="min-w-0">
                   <div className="text-xs font-bold text-white flex items-center gap-2">
-                    <span>🟢</span> The Binding of Isaac: Repentance+
+                    <span>The Binding of Isaac: Repentance+</span>
                   </div>
                   <div className="text-[11px] text-neutral-400 mt-0.5">
                     Versión actual con Cooperativo Online oficial (Prefijo "rep+")
@@ -162,7 +163,7 @@ export function SettingsModal({
                 />
                 <div className="min-w-0">
                   <div className="text-xs font-bold text-white flex items-center gap-2">
-                    <span>🔴</span> The Binding of Isaac: Repentance
+                    <span>The Binding of Isaac: Repentance</span>
                   </div>
                   <div className="text-[11px] text-neutral-400 mt-0.5">
                     Versión base clásica sin cooperativo online (Prefijo "rep_")
@@ -218,11 +219,22 @@ export function SettingsModal({
                     : 'text-amber-400'
                 }`}
               >
-                {checkStatus.loading
-                  ? '🔍 Comprobando...'
-                  : checkStatus.exists
-                  ? '✔️ Encontrado en Steam'
-                  : '⚠️ No encontrado en Steam'}
+                {checkStatus.loading ? (
+                  <span className="flex items-center gap-1.5">
+                    <i className="bi bi-search animate-pulse text-xs"></i>
+                    <span>Comprobando...</span>
+                  </span>
+                ) : checkStatus.exists ? (
+                  <span className="flex items-center gap-1.5">
+                    <i className="bi bi-check-circle-fill text-emerald-400 text-xs"></i>
+                    <span>Encontrado en Steam</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <i className="bi bi-exclamation-triangle-fill text-amber-400 text-xs"></i>
+                    <span>No encontrado en Steam</span>
+                  </span>
+                )}
               </span>
             </div>
           </div>
@@ -239,7 +251,7 @@ export function SettingsModal({
               type="submit"
               className="px-4 py-2 text-xs font-bold text-white bg-red-700 hover:bg-red-600 rounded-lg shadow transition-colors cursor-pointer flex items-center gap-1.5"
             >
-              <span>💾</span>
+              <i className="bi bi-floppy-fill"></i>
               <span>Guardar Configuración</span>
             </button>
           </div>

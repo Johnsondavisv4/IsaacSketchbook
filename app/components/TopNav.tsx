@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import React from 'react';
 
 interface TopNavProps {
-  title?: string;
+  title?: React.ReactNode;
   subtitle?: string;
   rightContent?: React.ReactNode;
 }

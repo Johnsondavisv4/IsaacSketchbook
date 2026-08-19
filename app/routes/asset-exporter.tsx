@@ -45,15 +45,15 @@ export async function loader() {
 }
 
 function getFolderIcon(folder: string): string {
-  if (folder === 'all') return '🌐';
+  if (folder === 'all') return 'bi bi-globe2';
   const f = folder.toLowerCase();
-  if (f.includes('trinket')) return '💍';
-  if (f.includes('achievement')) return '🏆';
-  if (f.includes('item') || f.includes('collectible')) return '📦';
-  if (f.includes('character')) return '🧙‍♂️';
-  if (f.includes('enemy') || f.includes('boss')) return '👾';
-  if (f.includes('mark')) return '🎯';
-  return '📁';
+  if (f.includes('trinket')) return 'bi bi-gem';
+  if (f.includes('achievement')) return 'bi bi-trophy-fill';
+  if (f.includes('item') || f.includes('collectible')) return 'bi bi-box-seam-fill';
+  if (f.includes('character')) return 'bi bi-people-fill';
+  if (f.includes('enemy') || f.includes('boss')) return 'bi bi-bug-fill';
+  if (f.includes('mark')) return 'bi bi-bullseye';
+  return 'bi bi-folder2-open';
 }
 
 export default function AssetExporter({ loaderData }: Route.ComponentProps) {
@@ -90,25 +90,35 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     return new Map(sortedEntries);
   }, [sprites]);
 
-  // Filtered files
+  // Filter sprites by folder and search query
   const filteredSprites = useMemo(() => {
-    let list = sprites;
+    let result = sprites;
 
     if (selectedFolder !== 'all') {
-      list = folderMap.get(selectedFolder) || [];
+      result = folderMap.get(selectedFolder) || [];
     }
 
-    if (searchQuery.trim()) {
+    if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
-      list = list.filter((s) => s.toLowerCase().includes(q));
+      result = result.filter((s) => s.toLowerCase().includes(q));
     }
 
-    return [...list].sort((a, b) => {
-      const nameA = a.split('/').pop() || a;
-      const nameB = b.split('/').pop() || b;
-      return isAscending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-    });
-  }, [sprites, selectedFolder, folderMap, searchQuery, isAscending]);
+    return isAscending
+      ? [...result].sort((a, b) => a.localeCompare(b))
+      : [...result].sort((a, b) => b.localeCompare(a));
+  }, [sprites, selectedFolder, searchQuery, isAscending, folderMap]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const next = new Set(selectedFiles);
+      filteredSprites.forEach((f) => next.add(f));
+      setSelectedFiles(next);
+    } else {
+      const next = new Set(selectedFiles);
+      filteredSprites.forEach((f) => next.delete(f));
+      setSelectedFiles(next);
+    }
+  };
 
   const toggleSelect = (filePath: string) => {
     setSelectedFiles((prev) => {
@@ -120,14 +130,6 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
       }
       return next;
     });
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedFiles(new Set(filteredSprites));
-    } else {
-      setSelectedFiles(new Set());
-    }
   };
 
   const setScaleForFile = (filePath: string, scale: number) => {
@@ -153,7 +155,6 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     showToast(`Escala ${bulkScale}x aplicada a ${selectedFiles.size} sprites.`, 'success');
   };
 
-  // Convert sprite with canvas to base64 at chosen scale
   const processImage = (filePath: string, scale: number): Promise<{ name: string; b64: string }> => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -181,7 +182,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
 
   const handleAddToCart = async () => {
     if (selectedFiles.size === 0) {
-      showToast('Selecciona al menos un sprite para añadir al carrito.', 'error');
+      showToast('Selecciona al menos un sprite.', 'error');
       return;
     }
 
@@ -202,6 +203,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     }
 
     addMultipleItems(results);
+    showToast(`Se añadieron ${results.length} sprites al carrito.`, 'success');
     setSelectedFiles(new Set());
     setIsProcessing(false);
   };
@@ -214,7 +216,12 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
       <div className="w-full max-w-455 h-[calc(100vh-40px)] min-h-137.5 flex flex-col gap-3">
         <TopNav
-          title="📁 Asset Exporter"
+          title={
+            <span className="flex items-center gap-2.5">
+              <i className="bi bi-folder2-open text-red-500"></i>
+              <span>Asset Exporter</span>
+            </span>
+          }
           subtitle="Explora y escala sprites de pixel art para inyectar en Photoshop"
         />
 
@@ -242,7 +249,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span>🌐</span>
+                  <i className="bi bi-globe2 text-neutral-400"></i>
                   <span>Todos los Sprites</span>
                 </div>
                 <span className="text-xs font-mono opacity-80">{sprites.length}</span>
@@ -260,7 +267,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                   }`}
                 >
                   <div className="flex items-center gap-2 truncate pr-2">
-                    <span>{getFolderIcon(folder)}</span>
+                    <i className={`${getFolderIcon(folder)} text-neutral-400`}></i>
                     <span className="truncate">{folder}</span>
                   </div>
                   <span className="text-xs font-mono opacity-80">{files.length}</span>
@@ -341,7 +348,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                   onClick={handleAddToCart}
                   className="px-4 py-2 text-xs font-bold text-white bg-red-700 hover:bg-red-600 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed rounded-lg shadow transition-colors cursor-pointer flex items-center gap-2 shrink-0"
                 >
-                  <span>🛒</span>
+                  <i className="bi bi-cart3"></i>
                   <span>{isProcessing ? 'Procesando...' : 'Añadir al Carrito'}</span>
                 </button>
               </div>

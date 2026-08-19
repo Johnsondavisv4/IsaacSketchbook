@@ -64,9 +64,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                   placeholder="Buscar logro..."
                   className="w-44 sm:w-56 px-3.5 py-1.5 pl-8 bg-neutral-950/80 border border-neutral-800 rounded-lg text-sm text-neutral-200 placeholder-neutral-500 font-upheaval tracking-wide focus:outline-none focus:border-red-500 transition-colors"
                 />
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500 text-xs font-sans">
-                  🔍
-                </span>
+                <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 text-xs"></i>
                 {searchTerm && (
                   <button
                     type="button"
@@ -152,8 +150,8 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
             </>
           ) : (
             <div className="flex items-center gap-3.5 min-w-0 w-full">
-              <div className="w-18 h-18 sm:w-20 sm:h-20 p-2 bg-neutral-900/60 border border-neutral-800/80 rounded-2xl shrink-0 flex items-center justify-center text-neutral-600 text-xl sm:text-2xl select-none">
-                🏆
+              <div className="w-18 h-18 sm:w-20 sm:h-20 p-2 bg-neutral-900/60 border border-neutral-800/80 rounded-2xl shrink-0 flex items-center justify-center text-neutral-600 text-2xl sm:text-3xl select-none">
+                <i className="bi bi-trophy"></i>
               </div>
               <div className="flex flex-col min-w-0 justify-center">
                 <h4 className="text-sm font-upheaval text-neutral-400 tracking-wide">

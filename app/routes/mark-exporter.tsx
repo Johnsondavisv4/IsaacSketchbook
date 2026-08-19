@@ -239,7 +239,12 @@ importarMarcaDirecto();`;
     <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
       <div className="w-full max-w-455 flex flex-col gap-4">
         <TopNav
-          title="🎯 Mark Exporter"
+          title={
+            <span className="flex items-center gap-2.5">
+              <i className="bi bi-bullseye text-red-500"></i>
+              <span>Mark Exporter</span>
+            </span>
+          }
           subtitle="Extrae marcas oficiales de completado con escalado personalizado pixel-perfect"
         />
 
@@ -380,7 +385,7 @@ importarMarcaDirecto();`;
                 onClick={handleAddToCart}
                 className="w-full py-2.5 text-xs font-bold text-white bg-red-700 hover:bg-red-600 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed rounded-lg shadow-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>🛒</span>
+                <i className="bi bi-cart3"></i>
                 <span>Añadir al Carrito ({scale}x)</span>
               </button>
 
@@ -390,7 +395,7 @@ importarMarcaDirecto();`;
                 onClick={handleDownloadPng}
                 className="w-full py-2 text-xs font-semibold text-neutral-200 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-neutral-600 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>📥</span>
+                <i className="bi bi-download"></i>
                 <span>Descargar PNG</span>
               </button>
 
@@ -402,7 +407,7 @@ importarMarcaDirecto();`;
                 onClick={handleDownloadJsx}
                 className="w-full py-2 text-xs font-semibold text-neutral-400 hover:text-white bg-neutral-950 hover:bg-neutral-800 border border-neutral-800 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>📜</span>
+                <i className="bi bi-file-earmark-code"></i>
                 <span>Descargar Script JSX Directo</span>
               </button>
             </div>

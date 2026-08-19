@@ -16,29 +16,27 @@ export function meta(): Route.MetaDescriptors {
 
 const TOOLS = [
   {
-    title: 'Progress Manager (Beta)',
-    path: '/progress-manager-beta',
-    icon: '🧪',
-    badge: 'Beta',
+    title: 'Progress Manager',
+    path: '/progress-manager',
+    icon: 'bi bi-graph-up-arrow',
     desc: 'Sincronización automática con Steam (.dat), marcas de completado y exportación dual de Post-its.',
-    borderDashed: true,
   },
   {
     title: 'Post-it Generator',
     path: '/postit-generator',
-    icon: '📜',
+    icon: 'bi bi-sticky-fill',
     desc: 'Diseña notas de completado interactivas para tus personajes (Normales / Tainted) con marcas pixel-perfect.',
   },
   {
     title: 'Asset Exporter',
     path: '/asset-exporter',
-    icon: '📁',
+    icon: 'bi bi-folder2-open',
     desc: 'Explora tu biblioteca de sprites, escálalos sin distorsión e inyéctalos en capas de Photoshop.',
   },
   {
     title: 'Mark Exporter',
     path: '/mark-exporter',
-    icon: '🎯',
+    icon: 'bi bi-bullseye',
     desc: 'Extrae marcas oficiales individualmente con escalado personalizado para tus diseños y miniaturas.',
   },
 ];
@@ -54,41 +52,31 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-4 md:p-6">
       <div className="w-full max-w-455 flex flex-col gap-5">
-        {/* Header */}
         <header className="mt-1">
           <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
-            🎨 TBOI - Modding Suite
+            <i className="bi bi-palette-fill text-red-500"></i>
+            <span>TBOI - Modding Suite</span>
           </h1>
           <p className="text-neutral-400 text-sm mt-1">
             Central de comando y gestión de scripts para Adobe Photoshop
           </p>
         </header>
 
-        {/* Tools Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {TOOLS.map((tool) => (
             <Link
               key={tool.path}
               to={tool.path}
-              className={`group bg-neutral-900 border ${
-                tool.borderDashed
-                  ? 'border-dashed border-red-500/40 hover:border-red-500'
-                  : 'border-neutral-700 hover:border-red-700'
-              } rounded-xl p-5 flex items-start gap-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-950/20`}
+              className="group bg-neutral-900 border border-neutral-700 hover:border-red-700 rounded-xl p-5 flex items-start gap-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-950/20"
             >
-              <div className="text-3xl bg-neutral-950 p-3 rounded-lg border border-neutral-800 shrink-0 group-hover:scale-105 transition-transform">
-                {tool.icon}
+              <div className="text-2xl bg-neutral-950 p-3.5 rounded-lg border border-neutral-800 shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center text-neutral-300 group-hover:text-red-400">
+                <i className={tool.icon}></i>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-bold text-white group-hover:text-red-400 transition-colors">
                     {tool.title}
                   </h2>
-                  {tool.badge && (
-                    <span className="text-xs font-bold uppercase bg-red-950 text-red-400 border border-red-800/60 px-1.5 py-0.5 rounded">
-                      {tool.badge}
-                    </span>
-                  )}
                 </div>
                 <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
                   {tool.desc}
@@ -98,12 +86,12 @@ export default function Home() {
           ))}
         </section>
 
-        {/* Cart Panel */}
         <section className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-neutral-700 pb-3.5">
             <div className="flex items-center gap-2.5">
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                🛒 Carrito de Inyección
+                <i className="bi bi-cart3 text-red-400"></i>
+                <span>Carrito de Inyección</span>
               </h2>
               {cart.length > 0 && (
                 <span className="bg-red-700 text-white text-xs font-bold px-2 py-0.5 rounded-full">

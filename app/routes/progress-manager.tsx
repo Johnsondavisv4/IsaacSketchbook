@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Route } from './+types/progress-manager-beta';
+import type { Route } from './+types/progress-manager';
 import fs from 'node:fs';
 import { useFetcher } from 'react-router';
 import { TopNav } from '../components/TopNav';
@@ -22,7 +22,7 @@ import type { AchievementJSON } from '../services/save-parser/models/Achievement
 
 export function meta(): Route.MetaDescriptors {
   return [
-    { title: 'Progress Manager (Beta) - TBOI Modding Suite' },
+    { title: 'Progress Manager - TBOI Modding Suite' },
     {
       name: 'description',
       content: 'Sincronización automática de guardado de Steam (.dat), marcas de completado y exportación para Photoshop',
@@ -103,7 +103,7 @@ export async function action({ request }: Route.ActionArgs) {
   };
 }
 
-export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps) {
+export default function ProgressManager({ loaderData }: Route.ComponentProps) {
   const {
     configured,
     settings: initialSettings,
@@ -134,10 +134,6 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
   const currentSaveFilename =
     fetcher.data?.filename !== undefined ? fetcher.data.filename : saveFile;
 
-  const saveSettingsLabel = isConfigured
-    ? `${currentSettings.version === 'Repentance+' ? '🟢' : '🔴'} ${currentSettings.version} · Slot ${currentSettings.slot} ${currentSaveExists ? '✔️' : '⚠️'}`
-    : '⚙️ Configurar Partida';
-
   const handleFilterChange = (newFilter: 'normal' | 'tainted') => {
     setCharacterFilter(newFilter);
     fetch('/api/settings', {
@@ -162,39 +158,58 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
     <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
       <div className="w-full max-w-455 h-[calc(100vh-40px)] min-h-137.5 flex flex-col gap-3 overflow-hidden">
         <TopNav
-          title="📈 Progress Manager"
+          title={
+            <span className="flex items-center gap-2.5">
+              <i className="bi bi-graph-up-arrow text-red-500"></i>
+              <span>Progress Manager</span>
+            </span>
+          }
           subtitle="Sincronización automática de Steam (.dat), marcas de completado y exportación dual de Post-its"
           rightContent={
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 border ${isConfigured
-                  ? 'text-neutral-200 bg-neutral-800 hover:bg-neutral-700 border-neutral-700 hover:border-neutral-600 shadow-sm'
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-2 border ${isConfigured
+                  ? 'text-neutral-200 bg-neutral-900 hover:bg-neutral-800 border-neutral-700 hover:border-neutral-600 shadow-sm'
                   : 'text-amber-400 bg-amber-950/40 hover:bg-amber-900/50 border-amber-800/60'
                   }`}
                 title="Configuración de guardado de Steam (Versión y Slot)"
               >
-                <span>⚙️</span>
-                <span>{saveSettingsLabel}</span>
+                <i className="bi bi-gear-fill text-xs text-neutral-400"></i>
+                {isConfigured ? (
+                  <div className="flex items-center gap-2">
+                    <span>{currentSettings.version} · Slot {currentSettings.slot}</span>
+                    <i
+                      className={`bi ${
+                        currentSaveExists
+                          ? 'bi-check-circle-fill text-emerald-400'
+                          : 'bi-exclamation-triangle-fill text-amber-400'
+                      } text-xs`}
+                    ></i>
+                  </div>
+                ) : (
+                  <span>Configurar Partida</span>
+                )}
               </button>
 
-              <span
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${!isConfigured
+              <div
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border flex items-center gap-2 ${!isConfigured
                   ? 'bg-neutral-900 text-neutral-400 border-neutral-800'
                   : currentSaveExists
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
-                    : 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                    ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800/60'
+                    : 'bg-amber-950/50 text-amber-300 border-amber-800/60'
                   }`}
               >
-                <span
-                  className={`w-2 h-2 rounded-full shrink-0 ${!isConfigured
-                    ? 'bg-neutral-600'
-                    : currentSaveExists
-                      ? 'bg-emerald-400 animate-pulse'
-                      : 'bg-amber-400'
-                    }`}
-                />
+                <i
+                  className={`bi ${
+                    !isConfigured
+                      ? 'bi-gear-wide-connected text-neutral-500'
+                      : currentSaveExists
+                        ? 'bi-steam text-emerald-400'
+                        : 'bi-cloud-slash-fill text-amber-400'
+                  } text-sm`}
+                ></i>
                 <span>
                   {!isConfigured
                     ? 'Configuración requerida'
@@ -202,7 +217,7 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
                       ? 'Sincronizado con Steam'
                       : 'Modo fuera de línea'}
                 </span>
-              </span>
+              </div>
             </div>
           }
         />
@@ -216,7 +231,7 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
           >
-            <span>🧙‍♂️</span>
+            <i className="bi bi-people-fill"></i>
             <span>Characters</span>
           </button>
 
@@ -228,7 +243,7 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
           >
-            <span>📦</span>
+            <i className="bi bi-box-seam-fill"></i>
             <span>Items</span>
           </button>
 
@@ -240,7 +255,7 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
               }`}
           >
-            <span>🏆</span>
+            <i className="bi bi-trophy-fill"></i>
             <span>Achievements</span>
           </button>
         </div>

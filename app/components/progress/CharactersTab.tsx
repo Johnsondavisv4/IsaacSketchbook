@@ -284,7 +284,7 @@ function CharacterRow({
         <div className="flex flex-col gap-1.5 w-44 shrink-0">
           <div className="flex items-center justify-between bg-neutral-950 px-2.5 py-1.5 rounded-md border border-neutral-800 text-xs">
             <span className="text-neutral-300 font-medium flex items-center gap-1.5">
-              <span>📜</span> Solo:
+              <i className="bi bi-file-earmark-text text-amber-400"></i> Solo:
             </span>
             <strong className="font-mono text-amber-400 text-xs font-bold">
               {soloHard}/12 Hard
@@ -293,7 +293,7 @@ function CharacterRow({
           {isRepPlus && (
             <div className="flex items-center justify-between bg-neutral-950 px-2.5 py-1.5 rounded-md border border-neutral-800 text-xs">
               <span className="text-neutral-300 font-medium flex items-center gap-1.5">
-                <span>🌐</span> Online:
+                <i className="bi bi-globe2 text-sky-400"></i> Online:
               </span>
               <strong className="font-mono text-sky-400 text-xs font-bold">
                 {onlineHard}/12 Hard
@@ -308,45 +308,50 @@ function CharacterRow({
           <button
             type="button"
             onClick={() => onExportAction('sprite', character)}
-            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-emerald-400 hover:bg-emerald-950/30 hover:border-emerald-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+            className="px-2.5 py-1.5 text-xs font-semibold text-neutral-300 hover:text-emerald-400 hover:bg-emerald-950/30 hover:border-emerald-700/60 border border-transparent rounded-md transition-all cursor-pointer flex items-center gap-1.5"
             title="Descargar script .jsx (Sprite) para Photoshop"
           >
-            🖼️ Sprite
+            <i className="bi bi-image"></i>
+            <span>Sprite</span>
           </button>
           <button
             type="button"
             onClick={() => onExportAction('solo', character)}
-            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-amber-400 hover:bg-amber-950/30 hover:border-amber-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+            className="px-2.5 py-1.5 text-xs font-semibold text-neutral-300 hover:text-amber-400 hover:bg-amber-950/30 hover:border-amber-700/60 border border-transparent rounded-md transition-all cursor-pointer flex items-center gap-1.5"
             title="Descargar script .jsx (Post-it Solo) para Photoshop"
           >
-            📜 Solo
+            <i className="bi bi-file-earmark-text"></i>
+            <span>Solo</span>
           </button>
           {isRepPlus && (
             <button
               type="button"
               onClick={() => onExportAction('online', character)}
-              className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-sky-400 hover:bg-sky-950/30 hover:border-sky-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+              className="px-2.5 py-1.5 text-xs font-semibold text-neutral-300 hover:text-sky-400 hover:bg-sky-950/30 hover:border-sky-700/60 border border-transparent rounded-md transition-all cursor-pointer flex items-center gap-1.5"
               title="Descargar script .jsx (Post-it Online) para Photoshop"
             >
-              🌐 Online
+              <i className="bi bi-globe2"></i>
+              <span>Online</span>
             </button>
           )}
           <button
             type="button"
             onClick={() => onExportAction('pack-solo', character)}
-            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+            className="px-2.5 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer flex items-center gap-1.5"
             title="Descargar script .jsx (Pack Solo: Sprite + Post-it Solo) para Photoshop"
           >
-            📦 Pack (Solo)
+            <i className="bi bi-box-seam"></i>
+            <span>Pack (Solo)</span>
           </button>
           {isRepPlus && (
             <button
               type="button"
               onClick={() => onExportAction('pack-online', character)}
-              className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+              className="px-2.5 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer flex items-center gap-1.5"
               title="Descargar script .jsx (Pack Online: Sprite + Post-it Online) para Photoshop"
             >
-              📦 Pack (Online)
+              <i className="bi bi-box-seam"></i>
+              <span>Pack (Online)</span>
             </button>
           )}
         </div>

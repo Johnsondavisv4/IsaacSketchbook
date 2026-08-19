@@ -235,7 +235,12 @@ importarPostitDirecto();`;
     <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
       <div className="w-full max-w-455 flex flex-col gap-4">
         <TopNav
-          title="📜 Post-it Generator"
+          title={
+            <span className="flex items-center gap-2.5">
+              <i className="bi bi-sticky-fill text-red-500"></i>
+              <span>Post-it Generator</span>
+            </span>
+          }
           subtitle="Diseña notas de completado interactivas pixel-perfect para tus personajes"
         />
 
@@ -316,23 +321,26 @@ importarPostitDirecto();`;
               <button
                 type="button"
                 onClick={() => setAllMarks(2)}
-                className="px-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded-md transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60 rounded-md transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                📜 Llenar Todo Hard Solo
+                <i className="bi bi-file-earmark-text"></i>
+                <span>Llenar Todo Hard Solo</span>
               </button>
               <button
                 type="button"
                 onClick={() => setAllMarks(4)}
-                className="px-3 py-1.5 text-xs font-semibold text-blue-300 bg-blue-950/40 hover:bg-blue-900/60 border border-blue-800/60 rounded-md transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-blue-300 bg-blue-950/40 hover:bg-blue-900/60 border border-blue-800/60 rounded-md transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                🌐 Llenar Todo Hard Online
+                <i className="bi bi-globe2"></i>
+                <span>Llenar Todo Hard Online</span>
               </button>
               <button
                 type="button"
                 onClick={() => setAllMarks(0)}
-                className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-md transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-md transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                ✕ Limpiar Todo
+                <i className="bi bi-x-lg"></i>
+                <span>Limpiar Todo</span>
               </button>
             </div>
 
@@ -424,7 +432,7 @@ importarPostitDirecto();`;
                 onClick={() => handlePushToCart(1)}
                 className="w-full py-2.5 text-xs font-bold text-white bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-red-700 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>🛒</span>
+                <i className="bi bi-cart3"></i>
                 <span>Añadir al Carrito (1x Nativo)</span>
               </button>
 
@@ -434,7 +442,7 @@ importarPostitDirecto();`;
                 onClick={() => handlePushToCart(4)}
                 className="w-full py-2.5 text-xs font-bold text-white bg-red-700 hover:bg-red-600 rounded-lg shadow transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>🛒</span>
+                <i className="bi bi-cart3"></i>
                 <span>Añadir al Carrito (4x HD 384px)</span>
               </button>
 
@@ -446,7 +454,7 @@ importarPostitDirecto();`;
                 onClick={() => handleDirectDownload(4)}
                 className="w-full py-2 text-xs font-semibold text-neutral-300 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>📥</span>
+                <i className="bi bi-download"></i>
                 <span>Descargar Script JSX Directo</span>
               </button>
             </div>
