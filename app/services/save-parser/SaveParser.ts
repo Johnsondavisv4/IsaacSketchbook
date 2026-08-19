@@ -53,7 +53,6 @@ function getChecklistUnlocks(
 ): number[] {
   const result = new Array<number>(NUM_MARKS);
   if (charIndex === 14) {
-    // The Forgotten
     let offset = section1Offset + 0x32c;
     for (let i = 0; i < NUM_MARKS; i++) {
       const currentOffset = offset + i * 4;
@@ -63,7 +62,6 @@ function getChecklistUnlocks(
       if (i === 10) offset += 0x84;
     }
   } else if (charIndex > 14) {
-    // Repentance (Bethany, J&E, Tainted 17..33)
     let offset = section1Offset + 0x31c;
     for (let i = 0; i < NUM_MARKS; i++) {
       const currentOffset = offset + charIndex * 4 + i * 19 * 4;
@@ -72,7 +70,6 @@ function getChecklistUnlocks(
       if (i === 9 || i === 10) offset += 0x3c;
     }
   } else {
-    // 0..13 (Isaac ... Apollyon)
     let offset = section1Offset + 0x6c;
     for (let i = 0; i < NUM_MARKS; i++) {
       const currentOffset = offset + charIndex * 4 + i * 14 * 4;
@@ -125,7 +122,6 @@ export function parseSaveFile(
 ): ParsedSaveData {
   const sectionOffsets = getSectionOffsets(data);
 
-  // 1. Personajes y Marcas (Sección 1)
   const characters: Character[] = [];
   for (let c = 0; c < NUM_CHARACTERS; c++) {
     const rawMarks = getChecklistUnlocks(data, sectionOffsets[1], c);
@@ -138,12 +134,10 @@ export function parseSaveFile(
     characters.push(new Character(c, undefined, soloMarks, onlineMarks));
   }
 
-  // 2. Logros (Sección 0)
   const achCount =
     version === 'Repentance' ? NUM_ACHIEVEMENTS_REP : NUM_ACHIEVEMENTS_REP_PLUS;
   const achievements = parseAchievements(data, sectionOffsets[0], achCount);
 
-  // 3. Coleccionables / Items (Sección 3)
   const items = parseItems(data, sectionOffsets[3]);
 
   return {

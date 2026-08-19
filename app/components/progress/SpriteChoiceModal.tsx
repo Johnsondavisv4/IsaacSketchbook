@@ -56,7 +56,6 @@ export function SpriteChoiceModal({
         aria-modal="true"
         aria-labelledby="sprite-choice-title"
       >
-        {/* Modal Header */}
         <header className="flex items-start justify-between gap-4 mb-4 pb-2 border-b border-neutral-800">
           <div>
             <p className="text-[11px] font-bold text-red-500 uppercase tracking-wider mb-1">
@@ -76,7 +75,6 @@ export function SpriteChoiceModal({
           </button>
         </header>
 
-        {/* Choice Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {choices.map((choice) => (
             <button

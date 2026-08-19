@@ -234,16 +234,13 @@ function CharacterRow({
 
   return (
     <div className={`grid ${gridColsClass} gap-4 items-center px-4 py-3 hover:bg-neutral-950/40 transition-colors border-b border-neutral-800 last:border-b-0`}>
-      {/* 1. Character Info (Direct Left Aligned) */}
       <div className="min-w-0 text-left pl-2">
         <h3 className="text-base font-upheaval text-white tracking-wide truncate">
           {character.character}
         </h3>
       </div>
 
-      {/* 2. Thumbnails (Sprite, Solo Post-it, and Online Post-it if Rep+) */}
       <div className="flex items-center justify-center gap-2 shrink-0">
-        {/* Character Sprite Thumbnail (85x85) */}
         <div
           className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-center p-1 overflow-hidden shrink-0"
           title={`Sprite de ${character.character}`}
@@ -256,7 +253,6 @@ function CharacterRow({
           />
         </div>
 
-        {/* Solo Post-it (85x85) */}
         <div
           className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-center p-0.5 overflow-hidden shrink-0"
           title={`Post-it Solo: ${soloHard}/12 Hard`}
@@ -269,7 +265,6 @@ function CharacterRow({
           />
         </div>
 
-        {/* Online Post-it (85x85) - Repentance+ Only */}
         {isRepPlus && (
           <div
             className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-center p-0.5 overflow-hidden shrink-0"
@@ -285,7 +280,6 @@ function CharacterRow({
         )}
       </div>
 
-      {/* Progress Badges (Centered capsule) */}
       <div className="flex items-center justify-center">
         <div className="flex flex-col gap-1.5 w-44 shrink-0">
           <div className="flex items-center justify-between bg-neutral-950 px-2.5 py-1.5 rounded-md border border-neutral-800 text-xs">
@@ -309,7 +303,6 @@ function CharacterRow({
         </div>
       </div>
 
-      {/* Actions (Centered button group) */}
       <div className="flex items-center justify-center">
         <div className="inline-flex items-center gap-1 bg-neutral-950 p-1 rounded-lg border border-neutral-800 flex-wrap justify-center">
           <button
@@ -403,7 +396,6 @@ export function CharactersTab({
   );
   const filteredList = filter === 'normal' ? normalChars : taintedChars;
 
-  // Indicators calculations
   const megaBlastCount = useMemo(() => {
     return normalChars.filter((c) => {
       const ms = c.soloMarks?.['Mega Satan'];
@@ -551,11 +543,8 @@ export function CharactersTab({
 
   return (
     <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-hidden">
-      {/* Top Filter and Indicators Panel */}
       <div className="shrink-0 bg-neutral-900 border border-neutral-700 rounded-xl p-4 shadow-xl flex flex-col gap-3">
-        {/* Info & Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-3">
-          {/* Character Filter Chips */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 mr-1">
               Filtrar:
@@ -583,7 +572,6 @@ export function CharactersTab({
           </div>
         </div>
 
-        {/* Global Item Unlock Indicators (only visible when configured) */}
         {configured && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
             {filter === 'normal' && (
@@ -652,7 +640,6 @@ export function CharactersTab({
         )}
       </div>
 
-      {/* Character Rows Capsule Table */}
       <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-y-auto shadow-xl">
         {!configured || filteredList.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
@@ -660,7 +647,6 @@ export function CharactersTab({
           </div>
         ) : (
           <>
-            {/* Sticky Table Header inside the scroll container */}
             <div className={`sticky top-0 z-10 grid ${isRepPlus ? 'grid-cols-[180px_290px_1fr_1fr]' : 'grid-cols-[180px_200px_1fr_1fr]'} gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-sm sm:text-base text-neutral-300 tracking-wide select-none shrink-0 text-center`}>
               <div className="text-left pl-2">Personaje</div>
               <div>{isRepPlus ? 'Sprite / Post-it Solo / Online' : 'Sprite / Post-it Solo'}</div>
@@ -668,7 +654,6 @@ export function CharactersTab({
               <div>Inyección (.jsx)</div>
             </div>
 
-            {/* Rows list */}
             <div className="divide-y divide-neutral-800">
               {filteredList.map((char) => (
                 <CharacterRow
@@ -684,7 +669,6 @@ export function CharactersTab({
         )}
       </div>
 
-      {/* Sprite Variant Choice Modal */}
       {activeVariantModal && (
         <SpriteChoiceModal
           isOpen={Boolean(activeVariantModal)}

@@ -41,7 +41,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
 
   return (
     <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-hidden shadow-xl">
-      {/* Top Header & Legend */}
       <div className="shrink-0 p-4 sm:p-5 border-b border-neutral-800 flex flex-col gap-4 bg-neutral-950/40">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
@@ -57,7 +56,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
 
           {configured && (
             <div className="flex flex-wrap items-center gap-2.5 font-upheaval text-sm sm:text-base tracking-wide">
-              {/* Search input */}
               <div className="relative">
                 <input
                   type="text"
@@ -80,7 +78,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                 )}
               </div>
 
-              {/* Unlocked Filter */}
               <button
                 type="button"
                 onClick={() => toggleFilter('unlocked')}
@@ -95,7 +92,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                 <span className="font-mono text-xs opacity-80">({unlockedCount})</span>
               </button>
 
-              {/* Locked Filter */}
               <button
                 type="button"
                 onClick={() => toggleFilter('locked')}
@@ -113,7 +109,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
           )}
         </div>
 
-        {/* Selected Achievement Detail Ribbon (Sticky Inspector) */}
         <div className="p-3 bg-neutral-950/90 border border-neutral-800 rounded-2xl flex items-center justify-between gap-3 shadow-inner h-24 sm:h-26 shrink-0 overflow-hidden">
           {selectedAchievement ? (
             <>
@@ -173,7 +168,6 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
         </div>
       </div>
 
-      {/* Achievements Grid Container */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-5">
         {!configured || achievements.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">

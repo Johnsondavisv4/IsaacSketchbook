@@ -38,7 +38,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
 
   return (
     <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-hidden shadow-xl">
-      {/* Top Header & Filter Controls */}
       <div className="shrink-0 p-4 sm:p-5 border-b border-neutral-800 flex flex-col gap-3 bg-neutral-950/40">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
@@ -54,7 +53,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
 
           {configured && (
             <div className="flex items-center gap-2 font-upheaval text-sm sm:text-base tracking-wide">
-              {/* Seen Filter Button */}
               <button
                 type="button"
                 onClick={() => toggleFilter('seen')}
@@ -69,7 +67,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                 <span className="font-mono text-xs opacity-80">({seenCount})</span>
               </button>
 
-              {/* Not Seen Filter Button */}
               <button
                 type="button"
                 onClick={() => toggleFilter('not_seen')}
@@ -88,7 +85,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
         </div>
       </div>
 
-      {/* Single Page View Area */}
       <div className="flex-1 min-h-0 p-3 sm:p-5 flex flex-col justify-between items-center overflow-y-auto">
         {!configured || validItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
@@ -100,7 +96,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
           </div>
         ) : (
           <div className="w-full flex-1 flex flex-col justify-between items-center gap-3">
-            {/* Page Title with Left / Right SVG Navigation Arrows */}
             <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6 select-none pt-1">
               <button
                 type="button"
@@ -155,7 +150,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               </button>
             </div>
 
-            {/* 20-Column Grid Container (centered vertically and horizontally) */}
             <div className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2">
               <div className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
                 {pageItems.map((item) => (
@@ -179,7 +173,6 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               </div>
             </div>
 
-            {/* Pagination Dots at Bottom (only when multiple pages exist) */}
             {totalPages > 1 && (
               <div className="shrink-0 flex items-center justify-center gap-2.5 pb-1 select-none">
                 {Array.from({ length: totalPages }).map((_, idx) => {

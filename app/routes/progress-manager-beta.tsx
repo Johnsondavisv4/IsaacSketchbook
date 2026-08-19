@@ -121,7 +121,6 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
   );
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // Auto-open modal on first visit if no configuration exists
   useEffect(() => {
     if (!configured) {
       setIsSettingsOpen(true);
@@ -208,7 +207,6 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
           }
         />
 
-        {/* 3 Main Tabs Bar */}
         <div className="shrink-0 flex items-center gap-2 bg-neutral-900 border border-neutral-700 p-1.5 rounded-xl">
           <button
             type="button"
@@ -247,7 +245,6 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
           </button>
         </div>
 
-        {/* Tab Content */}
         <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           {activeTab === 'characters' && (
             <CharactersTab
@@ -272,7 +269,6 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
         </div>
       </div>
 
-      {/* Steam Save Settings Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

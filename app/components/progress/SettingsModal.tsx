@@ -115,7 +115,6 @@ export function SettingsModal({
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Version Selection */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
               1. Versión del Juego
@@ -173,7 +172,6 @@ export function SettingsModal({
             </div>
           </div>
 
-          {/* Slot Selection */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
               2. Slot de Guardado
@@ -202,7 +200,6 @@ export function SettingsModal({
             </div>
           </div>
 
-          {/* Preview Box */}
           <div className="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 flex flex-col gap-1.5 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-neutral-400">Archivo calculado:</span>
@@ -230,7 +227,6 @@ export function SettingsModal({
             </div>
           </div>
 
-          {/* Modal Actions */}
           <div className="flex gap-3 justify-end pt-2">
             <button
               type="button"

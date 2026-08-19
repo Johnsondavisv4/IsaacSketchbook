@@ -95,7 +95,6 @@ export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileSta
         }
       }
     } catch {
-      // Ignore directory access errors
     }
   }
 

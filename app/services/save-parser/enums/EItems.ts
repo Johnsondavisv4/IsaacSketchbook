@@ -1,8 +1,3 @@
-/**
- * Listado oficial de Coleccionables (Collection Page) de The Binding of Isaac: Repentance.
- * Contiene exactamente los 719 coleccionables oficiales de la Colección.
- */
-
 export const items: Record<string, number> = {
     "The Sad Onion": 1,
     "The Inner Eye": 2,
@@ -723,13 +718,6 @@ export const items: Record<string, number> = {
     "Mom's Ring": 732
 };
 
-/**
- * Genera el nombre del archivo de sprite a partir del ID y Nombre.
- * Sanitiza caracteres inválidos (<>:"/\\|*?) reemplazándolos por guiones bajos.
- * @param {number} id
- * @param {string} name
- * @returns {string}
- */
 export function getSpriteFilename(id: number, name: string): string {
     const id3 = String(id).padStart(3, '0');
     const safeName = name
