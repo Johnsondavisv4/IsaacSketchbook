@@ -170,11 +170,10 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 border ${
-                  isConfigured
-                    ? 'text-neutral-200 bg-neutral-800 hover:bg-neutral-700 border-neutral-700 hover:border-neutral-600 shadow-sm'
-                    : 'text-amber-400 bg-amber-950/40 hover:bg-amber-900/50 border-amber-800/60'
-                }`}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 border ${isConfigured
+                  ? 'text-neutral-200 bg-neutral-800 hover:bg-neutral-700 border-neutral-700 hover:border-neutral-600 shadow-sm'
+                  : 'text-amber-400 bg-amber-950/40 hover:bg-amber-900/50 border-amber-800/60'
+                  }`}
                 title="Configuración de guardado de Steam (Versión y Slot)"
               >
                 <span>⚙️</span>
@@ -182,22 +181,20 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               </button>
 
               <span
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${
-                  !isConfigured
-                    ? 'bg-neutral-900 text-neutral-400 border-neutral-800'
-                    : currentSaveExists
-                      ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
-                      : 'bg-amber-950/60 text-amber-400 border-amber-800/60'
-                }`}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${!isConfigured
+                  ? 'bg-neutral-900 text-neutral-400 border-neutral-800'
+                  : currentSaveExists
+                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                    : 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                  }`}
               >
                 <span
-                  className={`w-2 h-2 rounded-full shrink-0 ${
-                    !isConfigured
-                      ? 'bg-neutral-600'
-                      : currentSaveExists
-                        ? 'bg-emerald-400 animate-pulse'
-                        : 'bg-amber-400'
-                  }`}
+                  className={`w-2 h-2 rounded-full shrink-0 ${!isConfigured
+                    ? 'bg-neutral-600'
+                    : currentSaveExists
+                      ? 'bg-emerald-400 animate-pulse'
+                      : 'bg-amber-400'
+                    }`}
                 />
                 <span>
                   {!isConfigured
@@ -216,24 +213,22 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
           <button
             type="button"
             onClick={() => setActiveTab('characters')}
-            className={`flex-1 py-2 px-4 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${
-              activeTab === 'characters'
-                ? 'bg-red-700 text-white shadow-md'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
-            }`}
+            className={`flex-1 py-2 px-4 font-upheaval text-sm tracking-wide rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${activeTab === 'characters'
+              ? 'bg-red-700 text-white shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
           >
             <span>🧙‍♂️</span>
-            <span>Personajes</span>
+            <span>Characters</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('items')}
-            className={`flex-1 py-2 px-4 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${
-              activeTab === 'items'
-                ? 'bg-red-700 text-white shadow-md'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
-            }`}
+            className={`flex-1 py-2 px-4 font-upheaval text-sm tracking-wide rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${activeTab === 'items'
+              ? 'bg-red-700 text-white shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
           >
             <span>📦</span>
             <span>Items</span>
@@ -242,14 +237,13 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
           <button
             type="button"
             onClick={() => setActiveTab('achievements')}
-            className={`flex-1 py-2 px-4 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${
-              activeTab === 'achievements'
-                ? 'bg-red-700 text-white shadow-md'
-                : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
-            }`}
+            className={`flex-1 py-2 px-4 font-upheaval text-sm tracking-wide rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2 ${activeTab === 'achievements'
+              ? 'bg-red-700 text-white shadow-md'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+              }`}
           >
             <span>🏆</span>
-            <span>Logros</span>
+            <span>Achievements</span>
           </button>
         </div>
 

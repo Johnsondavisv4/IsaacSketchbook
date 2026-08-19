@@ -229,7 +229,7 @@ function CharacterRow({
     <div className="grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 hover:bg-neutral-950/40 transition-colors border-b border-neutral-800 last:border-b-0">
       {/* 1. Character Info (Direct Left Aligned) */}
       <div className="min-w-0 text-left pl-2">
-        <h3 className="text-sm font-bold text-white truncate">
+        <h3 className="text-base font-upheaval text-white tracking-wide truncate">
           {character.character}
         </h3>
       </div>
@@ -545,7 +545,7 @@ export function CharactersTab({
             <button
               type="button"
               onClick={() => onFilterChange('normal')}
-              className={`px-3.5 py-1.5 text-xs font-bold rounded-lg border transition-colors cursor-pointer ${filter === 'normal'
+              className={`px-3.5 py-1.5 font-upheaval text-sm tracking-wide rounded-lg border transition-colors cursor-pointer ${filter === 'normal'
                 ? 'bg-red-950 text-white border-red-600'
                 : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
                 }`}
@@ -555,7 +555,7 @@ export function CharactersTab({
             <button
               type="button"
               onClick={() => onFilterChange('tainted')}
-              className={`px-3.5 py-1.5 text-xs font-bold rounded-lg border transition-colors cursor-pointer ${filter === 'tainted'
+              className={`px-3.5 py-1.5 font-upheaval text-sm tracking-wide rounded-lg border transition-colors cursor-pointer ${filter === 'tainted'
                 ? 'bg-red-950 text-white border-red-600'
                 : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:text-white'
                 }`}
@@ -578,7 +578,7 @@ export function CharactersTab({
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-neutral-300">Mega Blast</div>
+                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide">Mega Blast</div>
                   <div
                     className={`text-xs font-mono font-bold mt-0.5 ${isMegaBlastReady ? 'text-emerald-400' : 'text-amber-400'
                       }`}
@@ -599,7 +599,7 @@ export function CharactersTab({
                   />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-neutral-300">Mega Mush</div>
+                  <div className="text-sm font-upheaval text-neutral-200 tracking-wide">Mega Mush</div>
                   <div
                     className={`text-xs font-mono font-bold mt-0.5 ${isMegaMushReady ? 'text-emerald-400' : 'text-amber-400'
                       }`}
@@ -619,7 +619,7 @@ export function CharactersTab({
                 />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold text-neutral-300">
+                <div className="text-sm font-upheaval text-neutral-200 tracking-wide">
                   Death Certificate
                 </div>
                 <div
@@ -643,7 +643,7 @@ export function CharactersTab({
         ) : (
           <>
             {/* Sticky Table Header inside the scroll container */}
-            <div className="sticky top-0 z-10 grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 text-[11px] font-bold text-neutral-400 uppercase tracking-wider select-none shrink-0 text-center">
+            <div className="sticky top-0 z-10 grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-xs text-neutral-400 tracking-wider select-none shrink-0 text-center">
               <div className="text-left pl-2">Personaje</div>
               <div>Sprite / Post-it Solo / Online</div>
               <div>Progreso</div>

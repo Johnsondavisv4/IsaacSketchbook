@@ -1,10 +1,11 @@
-import { getAchievementName, getAchievementUnlock } from '../enums/EAchievements';
+import { getAchievementName, getAchievementUnlock, getAchievementSprite } from '../enums/EAchievements';
 
 export interface AchievementJSON {
   id: number;
   achievement: string;
   unlocked: boolean;
   unlock: string;
+  sprite: string;
 }
 
 export class Achievement {
@@ -12,12 +13,14 @@ export class Achievement {
   public achievement: string;
   public unlocked: boolean;
   public unlock: string;
+  public sprite: string;
 
   constructor(id: number, name?: string, unlocked: boolean = false, unlock?: string) {
     this.id = id;
     this.achievement = name ?? getAchievementName(id);
     this.unlocked = Boolean(unlocked);
     this.unlock = unlock ?? getAchievementUnlock(id);
+    this.sprite = getAchievementSprite(this.id, this.achievement);
   }
 
   getId(): number {
@@ -36,12 +39,17 @@ export class Achievement {
     return this.unlock;
   }
 
+  getSprite(): string {
+    return this.sprite;
+  }
+
   toJSON(): AchievementJSON {
     return {
       id: this.id,
       achievement: this.achievement,
       unlocked: this.unlocked,
       unlock: this.unlock,
+      sprite: this.sprite,
     };
   }
 }
