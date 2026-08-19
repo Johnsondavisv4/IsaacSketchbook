@@ -190,13 +190,16 @@ function CharacterRow({
   character,
   widgetImage,
   onExportAction,
+  isRepPlus = true,
 }: {
   character: CharacterJSON;
   widgetImage: HTMLImageElement | null;
   onExportAction: (
     action: 'sprite' | 'solo' | 'online' | 'pack-solo' | 'pack-online',
-    character: CharacterJSON
+    character: CharacterJSON,
+    chosenSprite?: string
   ) => void;
+  isRepPlus?: boolean;
 }) {
   const soloCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const onlineCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -215,7 +218,7 @@ function CharacterRow({
         widgetImage
       );
     }
-    if (onlineCanvasRef.current) {
+    if (onlineCanvasRef.current && isRepPlus) {
       drawPostitCanvas(
         onlineCanvasRef.current,
         character,
@@ -223,10 +226,14 @@ function CharacterRow({
         widgetImage
       );
     }
-  }, [character, widgetImage]);
+  }, [character, widgetImage, isRepPlus]);
+
+  const gridColsClass = isRepPlus
+    ? 'grid-cols-[180px_290px_1fr_1fr]'
+    : 'grid-cols-[180px_200px_1fr_1fr]';
 
   return (
-    <div className="grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 hover:bg-neutral-950/40 transition-colors border-b border-neutral-800 last:border-b-0">
+    <div className={`grid ${gridColsClass} gap-4 items-center px-4 py-3 hover:bg-neutral-950/40 transition-colors border-b border-neutral-800 last:border-b-0`}>
       {/* 1. Character Info (Direct Left Aligned) */}
       <div className="min-w-0 text-left pl-2">
         <h3 className="text-base font-upheaval text-white tracking-wide truncate">
@@ -234,7 +241,7 @@ function CharacterRow({
         </h3>
       </div>
 
-      {/* 2. 3 Thumbnails (Sprite, Solo Post-it, Online Post-it) */}
+      {/* 2. Thumbnails (Sprite, Solo Post-it, and Online Post-it if Rep+) */}
       <div className="flex items-center justify-center gap-2 shrink-0">
         {/* Character Sprite Thumbnail (85x85) */}
         <div
@@ -262,18 +269,20 @@ function CharacterRow({
           />
         </div>
 
-        {/* Online Post-it (85x85) */}
-        <div
-          className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-center p-0.5 overflow-hidden shrink-0"
-          title={`Post-it Online: ${onlineHard}/12 Hard`}
-        >
-          <canvas
-            ref={onlineCanvasRef}
-            width={85}
-            height={85}
-            className="w-full h-full pixelated"
-          />
-        </div>
+        {/* Online Post-it (85x85) - Repentance+ Only */}
+        {isRepPlus && (
+          <div
+            className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded-lg flex items-center justify-center p-0.5 overflow-hidden shrink-0"
+            title={`Post-it Online: ${onlineHard}/12 Hard`}
+          >
+            <canvas
+              ref={onlineCanvasRef}
+              width={85}
+              height={85}
+              className="w-full h-full pixelated"
+            />
+          </div>
+        )}
       </div>
 
       {/* Progress Badges (Centered capsule) */}
@@ -287,14 +296,16 @@ function CharacterRow({
               {soloHard}/12 Hard
             </strong>
           </div>
-          <div className="flex items-center justify-between bg-neutral-950 px-2.5 py-1.5 rounded-md border border-neutral-800 text-xs">
-            <span className="text-neutral-300 font-medium flex items-center gap-1.5">
-              <span>🌐</span> Online:
-            </span>
-            <strong className="font-mono text-sky-400 text-xs font-bold">
-              {onlineHard}/12 Hard
-            </strong>
-          </div>
+          {isRepPlus && (
+            <div className="flex items-center justify-between bg-neutral-950 px-2.5 py-1.5 rounded-md border border-neutral-800 text-xs">
+              <span className="text-neutral-300 font-medium flex items-center gap-1.5">
+                <span>🌐</span> Online:
+              </span>
+              <strong className="font-mono text-sky-400 text-xs font-bold">
+                {onlineHard}/12 Hard
+              </strong>
+            </div>
+          )}
         </div>
       </div>
 
@@ -317,14 +328,16 @@ function CharacterRow({
           >
             📜 Solo
           </button>
-          <button
-            type="button"
-            onClick={() => onExportAction('online', character)}
-            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-sky-400 hover:bg-sky-950/30 hover:border-sky-700/60 border border-transparent rounded-md transition-all cursor-pointer"
-            title="Descargar script .jsx (Post-it Online) para Photoshop"
-          >
-            🌐 Online
-          </button>
+          {isRepPlus && (
+            <button
+              type="button"
+              onClick={() => onExportAction('online', character)}
+              className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-sky-400 hover:bg-sky-950/30 hover:border-sky-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+              title="Descargar script .jsx (Post-it Online) para Photoshop"
+            >
+              🌐 Online
+            </button>
+          )}
           <button
             type="button"
             onClick={() => onExportAction('pack-solo', character)}
@@ -333,14 +346,16 @@ function CharacterRow({
           >
             📦 Pack (Solo)
           </button>
-          <button
-            type="button"
-            onClick={() => onExportAction('pack-online', character)}
-            className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
-            title="Descargar script .jsx (Pack Online: Sprite + Post-it Online) para Photoshop"
-          >
-            📦 Pack (Online)
-          </button>
+          {isRepPlus && (
+            <button
+              type="button"
+              onClick={() => onExportAction('pack-online', character)}
+              className="px-2 py-1.5 text-xs font-semibold text-neutral-300 hover:text-red-400 hover:bg-red-950/40 hover:border-red-700/60 border border-transparent rounded-md transition-all cursor-pointer"
+              title="Descargar script .jsx (Pack Online: Sprite + Post-it Online) para Photoshop"
+            >
+              📦 Pack (Online)
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -352,6 +367,7 @@ interface CharactersTabProps {
   characters: CharacterJSON[];
   filter: 'normal' | 'tainted';
   onFilterChange: (f: 'normal' | 'tainted') => void;
+  version?: 'Repentance' | 'Repentance+';
 }
 
 export function CharactersTab({
@@ -359,7 +375,9 @@ export function CharactersTab({
   characters,
   filter,
   onFilterChange,
+  version = 'Repentance+',
 }: CharactersTabProps) {
+  const isRepPlus = version === 'Repentance+';
   const [widgetImage, setWidgetImage] = useState<HTMLImageElement | null>(null);
   const [activeVariantModal, setActiveVariantModal] = useState<{
     character: CharacterJSON;
@@ -643,9 +661,9 @@ export function CharactersTab({
         ) : (
           <>
             {/* Sticky Table Header inside the scroll container */}
-            <div className="sticky top-0 z-10 grid grid-cols-[180px_290px_1fr_1fr] gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-sm sm:text-base text-neutral-300 tracking-wide select-none shrink-0 text-center">
+            <div className={`sticky top-0 z-10 grid ${isRepPlus ? 'grid-cols-[180px_290px_1fr_1fr]' : 'grid-cols-[180px_200px_1fr_1fr]'} gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-sm sm:text-base text-neutral-300 tracking-wide select-none shrink-0 text-center`}>
               <div className="text-left pl-2">Personaje</div>
-              <div>Sprite / Post-it Solo / Online</div>
+              <div>{isRepPlus ? 'Sprite / Post-it Solo / Online' : 'Sprite / Post-it Solo'}</div>
               <div>Progreso</div>
               <div>Inyección (.jsx)</div>
             </div>
@@ -658,6 +676,7 @@ export function CharactersTab({
                   character={char}
                   widgetImage={widgetImage}
                   onExportAction={handleExportCharacterItem}
+                  isRepPlus={isRepPlus}
                 />
               ))}
             </div>

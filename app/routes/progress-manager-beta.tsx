@@ -255,6 +255,7 @@ export default function ProgressManagerBeta({ loaderData }: Route.ComponentProps
               characters={characters}
               filter={characterFilter}
               onFilterChange={handleFilterChange}
+              version={currentSettings?.version}
             />
           )}
 
