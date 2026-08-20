@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { ItemJSON } from '../../services/save-parser/models/Item';
 
 interface ItemsTabProps {
@@ -11,6 +11,8 @@ type FilterMode = 'all' | 'seen' | 'not_seen';
 export function ItemsTab({ configured, items }: ItemsTabProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<FilterMode>('all');
+  const [selectedItem, setSelectedItem] = useState<ItemJSON | null>(null);
+  const lastWheelTime = useRef<number>(0);
 
   const validItems = items.filter((i) => i.id > 0);
   const seenCount = validItems.filter((i) => i.seen).length;
@@ -34,6 +36,25 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
   const toggleFilter = (mode: 'seen' | 'not_seen') => {
     setFilter((prev) => (prev === mode ? 'all' : mode));
     setCurrentPage(1);
+  };
+
+  const handleSelectItem = (item: ItemJSON) => {
+    setSelectedItem((prev) => (prev?.id === item.id ? null : item));
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (totalPages <= 1) return;
+    if (Math.abs(e.deltaY) < 10) return;
+
+    const now = Date.now();
+    if (now - lastWheelTime.current < 60) return;
+    lastWheelTime.current = now;
+
+    if (e.deltaY > 0) {
+      setCurrentPage((p) => Math.min(totalPages, p + 1));
+    } else if (e.deltaY < 0) {
+      setCurrentPage((p) => Math.max(1, p - 1));
+    }
   };
 
   return (
@@ -97,104 +118,161 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
         ) : (
           <div className="w-full flex-1 flex flex-col justify-between items-center gap-3">
             <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6 select-none pt-1">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={safeCurrentPage === 1}
-                className="p-1.5 sm:p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Página anterior"
-                aria-label="Página anterior"
-              >
-                <svg
-                  className="w-6 h-6 sm:w-7 sm:h-7"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-
               <div className="flex items-baseline gap-2">
                 <h2 className="text-2xl sm:text-3xl font-upheaval text-gray-200 tracking-wider">
                   Page {safeCurrentPage}
                 </h2>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={safeCurrentPage === totalPages}
-                className="p-1.5 sm:p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Página siguiente"
-                aria-label="Página siguiente"
-              >
-                <svg
-                  className="w-6 h-6 sm:w-7 sm:h-7"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
             </div>
 
-            <div className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2">
-              <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
-                {pageItems.map((item, idx) => (
-                  <div
-                    key={item.id}
-                    className="animate-stagger p-1 sm:p-1.5 rounded overflow-hidden flex justify-center items-center transition-colors group shrink-0"
-                    style={{ animationDelay: `${(idx % 50) * 12}ms` }}
-                    data-id={item.id}
-                  >
-                    <img
-                      loading="lazy"
-                      decoding="async"
-                      src={`/Items/${item.sprite}`}
-                      alt={item.name}
-                      className={`object-contain w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 pixelated transition-all duration-300 select-none ${!item.seen
-                        ? 'grayscale opacity-50 group-hover:opacity-75'
-                        : 'drop-shadow-md group-hover:scale-105'
-                        }`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+            <div
+              onWheel={handleWheel}
+              className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2 select-none"
+            >
+              <div className="flex items-center gap-4 sm:gap-6 justify-center">
+                {/* Grid 20x6 de Items */}
+                <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
+                  {pageItems.map((item, idx) => {
+                    const isSelected = selectedItem?.id === item.id;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => handleSelectItem(item)}
+                        className={`animate-stagger p-1 sm:p-1.5 rounded-lg overflow-hidden flex justify-center items-center transition-all duration-150 group shrink-0 cursor-pointer border ${isSelected
+                          ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105'
+                          : 'hover:bg-white/10 border-transparent hover:border-white/10'
+                          }`}
+                        style={{ animationDelay: `${(idx % 50) * 12}ms` }}
+                        data-id={item.id}
+                        title={`#${item.id} - ${item.name}`}
+                      >
+                        <img
+                          loading="lazy"
+                          decoding="async"
+                          src={`/Items/${item.sprite}`}
+                          alt={item.name}
+                          className={`object-contain w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 pixelated transition-all duration-300 select-none ${!item.seen
+                            ? 'grayscale opacity-50 group-hover:opacity-75'
+                            : 'drop-shadow-md group-hover:scale-105'
+                            }`}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
 
-            {totalPages > 1 && (
-              <div className="shrink-0 flex items-center justify-center gap-2.5 pb-1 select-none">
-                {Array.from({ length: totalPages }).map((_, idx) => {
-                  const pNum = idx + 1;
-                  const isActive = pNum === safeCurrentPage;
-                  return (
+                {/* Puntos y Flechas Verticales a la derecha (Sin cápsula) */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col items-center justify-center gap-2 select-none shrink-0">
                     <button
-                      key={pNum}
                       type="button"
-                      onClick={() => setCurrentPage(pNum)}
-                      className={`transition-all duration-200 cursor-pointer rounded-full ${isActive
-                        ? 'w-6 h-2.5 bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.6)]'
-                        : 'w-2.5 h-2.5 bg-neutral-700 hover:bg-neutral-500'
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={safeCurrentPage === 1}
+                      className={`p-1 text-neutral-400 hover:text-white transition-all duration-200 cursor-pointer flex items-center justify-center ${safeCurrentPage === 1 ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
                         }`}
-                      title={`Página ${pNum}`}
-                      aria-label={`Ir a Página ${pNum}`}
-                    />
-                  );
-                })}
+                      title="Página anterior"
+                      aria-label="Página anterior"
+                    >
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 5l-7 8h14l-7-8z" />
+                      </svg>
+                    </button>
+
+                    <div className="flex flex-col items-center gap-1.5 sm:gap-2 my-1">
+                      {Array.from({ length: totalPages }).map((_, idx) => {
+                        const pNum = idx + 1;
+                        const isActive = pNum === safeCurrentPage;
+                        return (
+                          <button
+                            key={pNum}
+                            type="button"
+                            onClick={() => setCurrentPage(pNum)}
+                            className="w-4 h-4 sm:w-4.5 sm:h-4.5 flex items-center justify-center cursor-pointer select-none group"
+                            title={`Página ${pNum}`}
+                            aria-label={`Ir a Página ${pNum}`}
+                          >
+                            <span
+                              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ease-in-out block ${isActive
+                                ? 'bg-white border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.85)] scale-125'
+                                : 'bg-neutral-800 border-2 border-neutral-600 group-hover:border-neutral-400 group-hover:bg-neutral-700 scale-100'
+                                }`}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={safeCurrentPage === totalPages}
+                      className={`p-1 text-neutral-400 hover:text-white transition-all duration-200 cursor-pointer flex items-center justify-center ${safeCurrentPage === totalPages ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
+                        }`}
+                      title="Página siguiente"
+                      aria-label="Página siguiente"
+                    >
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 19l7-8H5l7 8z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Cartel Inferior de Detalles (Estilo Vanilla STUFF I FOUND) */}
+            <div className="w-full max-w-3xl bg-neutral-950/90 border border-neutral-800 rounded-2xl p-3 sm:p-3.5 shadow-inner flex items-center justify-between gap-3 shrink-0 h-24 sm:h-26 overflow-hidden">
+              {selectedItem ? (
+                <>
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <div className="p-2 bg-neutral-900 border border-neutral-800 rounded-2xl shrink-0 flex items-center justify-center">
+                      <img
+                        src={`/Items/${selectedItem.sprite}`}
+                        alt={selectedItem.name}
+                        className="w-14 h-14 sm:w-16 sm:h-16 pixelated object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                      />
+                    </div>
+
+                    <div className="flex flex-col min-w-0 flex-1 justify-center">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base sm:text-lg font-upheaval text-white tracking-wide truncate">
+                          {selectedItem.name}
+                        </h4>
+                        <div className="ml-auto mr-2 shrink-0">
+                          {selectedItem.seen ? (
+                            <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                              <span>✓</span> Visto
+                            </span>
+                          ) : (
+                            <span className="text-xs text-neutral-500 italic flex items-center gap-1">
+                              <span>✗</span> No visto
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {selectedItem.quote && (
+                        <p className="text-xs sm:text-sm text-neutral-300 font-upheaval tracking-wide italic mt-0.5 truncate">
+                          {selectedItem.quote}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedItem(null)}
+                    className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors cursor-pointer shrink-0"
+                    title="Cerrar detalle"
+                  >
+                    ✕
+                  </button>
+                </>
+              ) : (
+                <div className="flex-1 text-center text-xs text-neutral-500 font-medium italic select-none">
+                  Selecciona un ítem para ver sus detalles
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
