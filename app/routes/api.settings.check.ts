@@ -11,13 +11,13 @@ export async function action({ request }: Route.ActionArgs) {
     body = Object.fromEntries(formData.entries());
   }
 
-  const { version, slot } = body;
+  const { version, file, slot } = body;
   const targetVersion = version === 'Repentance' ? 'Repentance' : 'Repentance+';
-  const targetSlot = Math.min(3, Math.max(1, Number(slot) || 1));
+  const targetFile = Math.min(3, Math.max(1, Number(file ?? slot) || 1));
 
   const status = resolveSaveFilePath({
     version: targetVersion,
-    slot: targetSlot,
+    file: targetFile,
     characterMenu: 'normal',
   });
 

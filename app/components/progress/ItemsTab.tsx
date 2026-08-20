@@ -109,7 +109,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
       <div className="flex-1 min-h-0 p-3 sm:p-5 flex flex-col justify-between items-center overflow-y-auto">
         {!configured || validItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
-            Configura tu versión y slot de guardado para comenzar.
+            Configura tu versión y archivo de guardado para comenzar.
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
@@ -130,7 +130,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2 select-none"
             >
               <div className="flex items-center gap-4 sm:gap-6 justify-center">
-                {/* Grid 20x6 de Items */}
+                
                 <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
                   {pageItems.map((item, idx) => {
                     const isSelected = selectedItem?.id === item.id;
@@ -161,7 +161,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                   })}
                 </div>
 
-                {/* Puntos y Flechas Verticales a la derecha (Sin cápsula) */}
+                
                 {totalPages > 1 && (
                   <div className="flex flex-col items-center justify-center gap-2 select-none shrink-0">
                     <button
@@ -220,7 +220,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               </div>
             </div>
 
-            {/* Cartel Inferior de Detalles (Estilo Vanilla STUFF I FOUND) */}
+            
             <div className="w-full max-w-3xl bg-neutral-950/90 border border-neutral-800 rounded-2xl p-3 sm:p-3.5 shadow-inner flex items-center justify-between gap-3 shrink-0 h-24 sm:h-26 overflow-hidden">
               {selectedItem ? (
                 <>

@@ -648,7 +648,7 @@ export function CharactersTab({
       <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-y-auto shadow-xl">
         {!configured || filteredList.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
-            Configura tu versión y slot de guardado para comenzar.
+            Configura tu versión y archivo de guardado para comenzar.
           </div>
         ) : (
           <>

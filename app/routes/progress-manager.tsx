@@ -37,7 +37,7 @@ export async function loader() {
       configured: false,
       settings: {
         version: 'Repentance+' as const,
-        slot: 1,
+        file: 1,
         characterMenu: 'normal' as const,
       },
       saveFile: '',
@@ -88,10 +88,10 @@ export async function loader() {
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const version = formData.get('version') as 'Repentance' | 'Repentance+';
-  const slot = Number(formData.get('slot')) || 1;
+  const file = Number(formData.get('file') ?? formData.get('slot')) || 1;
   const characterMenu = (formData.get('characterMenu') as 'normal' | 'tainted') || 'normal';
 
-  const saved = saveSettings({ version, slot, characterMenu });
+  const saved = saveSettings({ version, file, characterMenu });
   const status = resolveSaveFilePath(saved);
 
   return {
@@ -147,7 +147,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     fetcher.submit(
       {
         version: newSettings.version,
-        slot: String(newSettings.slot),
+        file: String(newSettings.file),
         characterMenu: characterFilter,
       },
       { method: 'post' }
@@ -174,12 +174,12 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
                   ? 'text-neutral-200 bg-neutral-900 hover:bg-neutral-800 border-neutral-700 hover:border-neutral-600 shadow-sm'
                   : 'text-amber-400 bg-amber-950/40 hover:bg-amber-900/50 border-amber-800/60'
                   }`}
-                title="Configuración de guardado de Steam (Versión y Slot)"
+                title="Configuración de guardado de Steam (Versión y Archivo)"
               >
                 <i className="bi bi-gear-fill text-xs text-neutral-400"></i>
                 {isConfigured ? (
                   <div className="flex items-center gap-2">
-                    <span>{currentSettings.version} · Slot {currentSettings.slot}</span>
+                    <span>{currentSettings.version} · File {currentSettings.file}</span>
                     <i
                       className={`bi ${
                         currentSaveExists

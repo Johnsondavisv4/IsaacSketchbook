@@ -69,7 +69,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
   const [bulkScale, setBulkScale] = useState<number>(4);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  // Group files by folder
+  
   const folderMap = useMemo(() => {
     const rawMap = new Map<string, string[]>();
     for (const sprite of sprites) {
@@ -90,7 +90,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     return new Map(sortedEntries);
   }, [sprites]);
 
-  // Filter sprites by folder and search query
+  
   const filteredSprites = useMemo(() => {
     let result = sprites;
 
@@ -170,7 +170,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
         }
         const dataUrl = canvas.toDataURL('image/png');
         const b64 = dataUrl.replace(/^data:image\/png;base64,/, '');
-        const cleanName = filePath.replace(/\//g, '_').replace(/\.[^/.]+$/, '');
+        const cleanName = filePath.replace(/[/\\?%*:|"<>]/g, '_').replace(/\.[^/.]+$/, '');
         resolve({ name: `${cleanName}_${scale}x`, b64 });
       };
       img.onerror = () => {
@@ -225,9 +225,9 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
           subtitle="Explora y escala sprites de pixel art para inyectar en Photoshop"
         />
 
-        {/* Main Workspace: Sidebar + Content */}
+        
         <div className="flex-1 min-h-0 flex gap-3 overflow-hidden">
-          {/* Sidebar */}
+          
           <aside className="w-64 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col shrink-0 overflow-hidden">
             <div className="p-3 border-b border-neutral-800 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -293,9 +293,9 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
             </div>
           </aside>
 
-          {/* Table Area */}
+          
           <main className="flex-1 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col min-w-0 overflow-hidden shadow-xl">
-            {/* Toolbar */}
+            
             <div className="p-3 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-3 bg-neutral-900">
               <div className="flex items-center gap-2 flex-1 min-w-60 max-w-md">
                 <input
@@ -354,7 +354,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
               </div>
             </div>
 
-            {/* Table Header */}
+            
             <div className="grid grid-cols-[48px_100px_1fr_140px] gap-4 items-center px-4 py-2.5 bg-neutral-950 border-b border-neutral-800 text-xs font-bold text-neutral-400 uppercase tracking-wider select-none shrink-0">
               <div className="flex justify-center">
                 <input
@@ -376,7 +376,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
               <div className="text-center">Escala</div>
             </div>
 
-            {/* Table Body */}
+            
             <div className="flex-1 overflow-y-auto divide-y divide-neutral-800">
               {filteredSprites.length === 0 ? (
                 <div className="p-12 text-center text-neutral-400 text-sm">
@@ -397,7 +397,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                       className={`grid grid-cols-[48px_100px_1fr_140px] gap-4 items-center px-4 py-2.5 transition-colors ${isSelected ? 'bg-red-950/20' : 'hover:bg-neutral-800'
                         }`}
                     >
-                      {/* Checkbox */}
+                      
                       <div className="flex justify-center">
                         <input
                           type="checkbox"
@@ -407,7 +407,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                         />
                       </div>
 
-                      {/* Thumbnail */}
+                      
                       <div className="flex justify-center">
                         <div className="w-21.25 h-21.25 bg-neutral-950 border border-neutral-800 rounded flex items-center justify-center overflow-hidden">
                           <img
@@ -419,7 +419,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                         </div>
                       </div>
 
-                      {/* Info */}
+                      
                       <div className="min-w-0 pr-2">
                         <div className="text-sm font-semibold text-white truncate">
                           {filename}
@@ -431,7 +431,7 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
                         )}
                       </div>
 
-                      {/* Custom Scale Input */}
+                      
                       <div className="flex justify-center items-center gap-1">
                         <input
                           type="number"

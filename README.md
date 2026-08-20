@@ -71,7 +71,7 @@ C:\Program Files (x86)\Steam\userdata\<TuSteamID>\250900\remote\
 - **Repentance**: `rep_persistentgamedata1.dat`, `rep_persistentgamedata2.dat`, `rep_persistentgamedata3.dat`
 - **Repentance+**: `rep+persistentgamedata1.dat`, `rep+persistentgamedata2.dat`, `rep+persistentgamedata3.dat`
 
-Puedes cambiar en cualquier momento entre versión y slot de guardado desde el botón de configuración de la barra superior.
+Puedes cambiar en cualquier momento entre versión y archivo de guardado (File 1, 2 o 3) desde el botón de configuración de la barra superior.
 
 ---
 

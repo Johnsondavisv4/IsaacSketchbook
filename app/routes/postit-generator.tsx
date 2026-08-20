@@ -72,7 +72,7 @@ export default function PostitGenerator() {
   const { addItem } = useCart();
   const { showToast } = useToast();
 
-  // Load Spritesheet
+  
   useEffect(() => {
     const img = new Image();
     img.src = '/completion_widget.png';
@@ -244,13 +244,13 @@ importarPostitDirecto();`;
           subtitle="Diseña notas de completado interactivas pixel-perfect para tus personajes"
         />
 
-        {/* Main Grid: Controls + Sticky Canvas Preview */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_22.5rem] gap-5 items-start">
-          {/* Controls Column */}
+          
           <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col gap-5">
-            {/* Top Options Bar */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-950 p-4 rounded-xl border border-neutral-800">
-              {/* Character Type */}
+              
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
                   Tipo de Personaje
@@ -281,7 +281,7 @@ importarPostitDirecto();`;
                 </div>
               </div>
 
-              {/* No Mark Style */}
+              
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
                   Estilo Sin Marca
@@ -313,7 +313,7 @@ importarPostitDirecto();`;
               </div>
             </div>
 
-            {/* Quick Actions Shortcuts */}
+            
             <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-4">
               <span className="text-xs font-bold text-neutral-400 mr-2">
                 Atajos rápidos:
@@ -344,7 +344,7 @@ importarPostitDirecto();`;
               </button>
             </div>
 
-            {/* Marks Table */}
+            
             <div className="overflow-x-auto rounded-lg border border-neutral-800">
               <table className="w-full text-left text-xs">
                 <thead className="bg-neutral-950 text-neutral-400 uppercase tracking-wider font-bold text-xs border-b border-neutral-800">
@@ -405,7 +405,7 @@ importarPostitDirecto();`;
             </div>
           </div>
 
-          {/* Sticky Canvas Column */}
+          
           <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center sticky top-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">
               Vista Previa Pixel-Perfect
@@ -424,7 +424,7 @@ importarPostitDirecto();`;
               Resolución nativa: 96 × 96 px
             </div>
 
-            {/* Action Buttons */}
+            
             <div className="w-full flex flex-col gap-2 mt-5">
               <button
                 type="button"

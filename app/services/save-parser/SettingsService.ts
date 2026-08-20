@@ -12,7 +12,7 @@ const STEAM_USERDATA_ROOTS = [
 
 export interface SaveSettings {
   version: 'Repentance' | 'Repentance+';
-  slot: number;
+  file: number;
   characterMenu: 'normal' | 'tainted';
 }
 
@@ -22,10 +22,10 @@ export interface SaveFileStatus {
   exists: boolean;
 }
 
-export function getSaveFilename(settings: Partial<SaveSettings>): string {
+export function getSaveFilename(settings: Partial<SaveSettings> & { slot?: number }): string {
   const prefix = settings.version === 'Repentance+' ? 'rep+' : 'rep_';
-  const slot = settings.slot || 1;
-  return `${prefix}persistentgamedata${slot}.dat`;
+  const file = settings.file ?? settings.slot ?? 1;
+  return `${prefix}persistentgamedata${file}.dat`;
 }
 
 export function getSettings(): SaveSettings | null {
@@ -33,10 +33,10 @@ export function getSettings(): SaveSettings | null {
     if (fs.existsSync(SETTINGS_PATH)) {
       const raw = fs.readFileSync(SETTINGS_PATH, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed && parsed.version && parsed.slot) {
+      if (parsed && parsed.version && (parsed.file !== undefined || parsed.slot !== undefined)) {
         return {
           version: parsed.version === 'Repentance+' ? 'Repentance+' : 'Repentance',
-          slot: Number(parsed.slot) || 1,
+          file: Number(parsed.file ?? parsed.slot) || 1,
           characterMenu: parsed.characterMenu === 'tainted' ? 'tainted' : 'normal',
         };
       }
@@ -47,21 +47,22 @@ export function getSettings(): SaveSettings | null {
   return null;
 }
 
-export function saveSettings(newSettings: Partial<SaveSettings>): SaveSettings {
+export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: number }): SaveSettings {
   const current = getSettings() || {
     version: 'Repentance+',
-    slot: 1,
+    file: 1,
     characterMenu: 'normal',
   };
+  const targetFile = newSettings.file ?? newSettings.slot;
   const validated: SaveSettings = {
     version:
       newSettings.version ?
         newSettings.version === 'Repentance+' ? 'Repentance+' : 'Repentance'
       : current.version,
-    slot:
-      newSettings.slot !== undefined ?
-        Math.min(3, Math.max(1, Number(newSettings.slot) || 1))
-      : current.slot,
+    file:
+      targetFile !== undefined ?
+        Math.min(3, Math.max(1, Number(targetFile) || 1))
+      : current.file,
     characterMenu:
       newSettings.characterMenu ?
         newSettings.characterMenu === 'tainted' ? 'tainted' : 'normal'

@@ -5,8 +5,8 @@ interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   settings: SaveSettings;
-  saveExists: boolean;
-  saveFilename: string;
+  saveExists?: boolean;
+  saveFilename?: string;
   onSave: (newSettings: SaveSettings) => void;
 }
 
@@ -14,72 +14,31 @@ export function SettingsModal({
   isOpen,
   onClose,
   settings,
-  saveExists,
-  saveFilename,
   onSave,
 }: SettingsModalProps) {
   const [version, setVersion] = useState<'Repentance' | 'Repentance+'>(
     settings.version || 'Repentance+'
   );
-  const [slot, setSlot] = useState<number>(settings.slot || 1);
-  const [checkStatus, setCheckStatus] = useState<{
-    loading: boolean;
-    exists: boolean;
-    filename: string;
-  }>({
-    loading: false,
-    exists: saveExists,
-    filename: saveFilename,
-  });
-
-  const calculatedPrefix = version === 'Repentance+' ? 'rep+' : 'rep_';
-  const previewFilename = `${calculatedPrefix}persistentgamedata${slot}.dat`;
+  const [file, setFile] = useState<number>(settings.file || (settings as any).slot || 1);
 
   useEffect(() => {
     if (isOpen) {
       setVersion(settings.version || 'Repentance+');
-      setSlot(settings.slot || 1);
+      setFile(settings.file || (settings as any).slot || 1);
     }
   }, [isOpen, settings]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    let isMounted = true;
-    setCheckStatus((prev) => ({ ...prev, loading: true }));
-
-    fetch('/api/settings/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ version, slot }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          setCheckStatus({
-            loading: false,
-            exists: Boolean(data.exists),
-            filename: data.filename || previewFilename,
-          });
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setCheckStatus((prev) => ({ ...prev, loading: false }));
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isOpen, version, slot, previewFilename]);
-
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSelectVersion = (newVersion: 'Repentance' | 'Repentance+') => {
+    setVersion(newVersion);
+  };
+
+  const handleSelectFile = (newFile: number) => {
+    setFile(newFile);
     onSave({
       version,
-      slot,
+      file: newFile,
       characterMenu: settings.characterMenu || 'normal',
     });
     onClose();
@@ -91,7 +50,7 @@ export function SettingsModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-2xl transition-transform"
+        className="w-full max-w-xl bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-2xl transition-transform"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -115,25 +74,25 @@ export function SettingsModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
               1. Versión del Juego
             </label>
             <div className="grid grid-cols-1 gap-2">
               <label
-                className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${
-                  version === 'Repentance+'
-                    ? 'bg-red-950/40 border-red-600'
-                    : 'bg-neutral-950 border-neutral-800 hover:bg-neutral-800'
-                }`}
+                className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${version === 'Repentance+'
+                  ? 'bg-red-950/40 border-red-600'
+                  : 'bg-neutral-950 border-neutral-800 hover:bg-neutral-800'
+                  }`}
+                onClick={() => handleSelectVersion('Repentance+')}
               >
                 <input
                   type="radio"
                   name="version"
                   value="Repentance+"
                   checked={version === 'Repentance+'}
-                  onChange={() => setVersion('Repentance+')}
+                  onChange={() => handleSelectVersion('Repentance+')}
                   className="accent-red-600 w-4 h-4 cursor-pointer shrink-0"
                 />
                 <div className="min-w-0">
@@ -147,18 +106,18 @@ export function SettingsModal({
               </label>
 
               <label
-                className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${
-                  version === 'Repentance'
-                    ? 'bg-red-950/40 border-red-600'
-                    : 'bg-neutral-950 border-neutral-800 hover:bg-neutral-800'
-                }`}
+                className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer ${version === 'Repentance'
+                  ? 'bg-red-950/40 border-red-600'
+                  : 'bg-neutral-950 border-neutral-800 hover:bg-neutral-800'
+                  }`}
+                onClick={() => handleSelectVersion('Repentance')}
               >
                 <input
                   type="radio"
                   name="version"
                   value="Repentance"
                   checked={version === 'Repentance'}
-                  onChange={() => setVersion('Repentance')}
+                  onChange={() => handleSelectVersion('Repentance')}
                   className="accent-red-600 w-4 h-4 cursor-pointer shrink-0"
                 />
                 <div className="min-w-0">
@@ -175,87 +134,66 @@ export function SettingsModal({
 
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
-              2. Slot de Guardado
+              2. Archivo de Guardado (File)
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {[1, 2, 3].map((s) => (
-                <label
-                  key={s}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer ${
-                    slot === s
-                      ? 'bg-red-950/50 border-red-600 text-white'
-                      : 'bg-neutral-950 border-neutral-800 text-neutral-300 hover:bg-neutral-800'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="slot"
-                    value={s}
-                    checked={slot === s}
-                    onChange={() => setSlot(s)}
-                    className="sr-only"
-                  />
-                  <span className="text-xs font-bold">Slot {s}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+            <div className="bg-neutral-950 px-3 pt-5 pb-3 sm:px-4 sm:pt-6 sm:pb-4 rounded-xl border border-neutral-800 flex items-center justify-center overflow-x-auto">
+              <div className="flex items-end justify-center gap-2 sm:gap-4 shrink-0">
+                {[
+                  { id: 1, name: 'File 1', crop: { x: 0, y: 272, w: 160, h: 208 }, drawingOffset: { left: 18, top: 6 } },
+                  { id: 2, name: 'File 2', crop: { x: 160, y: 272, w: 144, h: 208 }, drawingOffset: { left: 4, top: 6 } },
+                  { id: 3, name: 'File 3', crop: { x: 304, y: 272, w: 144, h: 208 }, drawingOffset: { left: 11, top: 10 } },
+                ].map((f) => {
+                  const isSelected = file === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => handleSelectFile(f.id)}
+                      className={`relative cursor-pointer focus:outline-none transition-all duration-150 ease-out group ${isSelected ? '-translate-y-2.5' : 'hover:-translate-y-2.5'
+                        }`}
+                      title={`Seleccionar ${f.name}`}
+                    >
+                      <div
+                        style={{
+                          width: `${f.crop.w}px`,
+                          height: `${f.crop.h}px`,
+                          backgroundImage: "url('/saveselectmenu.png')",
+                          backgroundPosition: `-${f.crop.x}px -${f.crop.y}px`,
+                          backgroundSize: '480px 556px',
+                          backgroundRepeat: 'no-repeat',
+                          imageRendering: 'pixelated',
+                        }}
+                        className={`transition-all duration-150 ${isSelected
+                          ? 'brightness-100'
+                          : 'brightness-75 group-hover:brightness-100'
+                          }`}
+                      />
 
-          <div className="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 flex flex-col gap-1.5 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-400">Archivo calculado:</span>
-              <code className="font-mono text-white font-bold bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
-                {checkStatus.filename || previewFilename}
-              </code>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-neutral-400">Estado en Steam:</span>
-              <span
-                className={`font-semibold ${
-                  checkStatus.loading
-                    ? 'text-neutral-400'
-                    : checkStatus.exists
-                    ? 'text-emerald-400'
-                    : 'text-amber-400'
-                }`}
-              >
-                {checkStatus.loading ? (
-                  <span className="flex items-center gap-1.5">
-                    <i className="bi bi-search animate-pulse text-xs"></i>
-                    <span>Comprobando...</span>
-                  </span>
-                ) : checkStatus.exists ? (
-                  <span className="flex items-center gap-1.5">
-                    <i className="bi bi-check-circle-fill text-emerald-400 text-xs"></i>
-                    <span>Encontrado en Steam</span>
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5">
-                    <i className="bi bi-exclamation-triangle-fill text-amber-400 text-xs"></i>
-                    <span>No encontrado en Steam</span>
-                  </span>
-                )}
-              </span>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: `${f.drawingOffset.left}px`,
+                          top: `${f.drawingOffset.top}px`,
+                          width: '128px',
+                          height: '144px',
+                          backgroundImage: "url('/Savedrawings/01_basement.png')",
+                          backgroundSize: '256px 144px',
+                          backgroundRepeat: 'no-repeat',
+                          imageRendering: 'pixelated',
+                          pointerEvents: 'none',
+                        }}
+                        className={`transition-all duration-150 ${isSelected
+                          ? 'brightness-100 save-drawing-animated'
+                          : 'brightness-75 group-hover:brightness-100 save-drawing-idle save-drawing-hover-animated'
+                          }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
-
-          <div className="flex gap-3 justify-end pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors cursor-pointer"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-xs font-bold text-white bg-red-700 hover:bg-red-600 rounded-lg shadow transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <i className="bi bi-floppy-fill"></i>
-              <span>Guardar Configuración</span>
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );

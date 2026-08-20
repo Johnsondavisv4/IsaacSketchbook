@@ -11,7 +11,7 @@ export async function loader() {
   const status = resolveSaveFilePath(settings);
   return Response.json({
     configured: Boolean(settings),
-    settings: settings || { version: 'Repentance+', slot: 1, characterMenu: 'normal' },
+    settings: settings || { version: 'Repentance+', file: 1, characterMenu: 'normal' },
     filename:
       status.filename ||
       (settings ? getSaveFilename(settings) : 'rep+persistentgamedata1.dat'),
@@ -30,23 +30,23 @@ export async function action({ request }: Route.ActionArgs) {
     body = Object.fromEntries(formData.entries());
   }
 
-  const { version, slot, characterMenu } = body;
+  const { version, file, slot, characterMenu } = body;
   const current = getSettings() || {
     version: 'Repentance+',
-    slot: 1,
+    file: 1,
     characterMenu: 'normal',
   };
 
   const targetVersion =
     version || current.version || ('Repentance+' as const);
-  const targetSlot =
-    slot !== undefined ? Number(slot) : (current.slot || 1);
+  const targetFile =
+    file !== undefined ? Number(file) : (slot !== undefined ? Number(slot) : (current.file || 1));
   const targetMenu =
     characterMenu || current.characterMenu || ('normal' as const);
 
   const saved = saveSettings({
     version: targetVersion,
-    slot: targetSlot,
+    file: targetFile,
     characterMenu: targetMenu,
   });
   const status = resolveSaveFilePath(saved);

@@ -169,7 +169,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-5">
         {!configured || achievements.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
-            Configura tu versión y slot de guardado para comenzar.
+            Configura tu versión y archivo de guardado para comenzar.
           </div>
         ) : filteredAchievements.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">

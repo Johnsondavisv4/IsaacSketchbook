@@ -76,7 +76,7 @@ export default function MarkExporter() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [selectedMarkIdx, setSelectedMarkIdx] = useState<number>(0);
-  const [selectedStateIdx, setSelectedStateIdx] = useState<number>(1); // Default to Hard (Solo)
+  const [selectedStateIdx, setSelectedStateIdx] = useState<number>(1); 
   const [scale, setScale] = useState<number>(4);
 
   const { addItem } = useCart();
@@ -85,7 +85,7 @@ export default function MarkExporter() {
   const selectedMark = MARKS[selectedMarkIdx] || MARKS[0];
   const selectedState = STATES[selectedStateIdx] || STATES[0];
 
-  // Load Spritesheet
+  
   useEffect(() => {
     const img = new Image();
     img.src = '/completion_widget.png';
@@ -124,7 +124,7 @@ export default function MarkExporter() {
     }
   }, [isLoaded, renderPreview]);
 
-  // Generate scaled canvas data
+  
   const generateScaledCanvas = useCallback(
     (scaleMultiplier: number): { canvas: HTMLCanvasElement; b64: string } => {
       const spritesheet = spritesheetRef.current;
@@ -248,11 +248,11 @@ importarMarcaDirecto();`;
           subtitle="Extrae marcas oficiales de completado con escalado personalizado pixel-perfect"
         />
 
-        {/* Main Layout Grid: Configuration + Preview & Export */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-5 items-start">
-          {/* Controls Column */}
+          
           <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col gap-5">
-            {/* Mark Selector Grid */}
+            
             <div>
               <div className="flex items-center justify-between mb-2.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-400">
@@ -284,7 +284,7 @@ importarMarcaDirecto();`;
               </div>
             </div>
 
-            {/* State / Difficulty Mode */}
+            
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2.5">
                 2. Dificultad / Modo
@@ -316,7 +316,7 @@ importarMarcaDirecto();`;
               </div>
             </div>
 
-            {/* Scaling Multiplier */}
+            
             <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 flex items-center justify-between gap-4">
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-1">
@@ -341,13 +341,13 @@ importarMarcaDirecto();`;
             </div>
           </div>
 
-          {/* Sticky Preview & Actions Column */}
+          
           <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center sticky top-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">
               Vista Previa de Marca
             </h3>
 
-            {/* Canvas Box */}
+            
             <div className="w-56 h-56 bg-neutral-950 border-2 border-dashed border-neutral-700 rounded-xl flex items-center justify-center p-4 shadow-inner">
               <canvas
                 ref={previewCanvasRef}
@@ -357,7 +357,7 @@ importarMarcaDirecto();`;
               />
             </div>
 
-            {/* Info Badges */}
+            
             <div className="w-full bg-neutral-950 p-3 rounded-lg border border-neutral-800 mt-4 flex flex-col gap-1.5 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-neutral-400">Marca:</span>
@@ -377,7 +377,7 @@ importarMarcaDirecto();`;
               </div>
             </div>
 
-            {/* Action Buttons */}
+            
             <div className="w-full flex flex-col gap-2.5 mt-5">
               <button
                 type="button"
