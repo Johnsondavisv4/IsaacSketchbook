@@ -177,7 +177,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
           </div>
         ) : (
           <div className="w-full flex flex-wrap gap-2 sm:gap-3 justify-center">
-            {filteredAchievements.map((ach) => {
+            {filteredAchievements.map((ach, idx) => {
               const isSelected = selectedAchievement?.id === ach.id;
 
               return (
@@ -185,7 +185,8 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                   key={ach.id}
                   type="button"
                   onClick={() => handleSelectAchievement(ach)}
-                  className={`p-2 rounded-2xl transition-all duration-150 hover:scale-105 shadow-md flex items-center justify-center cursor-pointer group shrink-0 border ${
+                  style={{ animationDelay: `${(idx % 50) * 12}ms` }}
+                  className={`animate-stagger p-2 rounded-2xl transition-all duration-150 hover:scale-105 shadow-md flex items-center justify-center cursor-pointer group shrink-0 border ${
                     isSelected
                       ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-xl'
                       : 'bg-black/20 hover:bg-white/10 border-white/5 hover:border-white/20'

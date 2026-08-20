@@ -151,11 +151,12 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
             </div>
 
             <div className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2">
-              <div className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
-                {pageItems.map((item) => (
+              <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
+                {pageItems.map((item, idx) => (
                   <div
                     key={item.id}
-                    className="p-1 sm:p-1.5 rounded overflow-hidden flex justify-center items-center transition-colors group shrink-0"
+                    className="animate-stagger p-1 sm:p-1.5 rounded overflow-hidden flex justify-center items-center transition-colors group shrink-0"
+                    style={{ animationDelay: `${(idx % 50) * 12}ms` }}
                     data-id={item.id}
                   >
                     <img
