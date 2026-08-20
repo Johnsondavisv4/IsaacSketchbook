@@ -1285,7 +1285,7 @@ export const AchievementUnlocks = Object.freeze([
     "Play an online co-op run",
     "Win an online co-op run",
     "Win an Online Daily Challenge run",
-    "Unlock all other 640 achievements and collect every single item in the game",
+    "Defeat Mom",
 ]);
 
 export function getAchievementName(id: number): string {
