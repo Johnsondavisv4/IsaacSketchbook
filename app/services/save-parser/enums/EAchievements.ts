@@ -1300,6 +1300,7 @@ export function getAchievementSprite(id: number, name?: string): string {
     const padId = id.toString().padStart(3, '0');
     const achName = name ?? AchievementNames[id] ?? '';
     const sanitizedName = achName
+        .replace(/%/g, '_percent')
         .replace(/[\s/:]/g, '_')
         .replace(/\?/g, '_');
     return `${padId}_${sanitizedName}.png`;
