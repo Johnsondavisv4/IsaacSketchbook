@@ -130,7 +130,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2 select-none"
             >
               <div className="flex items-center gap-4 sm:gap-6 justify-center">
-                
+
                 <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
                   {pageItems.map((item, idx) => {
                     const isSelected = selectedItem?.id === item.id;
@@ -142,7 +142,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                           ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105'
                           : 'hover:bg-white/10 border-transparent hover:border-white/10'
                           }`}
-                        style={{ animationDelay: `${(idx % 50) * 12}ms` }}
+                        style={{ animationDelay: `${(idx % 20) * 12}ms` }}
                         data-id={item.id}
                         title={`#${item.id} - ${item.name}`}
                       >
@@ -161,7 +161,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                   })}
                 </div>
 
-                
+
                 {totalPages > 1 && (
                   <div className="flex flex-col items-center justify-center gap-2 select-none shrink-0">
                     <button
@@ -220,7 +220,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               </div>
             </div>
 
-            
+
             <div className="w-full max-w-3xl bg-neutral-950/90 border border-neutral-800 rounded-2xl p-3 sm:p-3.5 shadow-inner flex items-center justify-between gap-3 shrink-0 h-24 sm:h-26 overflow-hidden">
               {selectedItem ? (
                 <>
