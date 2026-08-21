@@ -1,5 +1,6 @@
 import type { Route } from './+types/api.settings.check';
 import { resolveSaveFilePath } from '../services/save-parser/SettingsService';
+import { readAndEvaluateSaves } from '../services/save-parser/SaveDrawingParser';
 
 export async function action({ request }: Route.ActionArgs) {
   let body: any = {};
@@ -21,5 +22,10 @@ export async function action({ request }: Route.ActionArgs) {
     characterMenu: 'normal',
   });
 
-  return Response.json(status);
+  const drawings = readAndEvaluateSaves(targetVersion);
+
+  return Response.json({
+    ...status,
+    drawings,
+  });
 }

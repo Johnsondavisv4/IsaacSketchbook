@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { SaveSettings } from '../../services/save-parser/SettingsService';
+import type { SaveDrawingResult } from '../../services/save-parser/SaveDrawingParser';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -7,31 +8,54 @@ interface SettingsModalProps {
   settings: SaveSettings;
   saveExists?: boolean;
   saveFilename?: string;
+  saveDrawings?: SaveDrawingResult[];
   onSave: (newSettings: SaveSettings) => void;
 }
+
+const CHECKMARK_CONFIGS = [
+  { id: 1, left: 26, top: 24, idleClass: 'check1-idle', animClass: 'check1-animated', hoverClass: 'check1-hover-animated' },
+  { id: 2, left: 35, top: 21, idleClass: 'check2-idle', animClass: 'check2-animated', hoverClass: 'check2-hover-animated' },
+  { id: 3, left: 43, top: 19, idleClass: 'check3-idle', animClass: 'check3-animated', hoverClass: 'check3-hover-animated' },
+  { id: 4, left: 53, top: 17, idleClass: 'check4-idle', animClass: 'check4-animated', hoverClass: 'check4-hover-animated' },
+];
 
 export function SettingsModal({
   isOpen,
   onClose,
   settings,
+  saveDrawings = [],
   onSave,
 }: SettingsModalProps) {
   const [version, setVersion] = useState<'Repentance' | 'Repentance+'>(
     settings.version || 'Repentance+'
   );
   const [file, setFile] = useState<number>(settings.file || (settings as any).slot || 1);
+  const [drawings, setDrawings] = useState<SaveDrawingResult[]>(saveDrawings);
 
   useEffect(() => {
     if (isOpen) {
       setVersion(settings.version || 'Repentance+');
       setFile(settings.file || (settings as any).slot || 1);
+      setDrawings(saveDrawings);
     }
-  }, [isOpen, settings]);
+  }, [isOpen, settings, saveDrawings]);
 
   if (!isOpen) return null;
 
   const handleSelectVersion = (newVersion: 'Repentance' | 'Repentance+') => {
     setVersion(newVersion);
+    fetch('/api/settings/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ version: newVersion, file }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && Array.isArray(data.drawings)) {
+          setDrawings(data.drawings);
+        }
+      })
+      .catch((err) => console.error('Error fetching drawings:', err));
   };
 
   const handleSelectFile = (newFile: number) => {
@@ -144,6 +168,13 @@ export function SettingsModal({
                   { id: 3, name: 'File 3', crop: { x: 304, y: 272, w: 144, h: 208 }, drawingOffset: { left: 11, top: 10 } },
                 ].map((f) => {
                   const isSelected = file === f.id;
+                  const drawingInfo = drawings.find((d) => d.file === f.id) || {
+                    image: '01_basement.png',
+                    checkmarks: 0,
+                    photoOutline: false,
+                  };
+                  const activeChecks = CHECKMARK_CONFIGS.slice(0, Math.min(4, drawingInfo.checkmarks));
+
                   return (
                     <button
                       key={f.id}
@@ -176,7 +207,7 @@ export function SettingsModal({
                           top: `${f.drawingOffset.top}px`,
                           width: '128px',
                           height: '144px',
-                          backgroundImage: "url('/Savedrawings/01_basement.png')",
+                          backgroundImage: `url('/Savedrawings/${drawingInfo.image.toLowerCase()}')`,
                           backgroundSize: '256px 144px',
                           backgroundRepeat: 'no-repeat',
                           imageRendering: 'pixelated',
@@ -186,7 +217,50 @@ export function SettingsModal({
                           ? 'brightness-100 save-drawing-animated'
                           : 'brightness-75 group-hover:brightness-100 save-drawing-idle save-drawing-hover-animated'
                           }`}
-                      />
+                      >
+                        {drawingInfo.photoOutline && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              left: 0,
+                              top: 0,
+                              width: '128px',
+                              height: '144px',
+                              backgroundImage: "url('/Savedrawings/12_photooutline.png')",
+                              backgroundSize: '256px 144px',
+                              backgroundRepeat: 'no-repeat',
+                              imageRendering: 'pixelated',
+                              pointerEvents: 'none',
+                            }}
+                            className={`transition-all duration-150 ${isSelected
+                              ? 'brightness-100 save-drawing-animated'
+                              : 'brightness-75 group-hover:brightness-100 save-drawing-idle save-drawing-hover-animated'
+                              }`}
+                          />
+                        )}
+
+                        {activeChecks.map((c) => (
+                          <div
+                            key={c.id}
+                            style={{
+                              position: 'absolute',
+                              left: `${c.left}px`,
+                              top: `${c.top}px`,
+                              width: '16px',
+                              height: '16px',
+                              backgroundImage: "url('/Savedrawings/momsheartcheckmarks.png')",
+                              backgroundSize: '64px 16px',
+                              backgroundRepeat: 'no-repeat',
+                              imageRendering: 'pixelated',
+                              pointerEvents: 'none',
+                            }}
+                            className={`transition-all duration-150 ${isSelected
+                              ? `brightness-100 ${c.animClass}`
+                              : `brightness-75 group-hover:brightness-100 ${c.idleClass} ${c.hoverClass}`
+                              }`}
+                          />
+                        ))}
+                      </div>
                     </button>
                   );
                 })}

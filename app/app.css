@@ -72,3 +72,48 @@ body {
 .group:hover .save-drawing-hover-animated {
   animation: isaacSaveDrawingAnim 0.333s steps(1) infinite !important;
 }
+
+@keyframes checkmark1Anim {
+  0%, 49.99% { background-position: 0px 0px; }
+  50%, 100% { background-position: -16px 0px; }
+}
+
+@keyframes checkmark2Anim {
+  0%, 49.99% { background-position: -16px 0px; }
+  50%, 100% { background-position: -32px 0px; }
+}
+
+@keyframes checkmark3Anim {
+  0%, 49.99% { background-position: -32px 0px; }
+  50%, 100% { background-position: -48px 0px; }
+}
+
+@keyframes checkmark4Anim {
+  0%, 49.99% { background-position: -48px 0px; }
+  50%, 100% { background-position: 0px 0px; }
+}
+
+.check1-idle { background-position: 0px 0px; }
+.check2-idle { background-position: -16px 0px; }
+.check3-idle { background-position: -32px 0px; }
+.check4-idle { background-position: -48px 0px; }
+
+.check1-animated,
+.group:hover .check1-hover-animated {
+  animation: checkmark1Anim 0.333s steps(1) infinite !important;
+}
+
+.check2-animated,
+.group:hover .check2-hover-animated {
+  animation: checkmark2Anim 0.333s steps(1) infinite !important;
+}
+
+.check3-animated,
+.group:hover .check3-hover-animated {
+  animation: checkmark3Anim 0.333s steps(1) infinite !important;
+}
+
+.check4-animated,
+.group:hover .check4-hover-animated {
+  animation: checkmark4Anim 0.333s steps(1) infinite !important;
+}

@@ -16,6 +16,10 @@ import {
   type SaveSettings,
 } from '../services/save-parser/SettingsService';
 import { parseSaveFile } from '../services/save-parser/SaveParser';
+import {
+  readAndEvaluateSaves,
+  type SaveDrawingResult,
+} from '../services/save-parser/SaveDrawingParser';
 import { Character, type CharacterJSON } from '../services/save-parser/models/Character';
 import type { ItemJSON } from '../services/save-parser/models/Item';
 import type { AchievementJSON } from '../services/save-parser/models/Achievement';
@@ -33,6 +37,7 @@ export function meta(): Route.MetaDescriptors {
 export async function loader() {
   const currentSettings = getSettings();
   if (!currentSettings) {
+    const saveDrawings = readAndEvaluateSaves('Repentance+');
     return {
       configured: false,
       settings: {
@@ -42,6 +47,7 @@ export async function loader() {
       },
       saveFile: '',
       saveExists: false,
+      saveDrawings,
       characters: [] as CharacterJSON[],
       achievements: [] as AchievementJSON[],
       items: [] as ItemJSON[],
@@ -49,6 +55,7 @@ export async function loader() {
   }
 
   const status = resolveSaveFilePath(currentSettings);
+  const saveDrawings = readAndEvaluateSaves(currentSettings.version);
 
   let parsed = null;
   if (status.exists && status.fullPath) {
@@ -79,6 +86,7 @@ export async function loader() {
     settings: currentSettings,
     saveFile: status.filename || getSaveFilename(currentSettings),
     saveExists: status.exists,
+    saveDrawings,
     characters,
     achievements,
     items,
@@ -93,6 +101,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   const saved = saveSettings({ version, file, characterMenu });
   const status = resolveSaveFilePath(saved);
+  const saveDrawings = readAndEvaluateSaves(saved.version);
 
   return {
     ok: true,
@@ -100,6 +109,7 @@ export async function action({ request }: Route.ActionArgs) {
     filename: status.filename,
     exists: status.exists,
     fullPath: status.fullPath,
+    saveDrawings,
   };
 }
 
@@ -109,6 +119,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     settings: initialSettings,
     saveFile,
     saveExists,
+    saveDrawings: initialSaveDrawings,
     characters,
     achievements,
     items,
@@ -133,6 +144,8 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     fetcher.data?.exists !== undefined ? fetcher.data.exists : saveExists;
   const currentSaveFilename =
     fetcher.data?.filename !== undefined ? fetcher.data.filename : saveFile;
+  const currentSaveDrawings =
+    (fetcher.data?.saveDrawings as SaveDrawingResult[]) || initialSaveDrawings || [];
 
   const handleFilterChange = (newFilter: 'normal' | 'tainted') => {
     setCharacterFilter(newFilter);
@@ -290,6 +303,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         settings={currentSettings}
         saveExists={currentSaveExists}
         saveFilename={currentSaveFilename}
+        saveDrawings={currentSaveDrawings}
         onSave={handleSaveSettings}
       />
     </div>
