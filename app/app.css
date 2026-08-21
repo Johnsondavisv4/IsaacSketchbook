@@ -117,3 +117,11 @@ body {
 .group:hover .check4-hover-animated {
   animation: checkmark4Anim 0.333s steps(1) infinite !important;
 }
+
+.nearest-neighbor {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}

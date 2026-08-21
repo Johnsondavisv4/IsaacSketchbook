@@ -40,11 +40,7 @@ export async function loader() {
     const saveDrawings = readAndEvaluateSaves('Repentance+');
     return {
       configured: false,
-      settings: {
-        version: 'Repentance+' as const,
-        file: 1,
-        characterMenu: 'normal' as const,
-      },
+      settings: null as SaveSettings | null,
       saveFile: '',
       saveExists: false,
       saveDrawings,
@@ -128,7 +124,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher();
   const [activeTab, setActiveTab] = useState<'characters' | 'items' | 'achievements'>('characters');
   const [characterFilter, setCharacterFilter] = useState<'normal' | 'tainted'>(
-    initialSettings.characterMenu || 'normal'
+    initialSettings?.characterMenu || 'normal'
   );
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -139,7 +135,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
   }, [configured]);
 
   const isConfigured = Boolean(fetcher.data?.configured ?? configured);
-  const currentSettings = (fetcher.data?.settings as SaveSettings) || initialSettings;
+  const currentSettings = ((fetcher.data?.settings as SaveSettings) || initialSettings) as SaveSettings | null;
   const currentSaveExists =
     fetcher.data?.exists !== undefined ? fetcher.data.exists : saveExists;
   const currentSaveFilename =
@@ -190,7 +186,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
                 title="Configuración de guardado de Steam (Versión y Archivo)"
               >
                 <i className="bi bi-gear-fill text-xs text-neutral-400"></i>
-                {isConfigured ? (
+                {isConfigured && currentSettings ? (
                   <div className="flex items-center gap-2">
                     <span>{currentSettings.version} · File {currentSettings.file}</span>
                     <i
