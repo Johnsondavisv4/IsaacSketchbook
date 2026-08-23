@@ -13,6 +13,9 @@ Sincronización directa y lectura automática de tus archivos de guardado binari
 - **Compatibilidad Dual**:
   - **The Binding of Isaac: Repentance**: 637 logros oficiales y marcas clásicas Solo.
   - **The Binding of Isaac: Repentance+**: 641 logros oficiales con soporte para marcas cooperativas **Online**.
+- **Selector de Partidas con SaveDrawings Dinámicos**:
+  - Evaluación automática del estado de cada ranura de guardado (File 1, 2 y 3).
+  - Previsualización animada interactiva idéntica a la pantalla oficial de selección del juego (*SaveSelectMenu*), reflejando hitos como *Golden God*, *Platinum God*, *1001%*, *1000000%*, *Dead God*, marcas de comprobación y contorno de la foto.
 - **Pestaña de Personajes**:
   - Seguimiento de los 34 personajes (17 Normales y 17 Tainted).
   - Visualización dual de notas de completado (**Solo** y **Online Co-op**).
@@ -71,7 +74,7 @@ C:\Program Files (x86)\Steam\userdata\<TuSteamID>\250900\remote\
 - **Repentance**: `rep_persistentgamedata1.dat`, `rep_persistentgamedata2.dat`, `rep_persistentgamedata3.dat`
 - **Repentance+**: `rep+persistentgamedata1.dat`, `rep+persistentgamedata2.dat`, `rep+persistentgamedata3.dat`
 
-Puedes cambiar en cualquier momento entre versión y archivo de guardado (File 1, 2 o 3) desde el botón de configuración de la barra superior.
+Puedes cambiar en cualquier momento entre versión y archivo de guardado (File 1, 2 o 3) desde el botón de configuración de la barra superior. La modal de configuración analiza el progreso de cada ranura en tiempo real y renderiza los **SaveDrawings animados oficiales** con sus marcas y estados correspondientes.
 
 ---
 
