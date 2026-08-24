@@ -147,3 +147,31 @@ export function parseSaveFile(
     items,
   };
 }
+
+export function getDefaultSaveData(
+  version: 'Repentance' | 'Repentance+' = 'Repentance+'
+): ParsedSaveData {
+  const characters: Character[] = [];
+  for (let c = 0; c < NUM_CHARACTERS; c++) {
+    characters.push(new Character(c));
+  }
+
+  const achCount =
+    version === 'Repentance' ? NUM_ACHIEVEMENTS_REP : NUM_ACHIEVEMENTS_REP_PLUS;
+  const achievements: Achievement[] = [];
+  for (let i = 1; i <= achCount; i++) {
+    achievements.push(new Achievement(i, undefined, false));
+  }
+
+  const items: Item[] = [];
+  for (let i = 0; i < NUM_ITEMS; i++) {
+    items.push(new Item(i + 1, false));
+  }
+
+  return {
+    version,
+    characters,
+    achievements,
+    items,
+  };
+}

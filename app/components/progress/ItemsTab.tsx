@@ -65,14 +65,14 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
             <h2 className="text-3xl font-upheaval text-neutral-200 tracking-wide">
               Items
             </h2>
-            {configured && (
+            {validItems.length > 0 && (
               <div className="text-xs font-mono font-bold bg-neutral-950 border border-neutral-800 text-neutral-300 px-3 py-1.5 rounded-lg shadow-sm">
                 <span className="text-amber-400">{seenCount}</span> / {validItems.length} Vistos
               </div>
             )}
           </div>
 
-          {configured && (
+          {validItems.length > 0 && (
             <div className="flex items-center gap-2 font-upheaval text-sm sm:text-base tracking-wide">
               <button
                 type="button"
@@ -107,9 +107,9 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
       </div>
 
       <div className="flex-1 min-h-0 p-3 sm:p-5 flex flex-col justify-between items-center overflow-y-auto">
-        {!configured || validItems.length === 0 ? (
+        {validItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
-            Configura tu versión y archivo de guardado para comenzar.
+            No hay items disponibles para mostrar.
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">

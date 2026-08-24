@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { SaveSettings } from '../../services/save-parser/SettingsService';
+import type { SaveSettings, AvailableVersionsStatus } from '../../services/save-parser/SettingsService';
 import type { SaveDrawingResult } from '../../services/save-parser/SaveDrawingParser';
 
 interface SettingsModalProps {
@@ -9,6 +9,7 @@ interface SettingsModalProps {
   saveExists?: boolean;
   saveFilename?: string;
   saveDrawings?: SaveDrawingResult[];
+  availableVersions?: AvailableVersionsStatus;
   onSave: (newSettings: SaveSettings) => void;
 }
 
@@ -24,21 +25,44 @@ export function SettingsModal({
   onClose,
   settings,
   saveDrawings = [],
+  availableVersions,
   onSave,
 }: SettingsModalProps) {
-  const [version, setVersion] = useState<'Repentance' | 'Repentance+'>(
-    settings?.version || 'Repentance+'
-  );
+  const hasRepPlus = availableVersions ? availableVersions.hasRepentancePlus : true;
+  const hasRep = availableVersions ? availableVersions.hasRepentance : true;
+  const isGameInstalled = availableVersions?.isGameInstalled ?? true;
+  const isSteamDetected = availableVersions?.isSteamDetected ?? true;
+
+  // Case 1: Rep+ exists, Rep does not -> show ONLY Rep+
+  // Case 2: Rep exists, Rep+ does not -> show ONLY Rep
+  // Case 3: Both exist -> show BOTH
+  // Case 4: Neither exists (game uninstalled / no saves) -> show BOTH with warning banner
+  const neitherExists = !hasRepPlus && !hasRep;
+  const showRepPlus = hasRepPlus || neitherExists;
+  const showRep = hasRep || neitherExists;
+
+  const defaultVer = (!hasRepPlus && hasRep)
+    ? 'Repentance'
+    : (hasRepPlus && !hasRep)
+      ? 'Repentance+'
+      : (settings?.version || 'Repentance+');
+
+  const [version, setVersion] = useState<'Repentance' | 'Repentance+'>(defaultVer);
   const [file, setFile] = useState<number | null>(settings?.file ?? null);
   const [drawings, setDrawings] = useState<SaveDrawingResult[]>(saveDrawings);
 
   useEffect(() => {
     if (isOpen) {
-      setVersion(settings?.version || 'Repentance+');
+      const initialVer = (!hasRepPlus && hasRep)
+        ? 'Repentance'
+        : (hasRepPlus && !hasRep)
+          ? 'Repentance+'
+          : (settings?.version || 'Repentance+');
+      setVersion(initialVer);
       setFile(settings?.file ?? null);
       setDrawings(saveDrawings);
     }
-  }, [isOpen, settings, saveDrawings]);
+  }, [isOpen, settings, saveDrawings, hasRepPlus, hasRep]);
 
   if (!isOpen) return null;
 
@@ -97,32 +121,41 @@ export function SettingsModal({
           </div>
 
           <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
-            <div className="inline-flex p-1 bg-neutral-950/90 border border-neutral-800 rounded-xl shadow-inner">
-              <button
-                type="button"
-                onClick={() => handleSelectVersion('Repentance+')}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 ${
-                  version === 'Repentance+'
-                    ? 'bg-red-700 text-white shadow-md'
-                    : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
-                }`}
-              >
-                <i className="bi bi-globe2 text-xs"></i>
-                <span>Repentance+</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectVersion('Repentance')}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 ${
-                  version === 'Repentance'
-                    ? 'bg-red-700 text-white shadow-md'
-                    : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
-                }`}
-              >
-                <i className="bi bi-hdd-fill text-xs"></i>
-                <span>Repentance</span>
-              </button>
-            </div>
+            {showRepPlus && showRep ? (
+              <div className="inline-flex p-1 bg-neutral-950/90 border border-neutral-800 rounded-xl shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => handleSelectVersion('Repentance+')}
+                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 ${
+                    version === 'Repentance+'
+                      ? 'bg-red-700 text-white shadow-md'
+                      : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
+                  }`}
+                >
+                  <i className="bi bi-globe2 text-xs"></i>
+                  <span>Repentance+</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectVersion('Repentance')}
+                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-2 ${
+                    version === 'Repentance'
+                      ? 'bg-red-700 text-white shadow-md'
+                      : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
+                  }`}
+                >
+                  <i className="bi bi-hdd-fill text-xs"></i>
+                  <span>Repentance</span>
+                </button>
+              </div>
+            ) : (
+              <div className="inline-flex p-1 bg-neutral-950/90 border border-neutral-800 rounded-xl shadow-inner">
+                <div className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-red-700 text-white shadow-md flex items-center gap-2">
+                  <i className={`bi ${showRep ? 'bi-hdd-fill' : 'bi-globe2'} text-xs`}></i>
+                  <span>{showRep ? 'Repentance' : 'Repentance+'}</span>
+                </div>
+              </div>
+            )}
 
             <button
               type="button"
@@ -134,6 +167,26 @@ export function SettingsModal({
             </button>
           </div>
         </div>
+
+        {neitherExists && (
+          <div className="bg-amber-950/40 border border-amber-800/60 rounded-2xl p-3.5 text-xs text-amber-200 flex items-start gap-3 shadow-inner">
+            <div className="w-7 h-7 rounded-lg bg-amber-900/50 border border-amber-700/50 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+              <i className="bi bi-exclamation-triangle-fill text-sm"></i>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bold text-amber-300 text-sm">
+                {!isSteamDetected || !isGameInstalled
+                  ? 'No se detectó el juego instalado en Steam'
+                  : 'No se encontraron archivos de guardado (.dat)'}
+              </span>
+              <span className="text-neutral-300 text-xs leading-relaxed">
+                {!isSteamDetected || !isGameInstalled
+                  ? 'La suite está operando en modo sin conexión. Puedes seleccionar una versión para explorar todo el catálogo de personajes, ítems, logros y exportar gráficos libremente.'
+                  : 'Aún no se han generado archivos de guardado en la carpeta de Steam. Inicia el juego para crearlos o selecciona una ranura para explorar en modo offline.'}
+              </span>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-center overflow-x-auto max-w-full py-4 sm:py-6">
           <div className="flex items-end justify-center gap-6 sm:gap-8 shrink-0">

@@ -1,5 +1,5 @@
 import type { Route } from './+types/api.settings.check';
-import { resolveSaveFilePath } from '../services/save-parser/SettingsService';
+import { resolveSaveFilePath, getAvailableVersions } from '../services/save-parser/SettingsService';
 import { readAndEvaluateSaves } from '../services/save-parser/SaveDrawingParser';
 
 export async function action({ request }: Route.ActionArgs) {
@@ -23,9 +23,11 @@ export async function action({ request }: Route.ActionArgs) {
   });
 
   const drawings = readAndEvaluateSaves(targetVersion);
+  const availableVersions = getAvailableVersions();
 
   return Response.json({
     ...status,
     drawings,
+    availableVersions,
   });
 }

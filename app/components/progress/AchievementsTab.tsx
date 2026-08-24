@@ -73,14 +73,14 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
             <h2 className="text-3xl font-upheaval text-neutral-200 tracking-wide">
               Achievements
             </h2>
-            {configured && (
+            {achievements.length > 0 && (
               <div className="text-xs font-mono font-bold bg-neutral-950 border border-neutral-800 text-neutral-300 px-3 py-1.5 rounded-lg shadow-sm">
                 <span className="text-amber-400">{unlockedCount}</span> / {achievements.length} Desbloqueados
               </div>
             )}
           </div>
 
-          {configured && (
+          {achievements.length > 0 && (
             <div className="flex flex-wrap items-center gap-2.5 font-upheaval text-sm sm:text-base tracking-wide">
               <div className="relative">
                 <input
@@ -141,9 +141,9 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
       </div>
 
       <div className="flex-1 min-h-0 p-3 sm:p-5 flex flex-col justify-between items-center overflow-y-auto">
-        {!configured || achievements.length === 0 ? (
+        {achievements.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
-            Configura tu versión y archivo de guardado para comenzar.
+            No hay logros disponibles para mostrar.
           </div>
         ) : filteredAchievements.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">

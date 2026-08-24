@@ -4,11 +4,13 @@ import {
   saveSettings,
   resolveSaveFilePath,
   getSaveFilename,
+  getAvailableVersions,
 } from '../services/save-parser/SettingsService';
 
 export async function loader() {
   const settings = getSettings();
   const status = resolveSaveFilePath(settings);
+  const availableVersions = getAvailableVersions();
   return Response.json({
     configured: Boolean(settings),
     settings: settings || { version: 'Repentance+', file: 1, characterMenu: 'normal' },
@@ -17,6 +19,7 @@ export async function loader() {
       (settings ? getSaveFilename(settings) : 'rep+persistentgamedata1.dat'),
     exists: status.exists,
     fullPath: status.fullPath,
+    availableVersions,
   });
 }
 
@@ -58,5 +61,6 @@ export async function action({ request }: Route.ActionArgs) {
     filename: status.filename,
     exists: status.exists,
     fullPath: status.fullPath,
+    availableVersions: getAvailableVersions(),
   });
 }

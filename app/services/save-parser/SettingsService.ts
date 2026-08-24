@@ -73,6 +73,54 @@ export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: numbe
   return validated;
 }
 
+export interface AvailableVersionsStatus {
+  hasRepentancePlus: boolean;
+  hasRepentance: boolean;
+  isSteamDetected: boolean;
+  isGameInstalled: boolean;
+}
+
+export function getAvailableVersions(): AvailableVersionsStatus {
+  let hasRepentancePlus = false;
+  let hasRepentance = false;
+  let isSteamDetected = false;
+  let isGameInstalled = false;
+
+  for (const root of STEAM_USERDATA_ROOTS) {
+    if (!fs.existsSync(root)) continue;
+    isSteamDetected = true;
+
+    try {
+      const userDirs = fs.readdirSync(root);
+      for (const userDir of userDirs) {
+        const gameDir = path.join(root, userDir, '250900');
+        if (fs.existsSync(gameDir)) {
+          isGameInstalled = true;
+        }
+        const remoteDir = path.join(gameDir, 'remote');
+        if (fs.existsSync(remoteDir)) {
+          for (let f = 1; f <= 3; f++) {
+            if (fs.existsSync(path.join(remoteDir, `rep+persistentgamedata${f}.dat`))) {
+              hasRepentancePlus = true;
+            }
+            if (fs.existsSync(path.join(remoteDir, `rep_persistentgamedata${f}.dat`))) {
+              hasRepentance = true;
+            }
+          }
+        }
+      }
+    } catch {
+    }
+  }
+
+  return {
+    hasRepentancePlus,
+    hasRepentance,
+    isSteamDetected,
+    isGameInstalled,
+  };
+}
+
 export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileStatus {
   const activeSettings = settings || getSettings();
   if (!activeSettings) {

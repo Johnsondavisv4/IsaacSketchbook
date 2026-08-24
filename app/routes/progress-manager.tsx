@@ -13,14 +13,16 @@ import {
   saveSettings,
   resolveSaveFilePath,
   getSaveFilename,
+  getAvailableVersions,
   type SaveSettings,
+  type AvailableVersionsStatus,
 } from '../services/save-parser/SettingsService';
-import { parseSaveFile } from '../services/save-parser/SaveParser';
+import { parseSaveFile, getDefaultSaveData } from '../services/save-parser/SaveParser';
 import {
   readAndEvaluateSaves,
   type SaveDrawingResult,
 } from '../services/save-parser/SaveDrawingParser';
-import { Character, type CharacterJSON } from '../services/save-parser/models/Character';
+import type { CharacterJSON } from '../services/save-parser/models/Character';
 import type { ItemJSON } from '../services/save-parser/models/Item';
 import type { AchievementJSON } from '../services/save-parser/models/Achievement';
 
@@ -35,54 +37,57 @@ export function meta(): Route.MetaDescriptors {
 }
 
 export async function loader() {
+  const availableVersions = getAvailableVersions();
   const currentSettings = getSettings();
   if (!currentSettings) {
-    const saveDrawings = readAndEvaluateSaves('Repentance+');
+    const defaultVersion = (!availableVersions.hasRepentancePlus && availableVersions.hasRepentance)
+      ? 'Repentance'
+      : 'Repentance+';
+    const saveDrawings = readAndEvaluateSaves(defaultVersion);
+    const defaultData = getDefaultSaveData(defaultVersion);
     return {
       configured: false,
       settings: null as SaveSettings | null,
       saveFile: '',
       saveExists: false,
       saveDrawings,
-      characters: [] as CharacterJSON[],
-      achievements: [] as AchievementJSON[],
-      items: [] as ItemJSON[],
+      availableVersions,
+      characters: defaultData.characters.map((c) => c.toJSON()),
+      achievements: defaultData.achievements.map((a) => a.toJSON()),
+      items: defaultData.items.map((i) => i.toJSON()),
     };
   }
 
-  const status = resolveSaveFilePath(currentSettings);
-  const saveDrawings = readAndEvaluateSaves(currentSettings.version);
+  const effectiveVersion = (!availableVersions.hasRepentancePlus && availableVersions.hasRepentance && currentSettings.version === 'Repentance+')
+    ? 'Repentance'
+    : currentSettings.version;
+  const effectiveSettings = { ...currentSettings, version: effectiveVersion };
+
+  const status = resolveSaveFilePath(effectiveSettings);
+  const saveDrawings = readAndEvaluateSaves(effectiveSettings.version);
 
   let parsed = null;
   if (status.exists && status.fullPath) {
     try {
       const buf = fs.readFileSync(status.fullPath);
-      parsed = parseSaveFile(buf, currentSettings.version);
+      parsed = parseSaveFile(buf, effectiveSettings.version);
     } catch (e) {
       console.error('Error parseando save en loader:', e);
     }
   }
 
-  let characters: CharacterJSON[] = [];
-  if (parsed && parsed.characters) {
-    characters = parsed.characters.map((c) => c.toJSON());
-  } else {
-    for (let id = 0; id <= 33; id++) {
-      characters.push(new Character(id).toJSON());
-    }
-  }
-
-  const achievements: AchievementJSON[] =
-    parsed?.achievements ? parsed.achievements.map((a) => a.toJSON()) : [];
-  const items: ItemJSON[] =
-    parsed?.items ? parsed.items.map((i) => i.toJSON()) : [];
+  const fallbackData = parsed ?? getDefaultSaveData(effectiveSettings.version);
+  const characters: CharacterJSON[] = fallbackData.characters.map((c) => c.toJSON());
+  const achievements: AchievementJSON[] = fallbackData.achievements.map((a) => a.toJSON());
+  const items: ItemJSON[] = fallbackData.items.map((i) => i.toJSON());
 
   return {
     configured: true,
-    settings: currentSettings,
-    saveFile: status.filename || getSaveFilename(currentSettings),
+    settings: effectiveSettings,
+    saveFile: status.filename || getSaveFilename(effectiveSettings),
     saveExists: status.exists,
     saveDrawings,
+    availableVersions,
     characters,
     achievements,
     items,
@@ -98,6 +103,7 @@ export async function action({ request }: Route.ActionArgs) {
   const saved = saveSettings({ version, file, characterMenu });
   const status = resolveSaveFilePath(saved);
   const saveDrawings = readAndEvaluateSaves(saved.version);
+  const availableVersions = getAvailableVersions();
 
   return {
     ok: true,
@@ -106,6 +112,7 @@ export async function action({ request }: Route.ActionArgs) {
     exists: status.exists,
     fullPath: status.fullPath,
     saveDrawings,
+    availableVersions,
   };
 }
 
@@ -116,6 +123,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     saveFile,
     saveExists,
     saveDrawings: initialSaveDrawings,
+    availableVersions: initialAvailableVersions,
     characters,
     achievements,
     items,
@@ -142,6 +150,8 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     fetcher.data?.filename !== undefined ? fetcher.data.filename : saveFile;
   const currentSaveDrawings =
     (fetcher.data?.saveDrawings as SaveDrawingResult[]) || initialSaveDrawings || [];
+  const currentAvailableVersions =
+    (fetcher.data?.availableVersions as AvailableVersionsStatus) || initialAvailableVersions;
 
   const handleFilterChange = (newFilter: 'normal' | 'tainted') => {
     setCharacterFilter(newFilter);
@@ -224,7 +234,9 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
                     ? 'Configuración requerida'
                     : currentSaveExists
                       ? 'Sincronizado con Steam'
-                      : 'Modo fuera de línea'}
+                      : !currentAvailableVersions?.isGameInstalled
+                        ? 'Juego no detectado (Offline)'
+                        : 'Sin partida guardada (Offline)'}
                 </span>
               </div>
             </div>
@@ -300,6 +312,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         saveExists={currentSaveExists}
         saveFilename={currentSaveFilename}
         saveDrawings={currentSaveDrawings}
+        availableVersions={currentAvailableVersions}
         onSave={handleSaveSettings}
       />
     </div>
