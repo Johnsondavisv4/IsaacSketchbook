@@ -170,7 +170,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+    <div className="h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
       <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={

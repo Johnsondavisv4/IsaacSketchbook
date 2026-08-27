@@ -236,7 +236,7 @@ importarMarcaDirecto();`;
   const finalResolution = 16 * Math.max(1, scale);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+    <div className="h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
       <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
@@ -342,8 +342,8 @@ importarMarcaDirecto();`;
           </div>
 
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center justify-between shrink-0 h-full overflow-y-auto">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center gap-3.5 shrink-0">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-1">
               Vista Previa de Marca
             </h3>
 
