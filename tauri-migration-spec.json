@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tauri v2 Migration Specification for IsaacSketchbook",
+  "description": "Especificación técnica y guía de ejecución paso a paso para migrar y empaquetar IsaacSketchbook a una aplicación de escritorio nativa ultraligera (~3-5 MB) con Tauri v2 y React Router v7.",
+  "version": "1.0.0",
+  "project": {
+    "name": "IsaacSketchbook",
+    "rootDirectory": "c:/Users/Johnson/Documents/Proyectos/IsaacSketchbook",
+    "packageManager": "pnpm",
+    "targetBranch": "Implementacion-de-Tauri-v2",
+    "baseBranch": "main"
+  },
+  "architecture": {
+    "engine": "Tauri v2 (Microsoft Edge WebView2 / Chromium Evergreen)",
+    "frontend": "React Router v7 (Modo SPA estático)",
+    "styling": "TailwindCSS v4 con @tailwindcss/vite",
+    "pixelArtRendering": "image-rendering: pixelated (Nearest-Neighbor nativo en Chromium)",
+    "bundleSizeTarget": "< 5 MB",
+    "ramUsageTarget": "< 50 MB"
+  },
+  "buildOutputs": {
+    "targetPlatform": "Windows x64 (x86_64-pc-windows-msvc)",
+    "minimumOS": "Windows 10 (Build 1803+) / Windows 11",
+    "artifacts": [
+      {
+        "type": "Standalone Executable (.exe Portable)",
+        "path": "src-tauri/target/release/IsaacSketchbook.exe",
+        "description": "Ejecutable nativo independiente de un solo archivo. No requiere instalación, corre inmediatamente al hacer doble clic y genera/lee 'settings.json' en su mismo directorio.",
+        "estimatedSize": "3.5 MB - 4.8 MB"
+      },
+      {
+        "type": "Windows Setup Installer (NSIS .exe)",
+        "path": "src-tauri/target/release/bundle/nsis/IsaacSketchbook_0.1.0_x64-setup.exe",
+        "description": "Instalador estándar de Windows configurado en modo usuario actual ('currentUser', se instala en %LOCALAPPDATA%\\Programs sin pedir permisos UAC de administrador), con accesos directos y desinstalador.",
+        "estimatedSize": "3.8 MB - 5.2 MB"
+      },
+      {
+        "type": "Frontend SPA Dist (Compilado Web)",
+        "path": "build/client/",
+        "description": "Archivos HTML, CSS y JS cliente empaquetados e incrustados internamente en el binario final.",
+        "estimatedSize": "~1.2 MB"
+      }
+    ]
+  },
+  "prerequisites": [
+    "Rust y Cargo instalados (rustup)",
+    "Visual Studio C++ Build Tools (instalados en Windows)",
+    "Node.js >= 22.11.0 y pnpm exclusivamente (nunca usar npx)"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "id": "git-branch",
+      "title": "Aislamiento de Rama Git (Completado)",
+      "status": "COMPLETED",
+      "description": "Trabajar exclusivamente dentro de la rama activa 'Implementacion-de-Tauri-v2' para conservar la rama 'main' como versión web pura sin alteraciones.",
+      "commands": [
+        "git branch --show-current"
+      ],
+      "verification": "Verificar que la rama activa sea 'Implementacion-de-Tauri-v2'."
+    },
+    {
+      "step": 2,
+      "id": "spa-configuration",
+      "title": "Configuración de React Router v7 en Modo SPA",
+      "description": "Cambiar la configuración del framework para generar una SPA estática cliente en build/client/",
+      "targetFile": "react-router.config.ts",
+      "changes": {
+        "ssr": false
+      },
+      "expectedContent": "import type { Config } from '@react-router/dev/config';\n\nexport default {\n  ssr: false,\n} satisfies Config;\n"
+    },
+    {
+      "step": 3,
+      "id": "install-tauri-dependencies",
+      "title": "Instalación de Dependencias de Tauri v2",
+      "description": "Instalar el CLI de Tauri y los plugins oficiales para acceso al sistema de archivos y diálogos.",
+      "commands": [
+        "pnpm add -D @tauri-apps/cli@^2.0.0",
+        "pnpm add @tauri-apps/api@^2.0.0 @tauri-apps/plugin-fs@^2.0.0 @tauri-apps/plugin-dialog@^2.0.0 @tauri-apps/plugin-shell@^2.0.0"
+      ]
+    },
+    {
+      "step": 4,
+      "id": "init-tauri",
+      "title": "Inicialización de Estructura Tauri v2",
+      "description": "Crear la carpeta src-tauri con la configuración de ventana y permisos de sistema.",
+      "commands": [
+        "pnpm tauri init --app-name IsaacSketchbook --window-title \"The Binding of Isaac: Sketchbook\" --dist-dir \"../build/client\" --dev-url \"http://localhost:5173\""
+      ],
+      "configurations": {
+        "src-tauri/tauri.conf.json": {
+          "build": {
+            "beforeDevCommand": "pnpm dev",
+            "beforeBuildCommand": "pnpm build",
+            "devUrl": "http://localhost:5173",
+            "frontendDist": "../build/client"
+          },
+          "bundle": {
+            "active": true,
+            "targets": ["nsis"],
+            "icon": [
+              "icons/32x32.png",
+              "icons/128x128.png",
+              "icons/128x128@2x.png",
+              "icons/icon.icns",
+              "icons/icon.ico"
+            ],
+            "windows": {
+              "nsis": {
+                "installMode": "currentUser"
+              }
+            }
+          },
+          "app": {
+            "windows": [
+              {
+                "title": "The Binding of Isaac: Sketchbook",
+                "width": 1440,
+                "height": 900,
+                "minWidth": 1024,
+                "minHeight": 700,
+                "resizable": true,
+                "maximized": true,
+                "fullscreen": false
+              }
+            ]
+          }
+        },
+        "src-tauri/capabilities/default.json": {
+          "description": "Permisos requeridos para leer partidas de Steam, settings.json local y escanear sprites",
+          "permissions": [
+            "core:default",
+            "fs:allow-read-file",
+            "fs:allow-read-dir",
+            "fs:allow-exists",
+            "fs:allow-write-file",
+            "dialog:allow-open",
+            "dialog:allow-save"
+          ]
+        }
+      }
+    },
+    {
+      "step": 5,
+      "id": "migrate-asset-exporter",
+      "title": "Adaptación de Asset Exporter a clientLoader",
+      "targetFile": "app/routes/asset-exporter.tsx",
+      "description": "Reemplazar el loader de servidor por clientLoader utilizando @tauri-apps/plugin-fs para listar los archivos PNG de la carpeta public.",
+      "instructions": [
+        "Cambiar 'export async function loader()' por 'export async function clientLoader()'.",
+        "Reemplazar 'fs.readdirSync' por la lectura de directorio con Tauri plugin-fs o listado de assets estáticos.",
+        "Conservar 100% el JSX, layout, tabla de 4 columnas y estilos de Tailwind existentes."
+      ]
+    },
+    {
+      "step": 6,
+      "id": "migrate-progress-manager",
+      "title": "Adaptación de Progress Manager, SettingsService y Save Parser",
+      "targetFiles": [
+        "app/routes/progress-manager.tsx",
+        "app/routes/api.settings.ts",
+        "app/routes/api.settings.check.ts",
+        "app/services/save-parser/SettingsService.ts",
+        "app/services/save-parser/SaveDrawingParser.ts"
+      ],
+      "description": "Adaptar la lectura de archivos binarios .dat de Steam y la persistencia de settings.json a clientLoader y clientAction.",
+      "instructions": [
+        "En progress-manager.tsx: Cambiar 'loader' y 'action' por 'clientLoader' y 'clientAction'.",
+        "En SettingsService.ts: Gestionar 'settings.json' siempre en el mismo directorio donde reside el archivo ejecutable (.exe), tanto en la versión portable como en la instalada.",
+        "En SettingsService.ts y SaveDrawingParser.ts: Usar @tauri-apps/plugin-fs para leer los bytes de rep_persistentgamedata*.dat.",
+        "Pasar el Uint8Array obtenido directamente a parseSaveFile(buf, version) existente. Toda la lógica de parseo de modelos (Character, Item, Achievement, SaveDrawing) permanece 100% intacta."
+      ]
+    },
+    {
+      "step": 7,
+      "id": "package-scripts",
+      "title": "Actualización de Scripts en package.json",
+      "targetFile": "package.json",
+      "description": "Agregar scripts de desarrollo y empaquetado para Tauri.",
+      "scriptsToAdd": {
+        "tauri:dev": "tauri dev",
+        "tauri:build": "tauri build"
+      }
+    }
+  ],
+  "verificationChecklist": [
+    {
+      "test": "Verificar compilación SPA",
+      "command": "pnpm build",
+      "expectedResult": "Genera exitosamente la carpeta build/client/ con index.html y assets estáticos."
+    },
+    {
+      "test": "Lanzamiento en Desarrollo con Hot Reload",
+      "command": "pnpm tauri:dev",
+      "expectedResult": "Abre la ventana nativa de escritorio con Hot-Reload activo y consumo de RAM < 50 MB."
+    },
+    {
+      "test": "Renderizado Pixel-Art Nítido",
+      "expectedResult": "Las miniaturas de sprites en Asset Exporter y Mark Exporter se renderizan 100% nítidas (Nearest-Neighbor) mediante 'image-rendering: pixelated'."
+    },
+    {
+      "test": "Sincronización de Partidas de Steam",
+      "expectedResult": "Progress Manager detecta y lee correctamente el archivo .dat de Steam reflejando personajes, marcas y logros."
+    },
+    {
+      "test": "Inyección y Exportación JSX para Photoshop",
+      "expectedResult": "La generación de scripts JSX desde el Carrito y módulos individuales funciona y descarga/guarda el script correctamente."
+    },
+    {
+      "test": "Compilación del Instalador y Binario Final",
+      "command": "pnpm tauri:build",
+      "expectedResult": "Genera el ejecutable .exe final en src-tauri/target/release/ con un tamaño de ~3 a 5 MB."
+    }
+  ],
+  "rulesForAgents": [
+    "Usar EXCLUSIVAMENTE 'pnpm' como gestor de paquetes. NUNCA ejecutar 'npx'.",
+    "NO alterar los estilos de Tailwind v4, clases de color o fuentes de app/app.css.",
+    "Conservar la regla CSS 'image-rendering: pixelated;' en todos los contenedores de sprites e imágenes.",
+    "Mantener la rama 'main' intacta y trabajar exclusivamente dentro de la rama 'Implementacion-de-Tauri-v2'."
+  ]
+}
