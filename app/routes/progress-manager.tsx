@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Route } from './+types/progress-manager';
-import fs from 'node:fs';
+import { readFile } from '@tauri-apps/plugin-fs';
 import { useFetcher } from 'react-router';
 import { TopNav } from '../components/TopNav';
 import { CharactersTab } from '../components/progress/CharactersTab';
@@ -36,14 +36,14 @@ export function meta(): Route.MetaDescriptors {
   ];
 }
 
-export async function loader() {
-  const availableVersions = getAvailableVersions();
-  const currentSettings = getSettings();
+export async function clientLoader() {
+  const availableVersions = await getAvailableVersions();
+  const currentSettings = await getSettings();
   if (!currentSettings) {
     const defaultVersion = (!availableVersions.hasRepentancePlus && availableVersions.hasRepentance)
       ? 'Repentance'
       : 'Repentance+';
-    const saveDrawings = readAndEvaluateSaves(defaultVersion);
+    const saveDrawings = await readAndEvaluateSaves(defaultVersion);
     const defaultData = getDefaultSaveData(defaultVersion);
     return {
       configured: false,
@@ -63,16 +63,16 @@ export async function loader() {
     : currentSettings.version;
   const effectiveSettings = { ...currentSettings, version: effectiveVersion };
 
-  const status = resolveSaveFilePath(effectiveSettings);
-  const saveDrawings = readAndEvaluateSaves(effectiveSettings.version);
+  const status = await resolveSaveFilePath(effectiveSettings);
+  const saveDrawings = await readAndEvaluateSaves(effectiveSettings.version);
 
   let parsed = null;
   if (status.exists && status.fullPath) {
     try {
-      const buf = fs.readFileSync(status.fullPath);
+      const buf = await readFile(status.fullPath);
       parsed = parseSaveFile(buf, effectiveSettings.version);
     } catch (e) {
-      console.error('Error parseando save en loader:', e);
+      console.error('Error parseando save en clientLoader:', e);
     }
   }
 
@@ -94,16 +94,16 @@ export async function loader() {
   };
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
   const version = formData.get('version') as 'Repentance' | 'Repentance+';
   const file = Number(formData.get('file') ?? formData.get('slot')) || 1;
   const characterMenu = (formData.get('characterMenu') as 'normal' | 'tainted') || 'normal';
 
-  const saved = saveSettings({ version, file, characterMenu });
-  const status = resolveSaveFilePath(saved);
-  const saveDrawings = readAndEvaluateSaves(saved.version);
-  const availableVersions = getAvailableVersions();
+  const saved = await saveSettings({ version, file, characterMenu });
+  const status = await resolveSaveFilePath(saved);
+  const saveDrawings = await readAndEvaluateSaves(saved.version);
+  const availableVersions = await getAvailableVersions();
 
   return {
     ok: true,
@@ -155,11 +155,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
 
   const handleFilterChange = (newFilter: 'normal' | 'tainted') => {
     setCharacterFilter(newFilter);
-    fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ characterMenu: newFilter }),
-    }).catch((err) => console.error('Error guardando filtro:', err));
+    saveSettings({ characterMenu: newFilter }).catch((err) => console.error('Error guardando filtro:', err));
   };
 
   const handleSaveSettings = (newSettings: SaveSettings) => {

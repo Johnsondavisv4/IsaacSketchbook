@@ -41,6 +41,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return (
+    <div className="min-h-screen bg-neutral-950 text-neutral-400 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-xs font-semibold tracking-wide">Cargando...</span>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <ToastProvider>

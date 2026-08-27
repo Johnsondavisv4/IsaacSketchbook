@@ -7,10 +7,10 @@ import {
   getAvailableVersions,
 } from '../services/save-parser/SettingsService';
 
-export async function loader() {
-  const settings = getSettings();
-  const status = resolveSaveFilePath(settings);
-  const availableVersions = getAvailableVersions();
+export async function clientLoader() {
+  const settings = await getSettings();
+  const status = await resolveSaveFilePath(settings);
+  const availableVersions = await getAvailableVersions();
   return Response.json({
     configured: Boolean(settings),
     settings: settings || { version: 'Repentance+', file: 1, characterMenu: 'normal' },
@@ -23,7 +23,7 @@ export async function loader() {
   });
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function clientAction({ request }: Route.ClientActionArgs) {
   let body: any = {};
   const contentType = request.headers.get('content-type') || '';
   if (contentType.includes('application/json')) {
@@ -34,7 +34,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const { version, file, slot, characterMenu } = body;
-  const current = getSettings() || {
+  const current = (await getSettings()) || {
     version: 'Repentance+',
     file: 1,
     characterMenu: 'normal',
@@ -47,12 +47,12 @@ export async function action({ request }: Route.ActionArgs) {
   const targetMenu =
     characterMenu || current.characterMenu || ('normal' as const);
 
-  const saved = saveSettings({
+  const saved = await saveSettings({
     version: targetVersion,
     file: targetFile,
     characterMenu: targetMenu,
   });
-  const status = resolveSaveFilePath(saved);
+  const status = await resolveSaveFilePath(saved);
 
   return Response.json({
     ok: true,
@@ -61,6 +61,6 @@ export async function action({ request }: Route.ActionArgs) {
     filename: status.filename,
     exists: status.exists,
     fullPath: status.fullPath,
-    availableVersions: getAvailableVersions(),
+    availableVersions: await getAvailableVersions(),
   });
 }

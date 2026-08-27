@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
 import type { Route } from './+types/asset-exporter';
-import fs from 'node:fs';
-import path from 'node:path';
 import { TopNav } from '../components/TopNav';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
@@ -16,33 +14,19 @@ export function meta(): Route.MetaDescriptors {
   ];
 }
 
-function getAllPngFiles(dir: string, baseDir: string = dir): string[] {
-  let results: string[] = [];
-  if (!fs.existsSync(dir)) return results;
+const pngModules = import.meta.glob('../../public/**/*.png');
 
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      results = results.concat(getAllPngFiles(fullPath, baseDir));
-    } else if (
-      entry.isFile() &&
-      path.extname(entry.name).toLowerCase() === '.png'
-    ) {
-      const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-      results.push(relativePath);
-    }
-  }
-
-  return results;
+function getAllPngSprites(): string[] {
+  return Object.keys(pngModules)
+    .map((key) => key.replace(/^\.\.\/\.\.\/public\//, ''))
+    .sort((a, b) => a.localeCompare(b));
 }
 
-export async function loader() {
-  const publicPath = path.join(process.cwd(), 'public');
-  const sprites = getAllPngFiles(publicPath).sort((a, b) => a.localeCompare(b));
+export async function clientLoader() {
+  const sprites = getAllPngSprites();
   return { sprites };
 }
+
 
 function getFolderIcon(folder: string): string {
   if (folder === 'all') return 'bi bi-globe2';

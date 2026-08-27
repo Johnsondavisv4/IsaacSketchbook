@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import { readFile } from '@tauri-apps/plugin-fs';
 import {
   getSaveFilename,
   resolveSaveFilePath,
@@ -255,14 +255,14 @@ export function resolveMultiSaveDrawings(drawings: SaveDrawingResult[]): SaveDra
   return results;
 }
 
-export function readAndEvaluateSaves(version: 'Repentance' | 'Repentance+' = 'Repentance+'): SaveDrawingResult[] {
+export async function readAndEvaluateSaves(version: 'Repentance' | 'Repentance+' = 'Repentance+'): Promise<SaveDrawingResult[]> {
   const initialResults: SaveDrawingResult[] = [];
 
   for (let f = 1; f <= 3; f++) {
-    const status = resolveSaveFilePath({ version, file: f, characterMenu: 'normal' });
+    const status = await resolveSaveFilePath({ version, file: f, characterMenu: 'normal' });
     if (status.exists && status.fullPath) {
       try {
-        const buf = fs.readFileSync(status.fullPath);
+        const buf = await readFile(status.fullPath);
         const evaluated = parseSaveDrawing(buf, f, status.filename);
         initialResults.push(evaluated);
         continue;

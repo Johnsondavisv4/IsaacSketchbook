@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { SaveSettings, AvailableVersionsStatus } from '../../services/save-parser/SettingsService';
-import type { SaveDrawingResult } from '../../services/save-parser/SaveDrawingParser';
+import { readAndEvaluateSaves, type SaveDrawingResult } from '../../services/save-parser/SaveDrawingParser';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -68,15 +68,10 @@ export function SettingsModal({
 
   const handleSelectVersion = (newVersion: 'Repentance' | 'Repentance+') => {
     setVersion(newVersion);
-    fetch('/api/settings/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ version: newVersion, file: file || 1 }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && Array.isArray(data.drawings)) {
-          setDrawings(data.drawings);
+    readAndEvaluateSaves(newVersion)
+      .then((d) => {
+        if (Array.isArray(d)) {
+          setDrawings(d);
         }
       })
       .catch((err) => console.error('Error fetching drawings:', err));

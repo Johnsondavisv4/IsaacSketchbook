@@ -1,7 +1,18 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { exists, readTextFile, writeTextFile, readDir } from '@tauri-apps/plugin-fs';
+import { invoke } from '@tauri-apps/api/core';
 
-const SETTINGS_PATH = path.resolve(process.cwd(), 'settings.json');
+async function getSettingsPath(): Promise<string> {
+  try {
+    const exeDir: string = await invoke('get_exe_dir');
+    if (exeDir) {
+      const sep = exeDir.includes('/') ? '/' : '\\';
+      return `${exeDir}${sep}settings.json`;
+    }
+  } catch (err) {
+    console.warn('No se pudo obtener el directorio del exe vía Tauri invoke, usando ruta relativa:', err);
+  }
+  return 'settings.json';
+}
 
 const STEAM_USERDATA_ROOTS = [
   'C:\\Program Files (x86)\\Steam\\userdata',
@@ -28,10 +39,25 @@ export function getSaveFilename(settings: Partial<SaveSettings> & { slot?: numbe
   return `${prefix}persistentgamedata${file}.dat`;
 }
 
-export function getSettings(): SaveSettings | null {
+export async function getSettings(): Promise<SaveSettings | null> {
   try {
-    if (fs.existsSync(SETTINGS_PATH)) {
-      const raw = fs.readFileSync(SETTINGS_PATH, 'utf8');
+    const fromRust: any = await invoke('get_settings');
+    if (fromRust && fromRust.version && (fromRust.file !== undefined || fromRust.slot !== undefined)) {
+      return {
+        version: fromRust.version === 'Repentance+' ? 'Repentance+' : 'Repentance',
+        file: Number(fromRust.file ?? fromRust.slot) || 1,
+        characterMenu: fromRust.characterMenu === 'tainted' ? 'tainted' : 'normal',
+      };
+    }
+  } catch (invokeErr) {
+    // Fallback if invoke is unavailable
+  }
+
+  try {
+    const settingsPath = await getSettingsPath();
+    const hasFile = await exists(settingsPath);
+    if (hasFile) {
+      const raw = await readTextFile(settingsPath);
       const parsed = JSON.parse(raw);
       if (parsed && parsed.version && (parsed.file !== undefined || parsed.slot !== undefined)) {
         return {
@@ -42,13 +68,13 @@ export function getSettings(): SaveSettings | null {
       }
     }
   } catch (err: any) {
-    console.error('Error leyendo settings.json:', err.message);
+    console.error('Error leyendo settings.json:', err?.message || err);
   }
   return null;
 }
 
-export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: number }): SaveSettings {
-  const current = getSettings() || {
+export async function saveSettings(newSettings: Partial<SaveSettings> & { slot?: number }): Promise<SaveSettings> {
+  const current = (await getSettings()) || {
     version: 'Repentance+',
     file: 1,
     characterMenu: 'normal',
@@ -69,7 +95,19 @@ export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: numbe
       : current.characterMenu,
   };
 
-  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(validated, null, 2), 'utf8');
+  try {
+    await invoke('save_settings', { settings: validated });
+    return validated;
+  } catch (invokeErr) {
+    // Fallback if invoke is unavailable
+  }
+
+  try {
+    const settingsPath = await getSettingsPath();
+    await writeTextFile(settingsPath, JSON.stringify(validated, null, 2));
+  } catch (err: any) {
+    console.error('Error guardando settings.json:', err?.message || err);
+  }
   return validated;
 }
 
@@ -80,30 +118,35 @@ export interface AvailableVersionsStatus {
   isGameInstalled: boolean;
 }
 
-export function getAvailableVersions(): AvailableVersionsStatus {
+export async function getAvailableVersions(): Promise<AvailableVersionsStatus> {
   let hasRepentancePlus = false;
   let hasRepentance = false;
   let isSteamDetected = false;
   let isGameInstalled = false;
 
   for (const root of STEAM_USERDATA_ROOTS) {
-    if (!fs.existsSync(root)) continue;
-    isSteamDetected = true;
-
     try {
-      const userDirs = fs.readdirSync(root);
-      for (const userDir of userDirs) {
-        const gameDir = path.join(root, userDir, '250900');
-        if (fs.existsSync(gameDir)) {
+      const rootExists = await exists(root);
+      if (!rootExists) continue;
+      isSteamDetected = true;
+
+      const userDirs = await readDir(root);
+      for (const entry of userDirs) {
+        if (!entry.isDirectory) continue;
+        const userDirName = entry.name;
+        const gameDir = `${root}\\${userDirName}\\250900`;
+        const gameDirExists = await exists(gameDir);
+        if (gameDirExists) {
           isGameInstalled = true;
         }
-        const remoteDir = path.join(gameDir, 'remote');
-        if (fs.existsSync(remoteDir)) {
+        const remoteDir = `${gameDir}\\remote`;
+        const remoteDirExists = await exists(remoteDir);
+        if (remoteDirExists) {
           for (let f = 1; f <= 3; f++) {
-            if (fs.existsSync(path.join(remoteDir, `rep+persistentgamedata${f}.dat`))) {
+            if (await exists(`${remoteDir}\\rep+persistentgamedata${f}.dat`)) {
               hasRepentancePlus = true;
             }
-            if (fs.existsSync(path.join(remoteDir, `rep_persistentgamedata${f}.dat`))) {
+            if (await exists(`${remoteDir}\\rep_persistentgamedata${f}.dat`)) {
               hasRepentance = true;
             }
           }
@@ -121,8 +164,8 @@ export function getAvailableVersions(): AvailableVersionsStatus {
   };
 }
 
-export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileStatus {
-  const activeSettings = settings || getSettings();
+export async function resolveSaveFilePath(settings?: SaveSettings | null): Promise<SaveFileStatus> {
+  const activeSettings = settings || (await getSettings());
   if (!activeSettings) {
     return { fullPath: null, filename: '', exists: false };
   }
@@ -130,15 +173,19 @@ export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileSta
   const filename = getSaveFilename(activeSettings);
 
   for (const root of STEAM_USERDATA_ROOTS) {
-    if (!fs.existsSync(root)) continue;
-
     try {
-      const userDirs = fs.readdirSync(root);
-      for (const userDir of userDirs) {
-        const remoteDir = path.join(root, userDir, '250900', 'remote');
-        if (fs.existsSync(remoteDir)) {
-          const fullPath = path.join(remoteDir, filename);
-          if (fs.existsSync(fullPath)) {
+      const rootExists = await exists(root);
+      if (!rootExists) continue;
+
+      const userDirs = await readDir(root);
+      for (const entry of userDirs) {
+        if (!entry.isDirectory) continue;
+        const userDirName = entry.name;
+        const remoteDir = `${root}\\${userDirName}\\250900\\remote`;
+        const remoteDirExists = await exists(remoteDir);
+        if (remoteDirExists) {
+          const fullPath = `${remoteDir}\\${filename}`;
+          if (await exists(fullPath)) {
             return { fullPath, filename, exists: true };
           }
         }
@@ -149,3 +196,4 @@ export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileSta
 
   return { fullPath: null, filename, exists: false };
 }
+
