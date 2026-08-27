@@ -1,14 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Tauri v2 Migration Specification for IsaacSketchbook",
-  "description": "Especificación técnica y guía de ejecución paso a paso para migrar y empaquetar IsaacSketchbook a una aplicación de escritorio nativa ultraligera (~3-5 MB) con Tauri v2 y React Router v7.",
+  "description": "Especificación técnica para la migración de IsaacSketchbook a Tauri v2. IMPORTANTE: La versión original con Node.js en 'main' funciona a la perfección y cubre todos los edge cases; el alcance de esta migración es EXCLUSIVAMENTE adaptar las operaciones de I/O de archivos de Node.js a Tauri v2 manteniendo paridad estricta 1 a 1 sin alterar la lógica de negocio existente.",
   "version": "1.0.0",
   "project": {
     "name": "IsaacSketchbook",
     "rootDirectory": "c:/Users/Johnson/Documents/Proyectos/IsaacSketchbook",
     "packageManager": "pnpm",
     "targetBranch": "Implementacion-de-Tauri-v2",
-    "baseBranch": "main"
+    "baseBranch": "main",
+    "originalVersionStatus": "La versión original en Node.js (main) funciona perfectamente. No se deben rediseñar ni refactorizar componentes o flujos."
   },
   "architecture": {
     "engine": "Tauri v2 (Microsoft Edge WebView2 / Chromium Evergreen)",
@@ -214,6 +215,8 @@
     }
   ],
   "rulesForAgents": [
+    "ADAPTACIÓN EXCLUSIVA A TAURI V2: La versión original con Node.js en 'main' funciona a la perfección y cubre todos los edge cases. El trabajo del agente debe limitarse ÚNICAMENTE a adaptar la capa de I/O de archivos de Node.js a Tauri v2 con paridad 1 a 1. Queda TERMINANTEMENTE PROHIBIDO alterar, refactorizar o reescribir la lógica de negocio, los algoritmos de parseo de partidas, los componentes o el manejo de estados.",
+    "PERSISTENCIA FÍSICA DIRECTA: settings.json DEBE residir y generarse siempre como un archivo físico directo en el directorio del ejecutable .exe. Prohibido usar localStorage o almacenamiento web como sustituto o fallback.",
     "Usar EXCLUSIVAMENTE 'pnpm' como gestor de paquetes. NUNCA ejecutar 'npx'.",
     "NO alterar los estilos de Tailwind v4, clases de color o fuentes de app/app.css.",
     "Conservar la regla CSS 'image-rendering: pixelated;' en todos los contenedores de sprites e imágenes.",
