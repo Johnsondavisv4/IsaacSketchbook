@@ -33,7 +33,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
     return true;
   });
 
-  const PAGE_SIZE = 96;
+  const PAGE_SIZE = 120;
   const totalPages = Math.max(1, Math.ceil(filteredAchievements.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const pageAchievements = filteredAchievements.slice(
@@ -164,7 +164,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
               <div className="flex items-center gap-4 sm:gap-6 justify-center w-full h-full">
                 <div
                   key={safeCurrentPage}
-                  className="flex-1 h-full w-full grid grid-cols-16 grid-rows-6 gap-1 sm:gap-1.5 items-center justify-items-center"
+                  className="grid grid-cols-20 gap-1 sm:gap-1.5 items-center justify-items-center"
                 >
                   {pageAchievements.map((ach, idx) => {
                     const isSelected = selectedAchievement?.id === ach.id;
@@ -174,12 +174,12 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                         key={ach.id}
                         type="button"
                         onClick={() => handleSelectAchievement(ach)}
-                        className={`animate-stagger w-full h-full max-h-16 aspect-square p-0.5 sm:p-1 rounded-lg flex justify-center items-center transition-all duration-150 group cursor-pointer border ${
+                        className={`animate-stagger p-1 rounded-lg flex justify-center items-center transition-all duration-150 group cursor-pointer border ${
                           isSelected
                             ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105 z-10'
                             : 'hover:bg-white/10 border-transparent hover:border-white/10'
                         }`}
-                        style={{ animationDelay: `${(idx % 16) * 12}ms` }}
+                        style={{ animationDelay: `${(idx % 20) * 12}ms` }}
                         data-id={ach.id}
                         title={`#${ach.id} - ${ach.achievement}`}
                       >
@@ -188,7 +188,7 @@ export function AchievementsTab({ configured = true, achievements }: Achievement
                           decoding="async"
                           src={`/Achievements/${ach.sprite}`}
                           alt={ach.achievement}
-                          className={`object-contain w-full h-full max-w-[90%] max-h-[90%] pixelated transition-all duration-200 select-none ${
+                          className={`object-contain w-16 h-16 pixelated transition-all duration-200 select-none ${
                             !ach.unlocked
                               ? 'grayscale opacity-50 group-hover:opacity-75'
                               : 'drop-shadow-md group-hover:scale-110'

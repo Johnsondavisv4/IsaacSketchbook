@@ -130,7 +130,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               <div className="flex items-center gap-4 sm:gap-6 justify-center w-full h-full">
                 <div
                   key={safeCurrentPage}
-                  className="flex-1 h-full w-full grid grid-cols-20 grid-rows-6 gap-1 sm:gap-1.5 items-center justify-items-center"
+                  className="grid grid-cols-20 gap-1 sm:gap-1.5 items-center justify-items-center"
                 >
                   {pageItems.map((item, idx) => {
                     const isSelected = selectedItem?.id === item.id;
@@ -138,7 +138,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                       <div
                         key={item.id}
                         onClick={() => handleSelectItem(item)}
-                        className={`animate-stagger w-full h-full max-h-16 aspect-square p-0.5 sm:p-1 rounded-lg flex justify-center items-center transition-all duration-150 group cursor-pointer border ${
+                        className={`animate-stagger p-1 rounded-lg flex justify-center items-center transition-all duration-150 group cursor-pointer border ${
                           isSelected
                             ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105 z-10'
                             : 'hover:bg-white/10 border-transparent hover:border-white/10'
@@ -152,7 +152,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                           decoding="async"
                           src={`/Items/${item.sprite}`}
                           alt={item.name}
-                          className={`object-contain w-full h-full max-w-[90%] max-h-[90%] pixelated transition-all duration-200 select-none ${
+                          className={`object-contain w-16 h-16 pixelated transition-all duration-200 select-none ${
                             !item.seen
                               ? 'grayscale opacity-50 group-hover:opacity-75'
                               : 'drop-shadow-md group-hover:scale-110'
