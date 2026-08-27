@@ -232,8 +232,8 @@ importarPostitDirecto();`;
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
-      <div className="w-full max-w-455 flex flex-col gap-4">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+      <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
             <span className="flex items-center gap-2.5">
@@ -245,11 +245,11 @@ importarPostitDirecto();`;
         />
 
         
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_22.5rem] gap-5 items-start">
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[1fr_24rem] xl:grid-cols-[1fr_28rem] gap-4 w-full">
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col gap-5">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-5 shadow-xl flex flex-col gap-3.5 min-h-0">
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-950 p-4 rounded-xl border border-neutral-800">
+            <div className="shrink-0 grid grid-cols-1 md:grid-cols-2 gap-4 bg-neutral-950 p-4 rounded-xl border border-neutral-800">
               
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-neutral-400 block mb-2">
@@ -314,7 +314,7 @@ importarPostitDirecto();`;
             </div>
 
             
-            <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-4">
+            <div className="shrink-0 flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-3">
               <span className="text-xs font-bold text-neutral-400 mr-2">
                 Atajos rápidos:
               </span>
@@ -345,13 +345,13 @@ importarPostitDirecto();`;
             </div>
 
             
-            <div className="overflow-x-auto rounded-lg border border-neutral-800">
+            <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-neutral-800">
               <table className="w-full text-left text-xs">
-                <thead className="bg-neutral-950 text-neutral-400 uppercase tracking-wider font-bold text-xs border-b border-neutral-800">
+                <thead className="bg-neutral-950/95 backdrop-blur text-neutral-400 uppercase tracking-wider font-bold text-xs border-b border-neutral-800 sticky top-0 z-10">
                   <tr>
-                    <th className="py-3 px-4">Marca / Jefe</th>
+                    <th className="py-2.5 px-4 w-44 sm:w-52">Marca / Jefe</th>
                     {STATE_LABELS.map((label, idx) => (
-                      <th key={label} className="py-3 px-2 text-center">
+                      <th key={label} className="py-2.5 px-2 text-center">
                         <span
                           className={
                             idx === 2
@@ -367,20 +367,20 @@ importarPostitDirecto();`;
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-800">
+                <tbody className="divide-y divide-neutral-800/80">
                   {MARKS_LIST.map((mark) => {
                     const currentValue = marksState[mark.id] ?? 0;
                     return (
                       <tr
                         key={mark.id}
-                        className="hover:bg-neutral-800 transition-colors"
+                        className="hover:bg-neutral-800/60 transition-colors"
                       >
-                        <td className="py-2.5 px-4 font-semibold text-white">
+                        <td className="py-2 px-4 font-semibold text-white">
                           {mark.name}
                         </td>
                         {[0, 1, 2, 3, 4].map((val) => (
-                          <td key={val} className="py-2.5 px-2 text-center">
-                            <label className="inline-flex items-center justify-center p-1.5 cursor-pointer">
+                          <td key={val} className="py-2 px-2 text-center">
+                            <label className="inline-flex items-center justify-center p-1.5 cursor-pointer hover:scale-110 transition-transform">
                               <input
                                 type="radio"
                                 name={`mark-${mark.id}`}
@@ -406,26 +406,26 @@ importarPostitDirecto();`;
           </div>
 
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center sticky top-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center justify-between shrink-0 h-full overflow-y-auto">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
               Vista Previa Pixel-Perfect
             </h3>
 
-            <div className="w-64 h-64 bg-neutral-950 border-2 border-dashed border-neutral-600 rounded-xl flex items-center justify-center p-3 shadow-inner">
+            <div className="w-56 h-56 sm:w-64 sm:h-64 bg-neutral-950 border-2 border-dashed border-neutral-600 rounded-xl flex items-center justify-center p-3 shadow-inner">
               <canvas
                 ref={canvasRef}
                 width={96}
                 height={96}
-                className="w-56 h-56 pixelated drop-shadow-md"
+                className="w-48 h-48 sm:w-56 sm:h-56 pixelated drop-shadow-md"
               />
             </div>
 
-            <div className="text-xs text-neutral-400 mt-2 font-mono">
+            <div className="text-xs text-neutral-400 my-1 font-mono">
               Resolución nativa: 96 × 96 px
             </div>
 
             
-            <div className="w-full flex flex-col gap-2 mt-5">
+            <div className="w-full flex flex-col gap-2 mt-2">
               <button
                 type="button"
                 disabled={!isLoaded}

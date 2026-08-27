@@ -50,8 +50,8 @@ export default function Home() {
   const numMarks = cart.filter((i) => i.type === 'mark').length;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-4 md:p-6">
-      <div className="w-full max-w-455 flex flex-col gap-5">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-4 md:p-6 lg:p-8 overflow-y-auto">
+      <div className="w-full flex flex-col gap-6">
         <header className="mt-1">
           <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
             <i className="bi bi-palette-fill text-red-500"></i>

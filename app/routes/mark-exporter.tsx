@@ -236,8 +236,8 @@ importarMarcaDirecto();`;
   const finalResolution = 16 * Math.max(1, scale);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
-      <div className="w-full max-w-455 flex flex-col gap-4">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+      <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
             <span className="flex items-center gap-2.5">
@@ -249,9 +249,9 @@ importarMarcaDirecto();`;
         />
 
         
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-5 items-start">
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[1fr_24rem] xl:grid-cols-[1fr_28rem] gap-4 w-full">
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col gap-5">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-5 shadow-xl flex flex-col gap-4 min-h-0 overflow-y-auto">
             
             <div>
               <div className="flex items-center justify-between mb-2.5">
@@ -342,8 +342,8 @@ importarMarcaDirecto();`;
           </div>
 
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center sticky top-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-3">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center justify-between shrink-0 h-full overflow-y-auto">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
               Vista Previa de Marca
             </h3>
 
@@ -358,7 +358,7 @@ importarMarcaDirecto();`;
             </div>
 
             
-            <div className="w-full bg-neutral-950 p-3 rounded-lg border border-neutral-800 mt-4 flex flex-col gap-1.5 text-xs">
+            <div className="w-full bg-neutral-950 p-3 rounded-lg border border-neutral-800 my-2 flex flex-col gap-1.5 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-neutral-400">Marca:</span>
                 <span className="font-semibold text-white truncate max-w-36">
@@ -378,7 +378,7 @@ importarMarcaDirecto();`;
             </div>
 
             
-            <div className="w-full flex flex-col gap-2.5 mt-5">
+            <div className="w-full flex flex-col gap-2">
               <button
                 type="button"
                 disabled={!isLoaded}

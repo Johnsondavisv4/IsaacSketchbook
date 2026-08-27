@@ -197,8 +197,8 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     filteredSprites.every((f) => selectedFiles.has(f));
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
-      <div className="w-full max-w-455 h-[calc(100vh-40px)] min-h-137.5 flex flex-col gap-3">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+      <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
             <span className="flex items-center gap-2.5">
@@ -210,9 +210,9 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
         />
 
         
-        <div className="flex-1 min-h-0 flex gap-3 overflow-hidden">
+        <div className="flex-1 min-h-0 flex gap-3">
           
-          <aside className="w-64 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col shrink-0 overflow-hidden">
+          <aside className="w-64 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col shrink-0">
             <div className="p-3 border-b border-neutral-800 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
                 Carpetas
