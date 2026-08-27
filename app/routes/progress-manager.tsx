@@ -174,8 +174,8 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center p-3 md:p-5">
-      <div className="w-full max-w-455 h-[calc(100vh-40px)] min-h-137.5 flex flex-col gap-3 overflow-hidden">
+    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+      <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
             <span className="flex items-center gap-2.5">
@@ -281,7 +281,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col">
           {activeTab === 'characters' && (
             <CharactersTab
               configured={isConfigured}

@@ -9,7 +9,7 @@ interface TopNavProps {
 
 export function TopNav({ title, subtitle, rightContent }: TopNavProps) {
   return (
-    <header className="w-full max-w-455 mb-2 flex flex-col gap-2 shrink-0">
+    <header className="w-full mb-2 flex flex-col gap-2 shrink-0">
       <div className="flex items-center justify-between">
         <Link
           to="/"

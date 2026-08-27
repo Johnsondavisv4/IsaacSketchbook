@@ -58,7 +58,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
   };
 
   return (
-    <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-hidden shadow-xl">
+    <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col shadow-xl">
       <div className="shrink-0 p-4 sm:p-5 border-b border-neutral-800 flex flex-col gap-3 bg-neutral-950/40">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
@@ -106,7 +106,7 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 p-3 sm:p-5 flex flex-col justify-between items-center overflow-y-auto">
+      <div className="flex-1 min-h-0 p-3 sm:p-4 flex flex-col justify-between items-center w-full gap-2.5">
         {validItems.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
             No hay items disponibles para mostrar.
@@ -116,32 +116,33 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
             No se encontraron items para este filtro.
           </div>
         ) : (
-          <div className="w-full flex-1 flex flex-col justify-between items-center gap-3">
-            <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6 select-none pt-1">
-              <div className="flex items-baseline gap-2">
-                <h2 className="text-2xl sm:text-3xl font-upheaval text-gray-200 tracking-wider">
-                  Page {safeCurrentPage}
-                </h2>
-              </div>
+          <div className="w-full flex-1 min-h-0 flex flex-col justify-between items-center gap-2">
+            <div className="shrink-0 flex items-center justify-center select-none pt-0.5">
+              <h2 className="text-2xl sm:text-3xl font-upheaval text-gray-200 tracking-wider">
+                Page {safeCurrentPage}
+              </h2>
             </div>
 
             <div
               onWheel={handleWheel}
-              className="w-full flex-1 flex items-center justify-center overflow-x-auto py-2 select-none"
+              className="w-full flex-1 min-h-0 flex items-center justify-center select-none py-1"
             >
-              <div className="flex items-center gap-4 sm:gap-6 justify-center">
-
-                <div key={safeCurrentPage} className="grid grid-cols-[repeat(20,auto)] gap-1 sm:gap-1.5 justify-items-center shrink-0">
+              <div className="flex items-center gap-4 sm:gap-6 justify-center w-full h-full">
+                <div
+                  key={safeCurrentPage}
+                  className="grid grid-cols-20 gap-1 sm:gap-1.5 items-center justify-items-center"
+                >
                   {pageItems.map((item, idx) => {
                     const isSelected = selectedItem?.id === item.id;
                     return (
                       <div
                         key={item.id}
                         onClick={() => handleSelectItem(item)}
-                        className={`animate-stagger p-1 sm:p-1.5 rounded-lg overflow-hidden flex justify-center items-center transition-all duration-150 group shrink-0 cursor-pointer border ${isSelected
-                          ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105'
-                          : 'hover:bg-white/10 border-transparent hover:border-white/10'
-                          }`}
+                        className={`animate-stagger p-1 rounded-lg flex justify-center items-center transition-all duration-150 group cursor-pointer border ${
+                          isSelected
+                            ? 'bg-white/20 border-red-500 ring-2 ring-red-500/70 shadow-lg scale-105 z-10'
+                            : 'hover:bg-white/10 border-transparent hover:border-white/10'
+                        }`}
                         style={{ animationDelay: `${(idx % 20) * 12}ms` }}
                         data-id={item.id}
                         title={`#${item.id} - ${item.name}`}
@@ -151,25 +152,26 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                           decoding="async"
                           src={`/Items/${item.sprite}`}
                           alt={item.name}
-                          className={`object-contain w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 pixelated transition-all duration-300 select-none ${!item.seen
-                            ? 'grayscale opacity-50 group-hover:opacity-75'
-                            : 'drop-shadow-md group-hover:scale-105'
-                            }`}
+                          className={`object-contain w-16 h-16 pixelated transition-all duration-200 select-none ${
+                            !item.seen
+                              ? 'grayscale opacity-50 group-hover:opacity-75'
+                              : 'drop-shadow-md group-hover:scale-110'
+                          }`}
                         />
                       </div>
                     );
                   })}
                 </div>
 
-
                 {totalPages > 1 && (
-                  <div className="flex flex-col items-center justify-center gap-2 select-none shrink-0">
+                  <div className="flex flex-col items-center justify-center gap-2 select-none shrink-0 pl-1">
                     <button
                       type="button"
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={safeCurrentPage === 1}
-                      className={`p-1 text-neutral-400 hover:text-white transition-all duration-200 cursor-pointer flex items-center justify-center ${safeCurrentPage === 1 ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
-                        }`}
+                      className={`p-1 text-neutral-400 hover:text-white transition-all cursor-pointer ${
+                        safeCurrentPage === 1 ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
+                      }`}
                       title="Página anterior"
                       aria-label="Página anterior"
                     >
@@ -192,10 +194,11 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                             aria-label={`Ir a Página ${pNum}`}
                           >
                             <span
-                              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ease-in-out block ${isActive
-                                ? 'bg-white border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.85)] scale-125'
-                                : 'bg-neutral-800 border-2 border-neutral-600 group-hover:border-neutral-400 group-hover:bg-neutral-700 scale-100'
-                                }`}
+                              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ease-in-out block ${
+                                isActive
+                                  ? 'bg-white border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.85)] scale-125'
+                                  : 'bg-neutral-800 border-2 border-neutral-600 group-hover:border-neutral-400 group-hover:bg-neutral-700 scale-100'
+                              }`}
                             />
                           </button>
                         );
@@ -206,8 +209,9 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
                       type="button"
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       disabled={safeCurrentPage === totalPages}
-                      className={`p-1 text-neutral-400 hover:text-white transition-all duration-200 cursor-pointer flex items-center justify-center ${safeCurrentPage === totalPages ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
-                        }`}
+                      className={`p-1 text-neutral-400 hover:text-white transition-all cursor-pointer ${
+                        safeCurrentPage === totalPages ? 'invisible pointer-events-none opacity-0' : 'opacity-100'
+                      }`}
                       title="Página siguiente"
                       aria-label="Página siguiente"
                     >
@@ -220,16 +224,15 @@ export function ItemsTab({ configured, items }: ItemsTabProps) {
               </div>
             </div>
 
-
-            <div className="w-full max-w-3xl bg-neutral-950/90 border border-neutral-800 rounded-2xl p-3 sm:p-3.5 shadow-inner flex items-center justify-between gap-3 shrink-0 h-24 sm:h-26 overflow-hidden">
+            <div className="w-full max-w-3xl bg-neutral-950/90 border border-neutral-800 rounded-2xl p-2.5 sm:p-3 shadow-inner flex items-center justify-between gap-3 shrink-0 h-20 sm:h-22">
               {selectedItem ? (
                 <>
                   <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                    <div className="p-2 bg-neutral-900 border border-neutral-800 rounded-2xl shrink-0 flex items-center justify-center">
+                    <div className="p-1.5 bg-neutral-900 border border-neutral-800 rounded-xl shrink-0 flex items-center justify-center">
                       <img
                         src={`/Items/${selectedItem.sprite}`}
                         alt={selectedItem.name}
-                        className="w-14 h-14 sm:w-16 sm:h-16 pixelated object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                        className="w-11 h-11 sm:w-13 sm:h-13 pixelated object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
                       />
                     </div>
 
