@@ -30,13 +30,6 @@ fn save_settings(settings: serde_json::Value) -> Result<serde_json::Value, Strin
     }
     std::fs::write(&path, &content).map_err(|e| format!("Failed to write {}: {}", path.display(), e))?;
     
-    if let Ok(mut cwd) = std::env::current_dir() {
-        cwd.push("settings.json");
-        if cwd != path {
-            let _ = std::fs::write(&cwd, &content);
-        }
-    }
-    
     Ok(settings)
 }
 
@@ -47,17 +40,6 @@ fn get_settings() -> Result<Option<serde_json::Value>, String> {
         let content = std::fs::read_to_string(&path).map_err(|e| e.to_string())?;
         let parsed: serde_json::Value = serde_json::from_str(&content).map_err(|e| e.to_string())?;
         return Ok(Some(parsed));
-    }
-    
-    if let Ok(mut cwd) = std::env::current_dir() {
-        cwd.push("settings.json");
-        if cwd.exists() {
-            if let Ok(content) = std::fs::read_to_string(&cwd) {
-                if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
-                    return Ok(Some(parsed));
-                }
-            }
-        }
     }
     
     Ok(None)
