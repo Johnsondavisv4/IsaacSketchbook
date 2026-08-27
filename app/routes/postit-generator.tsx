@@ -232,7 +232,7 @@ importarPostitDirecto();`;
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+    <div className="h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
       <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
@@ -345,9 +345,9 @@ importarPostitDirecto();`;
             </div>
 
             
-            <div className="flex-1 min-h-0 overflow-y-auto rounded-lg border border-neutral-800">
+            <div className="rounded-lg border border-neutral-800 overflow-hidden">
               <table className="w-full text-left text-xs">
-                <thead className="bg-neutral-950/95 backdrop-blur text-neutral-400 uppercase tracking-wider font-bold text-xs border-b border-neutral-800 sticky top-0 z-10">
+                <thead className="bg-neutral-950 text-neutral-400 uppercase tracking-wider font-bold text-xs border-b border-neutral-800">
                   <tr>
                     <th className="py-2.5 px-4 w-44 sm:w-52">Marca / Jefe</th>
                     {STATE_LABELS.map((label, idx) => (
@@ -357,8 +357,8 @@ importarPostitDirecto();`;
                             idx === 2
                               ? 'text-amber-400'
                               : idx === 4
-                              ? 'text-blue-400'
-                              : ''
+                                ? 'text-blue-400'
+                                : ''
                           }
                         >
                           {label}
@@ -406,8 +406,8 @@ importarPostitDirecto();`;
           </div>
 
           
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center justify-between shrink-0 h-full overflow-y-auto">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5 shadow-xl flex flex-col items-center gap-3 shrink-0">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-1">
               Vista Previa Pixel-Perfect
             </h3>
 

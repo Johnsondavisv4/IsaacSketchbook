@@ -213,8 +213,8 @@ export default function AssetExporter({ loaderData }: Route.ComponentProps) {
     filteredSprites.every((f) => selectedFiles.has(f));
 
   return (
-    <div className="h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5 overflow-hidden">
-      <div className="w-full h-full flex flex-col gap-3 min-h-0">
+    <div className="h-screen bg-neutral-950 text-neutral-200 flex flex-col p-3 md:p-5">
+      <div className="w-full flex-1 flex flex-col gap-3 min-h-0">
         <TopNav
           title={
             <span className="flex items-center gap-2.5">
