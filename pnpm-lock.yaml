@@ -29,6 +29,9 @@ importers:
       react-router:
         specifier: ^8
         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      steam-locate:
+        specifier: ^1.0.7
+        version: 1.0.7
     devDependencies:
       '@react-router/dev':
         specifier: ^8
@@ -1218,6 +1221,10 @@ packages:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
 
+  steam-locate@1.0.7:
+    resolution: {integrity: sha512-9BFtXYVwJnY56RbqYEn46hIMguVsdLXuTbrP4vHSAUSODmZZxvzo7nFbwriHRZQHVUyB3sjaDx7KTrWyPIjKng==}
+    engines: {node: '>=14.0.0'}
+
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
 
@@ -2365,6 +2372,8 @@ snapshots:
   source-map@0.6.1: {}
 
   statuses@2.0.2: {}
+
+  steam-locate@1.0.7: {}
 
   tailwindcss@4.3.3: {}
 

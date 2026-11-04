@@ -1,14 +1,41 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { findSteamPathSync, findSteamAppSync } from 'steam-locate';
 
 const SETTINGS_PATH = path.resolve(process.cwd(), 'settings.json');
 
-const STEAM_USERDATA_ROOTS = [
-  'C:\\Program Files (x86)\\Steam\\userdata',
-  'C:\\Program Files\\Steam\\userdata',
-  'D:\\Steam\\userdata',
-  'E:\\Steam\\userdata',
-];
+// Cache only discovery; save files and installation status are checked afresh.
+let steamPathCache: { value: string | null; checkedAt: number } | undefined;
+
+function getSteamPath(): string | null {
+  if (steamPathCache && Date.now() - steamPathCache.checkedAt < 30_000) {
+    return steamPathCache.value;
+  }
+  let value: string | null = null;
+  try {
+    value = findSteamPathSync();
+  } catch {
+    // Steam may be absent; callers will return an offline status.
+  }
+  steamPathCache = { value, checkedAt: Date.now() };
+  return value;
+}
+
+function getSteamUserdataRoots(): string[] {
+  const steamPath = getSteamPath();
+  return steamPath ? [path.join(steamPath, 'userdata')] : [];
+}
+
+function isIsaacInstalled(): boolean {
+  const steamPath = getSteamPath();
+  if (!steamPath) return false;
+  try {
+    return findSteamAppSync('250900', steamPath).isInstalled;
+  } catch {
+    // A missing manifest or an unavailable library is not an installed game.
+    return false;
+  }
+}
 
 export interface SaveSettings {
   version: 'Repentance' | 'Repentance+';
@@ -83,10 +110,11 @@ export interface AvailableVersionsStatus {
 export function getAvailableVersions(): AvailableVersionsStatus {
   let hasRepentancePlus = false;
   let hasRepentance = false;
-  let isSteamDetected = false;
-  let isGameInstalled = false;
+  const roots = getSteamUserdataRoots();
+  let isSteamDetected = getSteamPath() !== null;
+  const isGameInstalled = isIsaacInstalled();
 
-  for (const root of STEAM_USERDATA_ROOTS) {
+  for (const root of roots) {
     if (!fs.existsSync(root)) continue;
     isSteamDetected = true;
 
@@ -94,9 +122,6 @@ export function getAvailableVersions(): AvailableVersionsStatus {
       const userDirs = fs.readdirSync(root);
       for (const userDir of userDirs) {
         const gameDir = path.join(root, userDir, '250900');
-        if (fs.existsSync(gameDir)) {
-          isGameInstalled = true;
-        }
         const remoteDir = path.join(gameDir, 'remote');
         if (fs.existsSync(remoteDir)) {
           for (let f = 1; f <= 3; f++) {
@@ -129,7 +154,12 @@ export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileSta
 
   const filename = getSaveFilename(activeSettings);
 
-  for (const root of STEAM_USERDATA_ROOTS) {
+  // Leftover saves from an uninstalled game must not activate synchronization.
+  if (!isIsaacInstalled()) {
+    return { fullPath: null, filename, exists: false };
+  }
+
+  for (const root of getSteamUserdataRoots()) {
     if (!fs.existsSync(root)) continue;
 
     try {

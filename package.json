@@ -6,7 +6,8 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "test:steam": "node --experimental-test-module-mocks --test tests/steam-detection.test.mjs"
   },
   "dependencies": {
     "@react-router/node": "^8",
@@ -15,7 +16,8 @@
     "isbot": "^5.1.36",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router": "^8"
+    "react-router": "^8",
+    "steam-locate": "^1.0.7"
   },
   "devDependencies": {
     "@react-router/dev": "^8",

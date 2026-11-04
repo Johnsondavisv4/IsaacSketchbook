@@ -71,6 +71,12 @@ La suite detecta y analiza automáticamente los archivos de partida ubicados en 
 C:\Program Files (x86)\Steam\userdata\<TuSteamID>\250900\remote\
 ```
 
+La ubicación de Steam se detecta exclusivamente mediante `steam-locate` (incluido el Registro de Windows), por lo que puede estar instalada en otra carpeta o unidad. La ubicación detectada se conserva en caché durante 30 segundos; los archivos de partida se comprueban en cada consulta.
+
+El estado de juego instalado se consulta mediante los manifiestos de sus bibliotecas de Steam, de forma independiente a la existencia de partidas. En la versión web, estas comprobaciones se realizan en el equipo donde se ejecuta el servidor Node.
+
+Progress Manager utiliza el modo offline si el juego no está instalado o no hay un guardado disponible para la ranura seleccionada. Los guardados que permanezcan tras desinstalar el juego no activan la sincronización; el catálogo y la exportación de gráficos siguen disponibles.
+
 - **Repentance**: `rep_persistentgamedata1.dat`, `rep_persistentgamedata2.dat`, `rep_persistentgamedata3.dat`
 - **Repentance+**: `rep+persistentgamedata1.dat`, `rep+persistentgamedata2.dat`, `rep+persistentgamedata3.dat`
 
