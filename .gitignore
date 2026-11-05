@@ -12,6 +12,11 @@
 !/tsconfig.json
 !/vite.config.ts
 
+# GitHub Actions
+!/.github/
+!/.github/workflows/
+!/.github/workflows/**
+
 # 3. Código de la aplicación y recursos
 !/app/
 !/app/**

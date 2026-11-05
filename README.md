@@ -119,6 +119,27 @@ La aplicación estará disponible de forma predeterminada en `http://localhost:5
 
 ---
 
+## Releases de Windows
+
+El workflow `.github/workflows/release-windows.yml` compila y publica una release con cada push a `Implementacion-de-Tauri-v2`. También admite ejecución manual desde Actions seleccionando esa rama.
+
+Antes de compilar verifica los tipos y ejecuta las pruebas. Usa Node 24, pnpm 11.20.0 y Rust estable, con los archivos de dependencias bloqueados.
+
+Cada lanzamiento se llama `Release-AAMMDD`, usando la fecha de Santiago de Chile. Su etiqueta independiente es `Release-AAMMDD-build.<ejecución>.<intento>` y contiene:
+
+- `IsaacSketchbook-AAMMDD-windows-x64-setup.exe`: instalador NSIS.
+- `IsaacSketchbook-AAMMDD-windows-x64-portable.zip`: contiene únicamente `IsaacSketchbook.exe`, para ejecutar sin instalar la aplicación. Necesita Microsoft Edge WebView2 Runtime instalado y una carpeta con permiso de escritura para `settings.json`.
+
+La versión de publicación usa el formato `AAMMDD` (por ejemplo, `261105`). La versión interna de Tauri se conserva en `src-tauri/tauri.conf.json`. Las releases anteriores se conservan y la publicación utiliza el `GITHUB_TOKEN` automático con permiso `contents: write`.
+
+Para generar los mismos binarios localmente:
+
+```bash
+pnpm exec -- tauri build --target x86_64-pc-windows-msvc --bundles nsis -- --locked
+```
+
+---
+
 ## 🖌️ Flujo de Trabajo en Adobe Photoshop
 
 1. Exporta tu script individual o el lote completo desde el **Carrito de Inyección** para descargar un archivo con extensión `.jsx`.
