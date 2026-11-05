@@ -100,7 +100,9 @@ export async function action({ request }: Route.ActionArgs) {
   const file = Number(formData.get('file') ?? formData.get('slot')) || 1;
   const characterMenu = (formData.get('characterMenu') as 'normal' | 'tainted') || 'normal';
 
-  const saved = saveSettings({ version, file, characterMenu });
+  const characterView = formData.has('characterView')
+    ? formData.get('characterView') as 'list' | 'wheel' : undefined;
+  const saved = saveSettings({ version, file, characterMenu, characterView });
   const status = resolveSaveFilePath(saved);
   const saveDrawings = readAndEvaluateSaves(saved.version);
   const availableVersions = getAvailableVersions();
@@ -135,6 +137,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     initialSettings?.characterMenu || 'normal'
   );
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [characterView, setCharacterView] = useState<'list' | 'wheel'>(initialSettings?.characterView ?? 'list');
 
   useEffect(() => {
     if (!configured) {
@@ -168,9 +171,21 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         version: newSettings.version,
         file: String(newSettings.file),
         characterMenu: characterFilter,
+        characterView,
       },
       { method: 'post' }
     );
+  };
+
+  const handleViewChange = (view: 'list' | 'wheel') => {
+    setCharacterView(view);
+    fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ characterView: view }),
+    }).then(response => {
+      if (!response.ok) throw new Error('No se pudo guardar la vista de personajes');
+    }).catch(error => console.error(error));
   };
 
   return (
@@ -284,9 +299,14 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         <div className="flex-1 min-h-0 flex flex-col">
           {activeTab === 'characters' && (
             <CharactersTab
+              key={`${currentSettings?.version ?? 'Repentance+'}:${currentSettings?.file ?? 1}`}
               configured={isConfigured}
               characters={characters}
+              achievements={achievements}
+              hasSave={currentSaveExists}
               filter={characterFilter}
+              view={characterView}
+              onViewChange={handleViewChange}
               onFilterChange={handleFilterChange}
               version={currentSettings?.version}
             />

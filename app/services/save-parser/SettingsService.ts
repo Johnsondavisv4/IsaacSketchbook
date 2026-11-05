@@ -41,6 +41,7 @@ export interface SaveSettings {
   version: 'Repentance' | 'Repentance+';
   file: number;
   characterMenu: 'normal' | 'tainted';
+  characterView: 'list' | 'wheel';
 }
 
 export interface SaveFileStatus {
@@ -65,6 +66,7 @@ export function getSettings(): SaveSettings | null {
           version: parsed.version === 'Repentance+' ? 'Repentance+' : 'Repentance',
           file: Number(parsed.file ?? parsed.slot) || 1,
           characterMenu: parsed.characterMenu === 'tainted' ? 'tainted' : 'normal',
+          characterView: parsed.characterView === 'wheel' ? 'wheel' : 'list',
         };
       }
     }
@@ -79,6 +81,7 @@ export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: numbe
     version: 'Repentance+',
     file: 1,
     characterMenu: 'normal',
+    characterView: 'list',
   };
   const targetFile = newSettings.file ?? newSettings.slot;
   const validated: SaveSettings = {
@@ -94,6 +97,9 @@ export function saveSettings(newSettings: Partial<SaveSettings> & { slot?: numbe
       newSettings.characterMenu ?
         newSettings.characterMenu === 'tainted' ? 'tainted' : 'normal'
       : current.characterMenu,
+    characterView: newSettings.characterView === undefined
+      ? current.characterView
+      : newSettings.characterView === 'wheel' ? 'wheel' : 'list',
   };
 
   fs.writeFileSync(SETTINGS_PATH, JSON.stringify(validated, null, 2), 'utf8');
@@ -146,7 +152,7 @@ export function getAvailableVersions(): AvailableVersionsStatus {
   };
 }
 
-export function resolveSaveFilePath(settings?: SaveSettings | null): SaveFileStatus {
+export function resolveSaveFilePath(settings?: (Pick<SaveSettings, 'version' | 'file'> & Partial<SaveSettings>) | null): SaveFileStatus {
   const activeSettings = settings || getSettings();
   if (!activeSettings) {
     return { fullPath: null, filename: '', exists: false };

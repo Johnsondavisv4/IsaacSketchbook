@@ -21,6 +21,8 @@
 # 4. Pruebas
 !/tests/
 !/tests/steam-detection.test.mjs
+!/tests/character-unlocks.test.mjs
+!/tests/settings.test.mjs
 
 # 5. Configuración del editor y skill del proyecto
 !/.vscode/
