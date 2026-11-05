@@ -1,8 +1,40 @@
-.DS_Store
-.env
-/node_modules/
+# 1. Ignorar todo por defecto
+*
 
-# React Router
-/.react-router/
-/build/
-/settings.json
+# 2. Permitir los archivos de la raíz
+!/.gitignore
+!/.dockerignore
+!/Dockerfile
+!/README.md
+!/package.json
+!/pnpm-lock.yaml
+!/react-router.config.ts
+!/tsconfig.json
+!/vite.config.ts
+
+# 3. Código de la aplicación y recursos
+!/app/
+!/app/**
+!/public/
+!/public/**
+
+# 4. Pruebas
+!/tests/
+!/tests/steam-detection.test.mjs
+!/tests/character-unlocks.test.mjs
+!/tests/settings.test.mjs
+
+# 5. Configuración del editor y skill del proyecto
+!/.vscode/
+!/.vscode/settings.json
+!/.agents/
+!/.agents/skills/
+!/.agents/skills/react-router/
+!/.agents/skills/react-router/**
+
+# Tauri: fuentes y configuración nativa
+!/src-tauri/
+!/src-tauri/**
+/src-tauri/target/
+/src-tauri/gen/
+!/tauri-migration-spec.json

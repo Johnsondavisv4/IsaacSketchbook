@@ -14,17 +14,25 @@ async function getSettingsPath(): Promise<string> {
   return 'settings.json';
 }
 
-const STEAM_USERDATA_ROOTS = [
-  'C:\\Program Files (x86)\\Steam\\userdata',
-  'C:\\Program Files\\Steam\\userdata',
-  'D:\\Steam\\userdata',
-  'E:\\Steam\\userdata',
-];
+interface SteamStatus {
+  userdataPath: string | null;
+  isGameInstalled: boolean;
+}
+
+async function getSteamStatus(): Promise<SteamStatus> {
+  try {
+    return await invoke<SteamStatus>('get_steam_status');
+  } catch (error) {
+    console.error('Error detectando Steam:', error);
+    return { userdataPath: null, isGameInstalled: false };
+  }
+}
 
 export interface SaveSettings {
   version: 'Repentance' | 'Repentance+';
   file: number;
   characterMenu: 'normal' | 'tainted';
+  characterView: 'list' | 'wheel';
 }
 
 export interface SaveFileStatus {
@@ -47,6 +55,7 @@ export async function getSettings(): Promise<SaveSettings | null> {
         version: fromRust.version === 'Repentance+' ? 'Repentance+' : 'Repentance',
         file: Number(fromRust.file ?? fromRust.slot) || 1,
         characterMenu: fromRust.characterMenu === 'tainted' ? 'tainted' : 'normal',
+        characterView: fromRust.characterView === 'wheel' ? 'wheel' : 'list',
       };
     }
   } catch (invokeErr) {
@@ -64,6 +73,7 @@ export async function getSettings(): Promise<SaveSettings | null> {
           version: parsed.version === 'Repentance+' ? 'Repentance+' : 'Repentance',
           file: Number(parsed.file ?? parsed.slot) || 1,
           characterMenu: parsed.characterMenu === 'tainted' ? 'tainted' : 'normal',
+          characterView: parsed.characterView === 'wheel' ? 'wheel' : 'list',
         };
       }
     }
@@ -78,6 +88,7 @@ export async function saveSettings(newSettings: Partial<SaveSettings> & { slot?:
     version: 'Repentance+',
     file: 1,
     characterMenu: 'normal',
+    characterView: 'list',
   };
   const targetFile = newSettings.file ?? newSettings.slot;
   const validated: SaveSettings = {
@@ -93,6 +104,9 @@ export async function saveSettings(newSettings: Partial<SaveSettings> & { slot?:
       newSettings.characterMenu ?
         newSettings.characterMenu === 'tainted' ? 'tainted' : 'normal'
       : current.characterMenu,
+    characterView: newSettings.characterView === undefined
+      ? current.characterView
+      : newSettings.characterView === 'wheel' ? 'wheel' : 'list',
   };
 
   try {
@@ -121,24 +135,20 @@ export interface AvailableVersionsStatus {
 export async function getAvailableVersions(): Promise<AvailableVersionsStatus> {
   let hasRepentancePlus = false;
   let hasRepentance = false;
-  let isSteamDetected = false;
-  let isGameInstalled = false;
+  const steam = await getSteamStatus();
+  const isSteamDetected = steam.userdataPath !== null;
+  const isGameInstalled = steam.isGameInstalled;
 
-  for (const root of STEAM_USERDATA_ROOTS) {
+  for (const root of steam.userdataPath ? [steam.userdataPath] : []) {
     try {
       const rootExists = await exists(root);
       if (!rootExists) continue;
-      isSteamDetected = true;
 
       const userDirs = await readDir(root);
       for (const entry of userDirs) {
         if (!entry.isDirectory) continue;
         const userDirName = entry.name;
         const gameDir = `${root}\\${userDirName}\\250900`;
-        const gameDirExists = await exists(gameDir);
-        if (gameDirExists) {
-          isGameInstalled = true;
-        }
         const remoteDir = `${gameDir}\\remote`;
         const remoteDirExists = await exists(remoteDir);
         if (remoteDirExists) {
@@ -164,15 +174,20 @@ export async function getAvailableVersions(): Promise<AvailableVersionsStatus> {
   };
 }
 
-export async function resolveSaveFilePath(settings?: SaveSettings | null): Promise<SaveFileStatus> {
+export async function resolveSaveFilePath(settings?: (Pick<SaveSettings, 'version' | 'file'> & Partial<SaveSettings>) | null): Promise<SaveFileStatus> {
   const activeSettings = settings || (await getSettings());
   if (!activeSettings) {
     return { fullPath: null, filename: '', exists: false };
   }
 
   const filename = getSaveFilename(activeSettings);
+  const steam = await getSteamStatus();
+  // Leftover saves from an uninstalled game must not activate synchronization.
+  if (!steam.isGameInstalled) {
+    return { fullPath: null, filename, exists: false };
+  }
 
-  for (const root of STEAM_USERDATA_ROOTS) {
+  for (const root of steam.userdataPath ? [steam.userdataPath] : []) {
     try {
       const rootExists = await exists(root);
       if (!rootExists) continue;

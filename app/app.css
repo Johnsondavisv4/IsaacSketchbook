@@ -1,6 +1,48 @@
 @import "tailwindcss";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
+.save-slot-dialog { width: 100%; height: 100%; min-height: 0; padding: clamp(12px, 2vw, 24px); gap: clamp(8px, 2vh, 20px); overflow-y: auto; }
+.save-slot-viewport { position: relative; flex: 1; min-height: 100px; margin: 8px; overflow: hidden; }
+.save-slot-scene { position: absolute; left: 50%; top: 50%; width: 480px; height: 213px; transform-origin: center; }
+.save-slot-row { position: absolute; bottom: 0; left: 0; display: flex; align-items: flex-end; gap: 24px; width: 480px; height: 193px; }
+.save-slot-row button:focus-visible { outline: 2px dashed #f87171; outline-offset: 2px; }
+@media (max-height: 520px) { .save-slot-description { display: none; } }
+
+.character-wheel-panel { container-type: size; }
+.character-wheel-view { width: 100%; height: 100%; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.character-wheel-stage { position: relative; flex: none; width: min(calc(100cqw - 16px), calc((100cqh - 16px) * 480 / 270)); aspect-ratio: 480 / 270; container-type: inline-size; outline-offset: -3px; isolation: isolate; }
+.character-wheel-art { display: block; width: 100%; height: 100%; }
+.character-wheel-portraits { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.character-wheel-portrait-anchor { position: absolute; width: 10%; aspect-ratio: 1; pointer-events: none; transition: left 240ms ease, top 240ms ease, transform 240ms ease; }
+.character-wheel-portrait { position: absolute; border: 0; padding: 0; background: transparent; cursor: pointer; pointer-events: auto; }
+.character-wheel-foreground { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+.character-wheel-portrait-art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.character-wheel-portrait:focus-visible { outline: 1px dashed #4b3232; outline-offset: -8px; border-radius: 50%; }
+.character-wheel-arrow { position: absolute; z-index: 3; transform: translate(-50%, -50%); background: transparent; border: 0; cursor: pointer; }
+.character-wheel-arrow:hover { background: #321d1d12; border-radius: 50%; }
+.character-wheel-postit-controls { position: absolute; z-index: 3; top: 3%; left: 13%; width: 20%; font-size: 1.3cqw; color: #a3a3a3; }
+.character-wheel-mode-switch { display: flex; padding: 0.3cqw; gap: 0.3cqw; border: 1px solid #404040; border-radius: 0.9cqw; background: #171717; }
+.character-wheel-mode-switch button { display: flex; align-items: center; justify-content: center; gap: 0.5cqw; flex: 1; cursor: pointer; padding: 0.5cqw 0.3cqw; border: 1px solid transparent; border-radius: 0.6cqw; color: #a3a3a3; transition: background 150ms, color 150ms; }
+.character-wheel-mode-switch button:hover { background: #262626; color: white; }
+.character-wheel-mode-switch button[aria-pressed="true"] { background: #450a0a; border-color: #991b1b; color: #fff; }
+.character-wheel-actions { position: absolute; z-index: 3; right: 2%; top: 29%; width: 21%; display: flex; flex-direction: column; gap: 0.9cqw; font-size: 1.4cqw; }
+.character-wheel-actions-label { color: #a3a3a3; font-size: 0.8em; font-weight: 600; letter-spacing: 0.03em; margin-bottom: 0.2cqw; }
+.character-wheel-locked { display: flex; align-items: center; gap: 0.5cqw; color: #fbbf24; font-size: 0.85em; }
+.character-wheel-actions button { display: flex; align-items: center; gap: 0.8cqw; min-height: 4.4cqw; cursor: pointer; padding: 0.8cqw 1cqw; border: 1px solid #404040; background: #202020; border-radius: 0.9cqw; color: #e5e5e5; text-align: left; box-shadow: 0 0.2cqw 0 #0a0a0a; transition: background 150ms, border-color 150ms, color 150ms; }
+.character-wheel-actions button span { flex: 1; }
+.character-wheel-actions button > i:last-child { font-size: 0.8em; opacity: 0.5; }
+.character-wheel-actions button:hover { color: white; background: #2b2222; border-color: #a33b3b; }
+.character-wheel-actions .character-wheel-pack { background: #450a0a; border-color: #7f1d1d; }
+.character-wheel-actions .character-wheel-pack:hover { background: #601010; border-color: #dc2626; }
+.character-wheel-actions button:focus-visible, .character-wheel-mode-switch button:focus-visible { outline: 2px solid #f87171; outline-offset: 3px; }
+.character-wheel-counters > div { padding: 8px; gap: 8px; }
+.character-wheel-counters > div > div:first-child { width: 32px; height: 32px; padding: 2px; }
+@media (max-width: 639px) {
+  .character-wheel-counters > div { flex-direction: column; gap: 3px; padding: 6px 3px; text-align: center; }
+  .character-wheel-counters .font-upheaval { font-size: 10px; line-height: 1.2; }
+}
+@media (prefers-reduced-motion: reduce) { .character-wheel-portrait-anchor { transition: none; } }
+
 @font-face {
   font-family: 'Upheaval';
   src: url('/fonts/upheavtt.ttf') format('truetype');

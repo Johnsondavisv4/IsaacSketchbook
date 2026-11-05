@@ -71,6 +71,12 @@ La suite detecta y analiza automáticamente los archivos de partida ubicados en 
 C:\Program Files (x86)\Steam\userdata\<TuSteamID>\250900\remote\
 ```
 
+La ubicación de Steam se detecta en Rust mediante `steamlocate`, sin rutas de respaldo fijas. El juego `250900` se busca en los manifiestos de sus bibliotecas; la presencia de archivos en `userdata` no significa que siga instalado.
+
+Progress Manager funciona en modo offline cuando el juego no está instalado o falta el guardado seleccionado. El catálogo y las exportaciones siguen disponibles.
+
+La selección de personajes ofrece Lista y Rueda. La preferencia se guarda en `settings.json` junto al ejecutable y el valor predeterminado es Lista. Al cambiar de slot o versión se reinician el personaje seleccionado y el modo Solo/Online.
+
 - **Repentance**: `rep_persistentgamedata1.dat`, `rep_persistentgamedata2.dat`, `rep_persistentgamedata3.dat`
 - **Repentance+**: `rep+persistentgamedata1.dat`, `rep+persistentgamedata2.dat`, `rep+persistentgamedata3.dat`
 
@@ -80,7 +86,7 @@ Puedes cambiar en cualquier momento entre versión y archivo de guardado (File 1
 
 ## 🛠️ Stack Tecnológico
 
-- **Framework**: [Remix](https://remix.run/) (React Router Full-Stack SSR)
+- **Framework**: [Remix](https://remix.run/) (React Router en modo SPA para Tauri)
 - **UI**: [React 19](https://react.dev/)
 - **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Iconografía**: [Bootstrap Icons](https://icons.getbootstrap.com/)

@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import type { CharacterJSON } from '../../services/save-parser/models/Character';
+import { CharacterWheel } from './CharacterWheel';
+import type { AchievementJSON } from '../../services/save-parser/models/Achievement';
+import { getCharacterUnlock, isCharacterVisible, type CharacterUnlock } from '../../lib/character-unlocks';
 import { useToast } from '../../context/ToastContext';
 import { downloadJsxFile, generateBatchJsxScript } from '../../lib/jsx-generator';
 import {
@@ -191,6 +194,7 @@ function CharacterRow({
   widgetImage,
   onExportAction,
   isRepPlus = true,
+  unlock,
 }: {
   character: CharacterJSON;
   widgetImage: HTMLImageElement | null;
@@ -200,6 +204,7 @@ function CharacterRow({
     chosenSprite?: string
   ) => void;
   isRepPlus?: boolean;
+  unlock?: CharacterUnlock;
 }) {
   const soloCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const onlineCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -236,6 +241,7 @@ function CharacterRow({
     <div className={`grid ${gridColsClass} gap-4 items-center px-4 py-3 hover:bg-neutral-950/40 transition-colors border-b border-neutral-800 last:border-b-0`}>
       <div className="min-w-0 text-left pl-2">
         <h3 className="text-base font-upheaval text-white tracking-wide truncate">
+          {unlock?.state === 'locked' && <i className="bi bi-lock-fill text-amber-400 mr-1.5" title="Personaje bloqueado" aria-label="Bloqueado" />}
           {character.character}
         </h3>
       </div>
@@ -363,7 +369,11 @@ function CharacterRow({
 interface CharactersTabProps {
   configured: boolean;
   characters: CharacterJSON[];
+  achievements: AchievementJSON[];
+  hasSave: boolean;
   filter: 'normal' | 'tainted';
+  view: 'list' | 'wheel';
+  onViewChange: (view: 'list' | 'wheel') => void;
   onFilterChange: (f: 'normal' | 'tainted') => void;
   version?: 'Repentance' | 'Repentance+';
 }
@@ -371,11 +381,16 @@ interface CharactersTabProps {
 export function CharactersTab({
   configured,
   characters,
+  achievements,
+  hasSave,
   filter,
+  view,
+  onViewChange,
   onFilterChange,
   version = 'Repentance+',
 }: CharactersTabProps) {
   const isRepPlus = version === 'Repentance+';
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [widgetImage, setWidgetImage] = useState<HTMLImageElement | null>(null);
   const [activeVariantModal, setActiveVariantModal] = useState<{
     character: CharacterJSON;
@@ -399,7 +414,8 @@ export function CharactersTab({
     () => characters.filter((c) => c.tainted),
     [characters]
   );
-  const filteredList = filter === 'normal' ? normalChars : taintedChars;
+  const filteredList = (filter === 'normal' ? normalChars : taintedChars)
+    .filter(character => isCharacterVisible(character.id, achievements, hasSave));
 
   const megaBlastCount = useMemo(() => {
     return normalChars.filter((c) => {
@@ -549,7 +565,7 @@ export function CharactersTab({
   return (
     <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-hidden">
       <div className="shrink-0 bg-neutral-900 border border-neutral-700 rounded-xl p-4 shadow-xl flex flex-col gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-3">
+        <div className={`flex flex-wrap items-center justify-between gap-4 ${view === 'list' ? 'border-b border-neutral-800 pb-3' : ''}`}>
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-neutral-400 mr-1">
               Filtrar:
@@ -575,10 +591,19 @@ export function CharactersTab({
               Tainted
             </button>
           </div>
+          <div className="flex gap-1 rounded-lg bg-neutral-950 p-1" aria-label="Vista de personajes">
+            {(['wheel', 'list'] as const).map(mode => (
+              <button key={mode} type="button" aria-pressed={view === mode}
+                onClick={() => onViewChange(mode)}
+                className={`px-3 py-1.5 rounded-md text-xs cursor-pointer ${view === mode ? 'bg-neutral-700 text-white' : 'text-neutral-400 hover:text-white'}`}>
+                {mode === 'wheel' ? 'Rueda' : 'Lista'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {configured && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+          <div className={`grid ${view === 'wheel' ? 'grid-cols-3 gap-2 character-wheel-counters' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5'}`}>
             {filter === 'normal' && (
               <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5">
                 <div className="w-11 h-11 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
@@ -621,7 +646,7 @@ export function CharactersTab({
               </div>
             )}
 
-            <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5 sm:col-span-2 md:col-span-1">
+            <div className={`bg-neutral-950 border border-neutral-800 rounded-xl p-2.5 flex items-center gap-2.5 ${view === 'list' ? 'sm:col-span-2 md:col-span-1' : ''}`}>
               <div className="w-11 h-11 bg-neutral-900 border border-neutral-800 rounded-lg p-1 flex items-center justify-center shrink-0">
                 <img
                   src="/DeathCertificate.png"
@@ -645,11 +670,16 @@ export function CharactersTab({
         )}
       </div>
 
-      <div className="flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col overflow-y-auto shadow-xl">
+      <div className={`flex-1 min-h-0 bg-neutral-900 border border-neutral-700 rounded-xl flex flex-col shadow-xl ${view === 'wheel' ? 'character-wheel-panel overflow-hidden' : 'overflow-y-auto'}`}>
         {!configured || filteredList.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 text-center text-neutral-400 text-sm font-medium">
             Configura tu versión y archivo de guardado para comenzar.
           </div>
+        ) : view === 'wheel' ? (
+          <CharacterWheel characters={filteredList}
+            achievements={achievements} hasSave={hasSave}
+            selectedIndex={selectedIndex % filteredList.length} onSelect={setSelectedIndex}
+            isRepPlus={isRepPlus} onExport={handleExportCharacterItem} />
         ) : (
           <>
             <div className={`sticky top-0 z-10 grid ${isRepPlus ? 'grid-cols-[180px_290px_1fr_1fr]' : 'grid-cols-[180px_200px_1fr_1fr]'} gap-4 items-center px-4 py-3 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800 font-upheaval text-sm sm:text-base text-neutral-300 tracking-wide select-none shrink-0 text-center`}>
@@ -664,6 +694,7 @@ export function CharactersTab({
                 <CharacterRow
                   key={char.id}
                   character={char}
+                  unlock={getCharacterUnlock(char.id, achievements, hasSave)}
                   widgetImage={widgetImage}
                   onExportAction={handleExportCharacterItem}
                   isRepPlus={isRepPlus}

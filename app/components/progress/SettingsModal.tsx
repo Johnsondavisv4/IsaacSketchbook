@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { SaveSettings, AvailableVersionsStatus } from '../../services/save-parser/SettingsService';
 import { readAndEvaluateSaves, type SaveDrawingResult } from '../../services/save-parser/SaveDrawingParser';
 
@@ -50,6 +50,33 @@ export function SettingsModal({
   const [version, setVersion] = useState<'Repentance' | 'Repentance+'>(defaultVer);
   const [file, setFile] = useState<number | null>(settings?.file ?? null);
   const [drawings, setDrawings] = useState<SaveDrawingResult[]>(saveDrawings);
+  const slotViewportRef = useRef<HTMLDivElement>(null);
+  const [slotScale, setSlotScale] = useState(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const bodyOverflow = document.body.style.overflow;
+    const rootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = rootOverflow;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !slotViewportRef.current) return;
+    const viewport = slotViewportRef.current;
+    const resize = () => {
+      // Three 144px papers, two 24px gaps, and 20px above for selection lift.
+      setSlotScale(Math.max(0, Math.min(viewport.clientWidth / 480, viewport.clientHeight / 213)));
+    };
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -69,11 +96,7 @@ export function SettingsModal({
   const handleSelectVersion = (newVersion: 'Repentance' | 'Repentance+') => {
     setVersion(newVersion);
     readAndEvaluateSaves(newVersion)
-      .then((d) => {
-        if (Array.isArray(d)) {
-          setDrawings(d);
-        }
-      })
+      .then(drawings => setDrawings(drawings))
       .catch((err) => console.error('Error fetching drawings:', err));
   };
 
@@ -83,33 +106,33 @@ export function SettingsModal({
       version,
       file: newFile,
       characterMenu: settings?.characterMenu || 'normal',
+      characterView: settings?.characterView ?? 'list',
     });
     onClose();
   };
 
-  const scale = 3;
-
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md transition-opacity overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md transition-opacity"
       onClick={onClose}
     >
       <div
-        className="w-fit max-w-[96vw] bg-neutral-900 border border-neutral-700/80 rounded-3xl p-5 sm:p-6 shadow-2xl transition-all flex flex-col gap-4 my-auto mx-auto"
+        className="save-slot-dialog bg-neutral-900 border border-neutral-700/80 rounded-3xl shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
+        aria-labelledby="save-slot-title"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800/80 pb-3.5">
+        <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800/80 pb-3.5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-red-950/60 border border-red-800/60 flex items-center justify-center text-red-500 shadow-inner shrink-0">
               <i className="bi bi-file-earmark-person-fill text-xl"></i>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white tracking-wide font-upheaval leading-tight">
+              <h2 id="save-slot-title" className="text-2xl font-bold text-white tracking-wide font-upheaval leading-tight">
                 Seleccionar Partida
               </h2>
-              <p className="text-xs text-neutral-400 mt-0.5">
+              <p className="save-slot-description text-xs text-neutral-400 mt-0.5">
                 Haz clic en uno de los archivos para sincronizar automáticamente tu progreso de Steam
               </p>
             </div>
@@ -164,7 +187,7 @@ export function SettingsModal({
         </div>
 
         {neitherExists && (
-          <div className="bg-amber-950/40 border border-amber-800/60 rounded-2xl p-3.5 text-xs text-amber-200 flex items-start gap-3 shadow-inner">
+          <div className="shrink-0 bg-amber-950/40 border border-amber-800/60 rounded-2xl p-3.5 text-xs text-amber-200 flex items-start gap-3 shadow-inner">
             <div className="w-7 h-7 rounded-lg bg-amber-900/50 border border-amber-700/50 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
               <i className="bi bi-exclamation-triangle-fill text-sm"></i>
             </div>
@@ -183,8 +206,9 @@ export function SettingsModal({
           </div>
         )}
 
-        <div className="flex items-center justify-center overflow-x-auto max-w-full py-4 sm:py-6">
-          <div className="flex items-end justify-center gap-6 sm:gap-8 shrink-0">
+        <div ref={slotViewportRef} className="save-slot-viewport">
+          <div className="save-slot-scene" style={{ transform: `translate(-50%, -50%) scale(${slotScale})`, visibility: slotScale > 0 ? 'visible' : 'hidden' }}>
+          <div className="save-slot-row">
             {[
               { id: 1, name: 'File 1', crop: { x: 10, y: 272, w: 144, h: 193 }, drawingOffset: { left: 8, top: 6 } },
               { id: 2, name: 'File 2', crop: { x: 160, y: 272, w: 144, h: 193 }, drawingOffset: { left: 4, top: 6 } },
@@ -202,8 +226,8 @@ export function SettingsModal({
                 <div
                   key={f.id}
                   style={{
-                    width: `${Math.round(f.crop.w * scale)}px`,
-                    height: `${Math.round(f.crop.h * scale)}px`,
+                    width: `${f.crop.w}px`,
+                    height: `${f.crop.h}px`,
                   }}
                   className="relative shrink-0 flex items-end justify-center"
                 >
@@ -213,12 +237,11 @@ export function SettingsModal({
                     style={{
                       width: `${f.crop.w}px`,
                       height: `${f.crop.h}px`,
-                      transform: `scale(${scale})`,
-                      transformOrigin: 'bottom left',
                     }}
                     className={`absolute left-0 bottom-0 cursor-pointer focus:outline-none transition-transform duration-150 ease-out group ${isSelected ? '-translate-y-5' : 'hover:-translate-y-5'
                       }`}
                     title={`Seleccionar ${f.name}`}
+                    aria-pressed={isSelected}
                   >
                     <div
                       style={{
@@ -297,6 +320,7 @@ export function SettingsModal({
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
       </div>

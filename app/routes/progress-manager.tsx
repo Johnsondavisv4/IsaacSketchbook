@@ -100,7 +100,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const file = Number(formData.get('file') ?? formData.get('slot')) || 1;
   const characterMenu = (formData.get('characterMenu') as 'normal' | 'tainted') || 'normal';
 
-  const saved = await saveSettings({ version, file, characterMenu });
+  const characterView = formData.has('characterView')
+    ? formData.get('characterView') as 'list' | 'wheel' : undefined;
+  const saved = await saveSettings({ version, file, characterMenu, characterView });
   const status = await resolveSaveFilePath(saved);
   const saveDrawings = await readAndEvaluateSaves(saved.version);
   const availableVersions = await getAvailableVersions();
@@ -135,6 +137,7 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
     initialSettings?.characterMenu || 'normal'
   );
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [characterView, setCharacterView] = useState<'list' | 'wheel'>(initialSettings?.characterView ?? 'list');
 
   useEffect(() => {
     if (!configured) {
@@ -164,9 +167,15 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         version: newSettings.version,
         file: String(newSettings.file),
         characterMenu: characterFilter,
+        characterView,
       },
       { method: 'post' }
     );
+  };
+
+  const handleViewChange = (view: 'list' | 'wheel') => {
+    setCharacterView(view);
+    saveSettings({ characterView: view }).catch(error => console.error('Error guardando vista:', error));
   };
 
   return (
@@ -280,8 +289,13 @@ export default function ProgressManager({ loaderData }: Route.ComponentProps) {
         <div className="flex-1 min-h-0 flex flex-col">
           {activeTab === 'characters' && (
             <CharactersTab
+              key={`${currentSettings?.version ?? 'Repentance+'}:${currentSettings?.file ?? 1}`}
               configured={isConfigured}
               characters={characters}
+              achievements={achievements}
+              hasSave={currentSaveExists}
+              view={characterView}
+              onViewChange={handleViewChange}
               filter={characterFilter}
               onFilterChange={handleFilterChange}
               version={currentSettings?.version}

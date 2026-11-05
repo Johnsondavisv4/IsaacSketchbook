@@ -1,5 +1,23 @@
 use std::path::PathBuf;
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct SteamStatus {
+    userdata_path: Option<String>,
+    is_game_installed: bool,
+}
+
+#[tauri::command]
+fn get_steam_status() -> SteamStatus {
+    match steamlocate::locate() {
+        Ok(steam) => SteamStatus {
+            userdata_path: Some(steam.path().join("userdata").to_string_lossy().into_owned()),
+            is_game_installed: steam.find_app(250900).ok().flatten().is_some(),
+        },
+        Err(_) => SteamStatus { userdata_path: None, is_game_installed: false },
+    }
+}
+
 fn get_settings_file_path() -> PathBuf {
     if let Ok(mut exe) = std::env::current_exe() {
         exe.pop();
@@ -61,7 +79,7 @@ pub fn run() {
       }
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![get_exe_dir, save_settings, get_settings])
+    .invoke_handler(tauri::generate_handler![get_exe_dir, save_settings, get_settings, get_steam_status])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
