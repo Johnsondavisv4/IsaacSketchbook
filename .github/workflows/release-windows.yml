@@ -63,7 +63,7 @@ jobs:
           $releaseDate = [TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTimeOffset]::UtcNow, 'Pacific SA Standard Time')
           $version = $releaseDate.ToString('yyMMdd')
           $name = "Release-$version"
-          $tag = "$name-build.$env:GITHUB_RUN_NUMBER.$env:GITHUB_RUN_ATTEMPT"
+          $tag = $name
           $releaseDir = 'src-tauri/target/x86_64-pc-windows-msvc/release'
           $binary = Join-Path $releaseDir 'IsaacSketchbook.exe'
           $installers = @(Get-ChildItem -LiteralPath (Join-Path $releaseDir 'bundle/nsis') -Filter '*-setup.exe' -File)
@@ -77,21 +77,9 @@ jobs:
           Copy-Item -LiteralPath $binary -Destination (Join-Path $portable 'IsaacSketchbook.exe')
           Compress-Archive -LiteralPath (Join-Path $portable 'IsaacSketchbook.exe') -DestinationPath (Join-Path $output "IsaacSketchbook-$version-windows-x64-portable.zip")
 
-          $notes = @'
-          Compilación automática de IsaacSketchbook para Windows x64.
-
-          - **Instalador:** descarga y ejecuta el archivo `*-setup.exe`.
-          - **Portable:** extrae el ZIP en una carpeta con permiso de escritura y ejecuta `IsaacSketchbook.exe`. Requiere Microsoft Edge WebView2 Runtime instalado.
-          - La configuración se guarda como `settings.json` junto al ejecutable.
-
-          '@
-          $notes += "`nCommit: $env:GITHUB_SHA"
-          $notesPath = Join-Path $env:RUNNER_TEMP 'isaac-release-notes.md'
-          Set-Content -LiteralPath $notesPath -Value $notes -Encoding utf8
           "tag=$tag" >> $env:GITHUB_OUTPUT
           "name=$name" >> $env:GITHUB_OUTPUT
           "assets=$output" >> $env:GITHUB_OUTPUT
-          "notes=$notesPath" >> $env:GITHUB_OUTPUT
 
       - name: Publish GitHub release
         env:
@@ -100,9 +88,17 @@ jobs:
           RELEASE_TAG: ${{ steps.package.outputs.tag }}
           RELEASE_NAME: ${{ steps.package.outputs.name }}
           RELEASE_ASSETS: ${{ steps.package.outputs.assets }}
-          RELEASE_NOTES: ${{ steps.package.outputs.notes }}
         run: |
           $assets = @(Get-ChildItem -LiteralPath $env:RELEASE_ASSETS -File | ForEach-Object FullName)
           if ($assets.Count -ne 2) { throw 'Expected installer and portable ZIP' }
-          gh release create $env:RELEASE_TAG @assets --target $env:GITHUB_SHA --title $env:RELEASE_NAME --notes-file $env:RELEASE_NOTES
+          gh release view $env:RELEASE_TAG --json tagName > $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:RELEASE_TAG @assets --clobber
+            if ($LASTEXITCODE -ne 0) { throw 'Release asset upload failed' }
+            gh api --method PATCH "repos/$env:GH_REPO/git/refs/tags/$env:RELEASE_TAG" -f "sha=$env:GITHUB_SHA" -F force=true
+            if ($LASTEXITCODE -ne 0) { throw 'Release tag update failed' }
+            gh release edit $env:RELEASE_TAG --title $env:RELEASE_NAME --notes=
+          } else {
+            gh release create $env:RELEASE_TAG @assets --target $env:GITHUB_SHA --title $env:RELEASE_NAME --notes=
+          }
           if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed' }

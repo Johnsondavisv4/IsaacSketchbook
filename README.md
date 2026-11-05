@@ -125,7 +125,7 @@ El workflow `.github/workflows/release-windows.yml` compila y publica una releas
 
 Antes de compilar verifica los tipos y ejecuta las pruebas. Usa Node 24, pnpm 11.20.0 y Rust estable, con los archivos de dependencias bloqueados.
 
-Cada lanzamiento se llama `Release-AAMMDD`, usando la fecha de Santiago de Chile. Su etiqueta independiente es `Release-AAMMDD-build.<ejecución>.<intento>` y contiene:
+Cada lanzamiento y su etiqueta se llaman `Release-AAMMDD`. Una nueva ejecución durante el mismo día reemplaza los archivos y actualiza la etiqueta al commit compilado. Contiene:
 
 - `IsaacSketchbook-AAMMDD-windows-x64-setup.exe`: instalador NSIS.
 - `IsaacSketchbook-AAMMDD-windows-x64-portable.zip`: contiene únicamente `IsaacSketchbook.exe`, para ejecutar sin instalar la aplicación. Necesita Microsoft Edge WebView2 Runtime instalado y una carpeta con permiso de escritura para `settings.json`.
